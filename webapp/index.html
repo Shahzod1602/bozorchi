@@ -278,16 +278,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 /* SHOP */
 .shop-cat-btn{flex-shrink:0;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap;transition:all .15s}
 .shop-cat-btn.on{background:var(--p);color:#fff;border-color:var(--p)}
-.prod-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.07)}
-.prod-img-wrap{width:100%;padding-bottom:100%;position:relative;background:#f5f6f8;overflow:hidden}
-.prod-img-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.prod-img-real{max-width:90%;max-height:90%;object-fit:contain;display:block}
+.prod-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.07);display:flex;align-items:stretch}
+.prod-img-wrap{width:130px;flex-shrink:0;position:relative;background:#f5f6f8;display:flex;align-items:center;justify-content:center;min-height:130px}
+.prod-img-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:10px;box-sizing:border-box}
+.prod-img-real{max-width:100%;max-height:110px;object-fit:contain;display:block}
 .prod-emoji{font-size:48px}
-.prod-body{padding:8px 10px 12px}
-.prod-name{font-size:12px;font-weight:500;color:#333;line-height:1.35;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px}
-.prod-price{font-size:15px;font-weight:800;color:#111;letter-spacing:-.3px}
-.prod-old-price{font-size:11px;color:#aaa;text-decoration:line-through;display:block;margin-bottom:2px}
-.prod-unit{font-size:11px;color:#aaa;margin-top:3px}
+.prod-body{padding:14px 14px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.prod-name{font-size:14px;font-weight:600;color:#222;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.prod-price{font-size:18px;font-weight:800;color:#111;letter-spacing:-.3px;margin-top:4px}
+.prod-old-price{font-size:12px;color:#aaa;text-decoration:line-through}
+.prod-unit{font-size:12px;color:#aaa;margin-top:2px}
 .prod-discount{position:absolute;top:7px;left:7px;background:#FF3B30;color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px;z-index:1}
 .krz-ac{position:relative;flex:1.4;min-width:0}
 .krz-ac input{width:100%;box-sizing:border-box}
@@ -531,7 +531,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
   <div id="shopCats" style="display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px;flex-shrink:0;scrollbar-width:none"></div>
 
   <!-- product grid -->
-  <div id="shopGrid" style="flex:1;overflow-y:auto;padding:4px 10px 24px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start"></div>
+  <div id="shopGrid" style="flex:1;overflow-y:auto;padding:4px 12px 24px;display:flex;flex-direction:column;gap:10px"></div>
 
 </div>
 
@@ -927,14 +927,12 @@ function closeShop(){
 
 async function loadShopProducts(){
   const grid=document.getElementById('shopGrid');
-  grid.style.gridTemplateColumns='1fr';
   grid.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--sub)">Yuklanmoqda...</div>`;
   try{
     const data=await fetch('/api/korzinka-products').then(r=>r.json());
     if(data.error) throw new Error(data.error);
     shopProducts=data;
     shopLoaded=true;
-    grid.style.gridTemplateColumns='1fr 1fr';
     const isUz=shopLang()==='uz';
     const cats=[...new Set(data.map(p=>isUz?p.category_uz:p.category_ru))].filter(Boolean);
     const allLabel=isUz?'Barchasi':'Все';
