@@ -209,6 +209,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 /* ERR */
 .err-msg{background:var(--red-l);border:1px solid rgba(244,63,94,.15);border-radius:14px;padding:14px 16px;color:var(--red);font-size:14px;margin-top:12px}
 
+/* FRIDGE */
+.fridge-add{display:flex;gap:8px;margin-bottom:14px}
+.fridge-add input{flex:1;background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:12px 16px;font-size:14px;color:var(--text);outline:none;font-family:inherit;transition:border-color .2s;box-shadow:var(--shadow-s)}
+.fridge-add input:focus{border-color:var(--p)}
+.fridge-add input::placeholder{color:var(--sub)}
+.fridge-add button{padding:12px 18px;background:var(--p);color:#fff;border:none;border-radius:14px;font-size:20px;font-weight:700;cursor:pointer;flex-shrink:0;transition:opacity .15s}
+.fridge-add button:active{opacity:.8}
+.fridge-item{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);background:var(--white)}
+.fridge-item:last-child{border:none}
+.fridge-dot{width:8px;height:8px;border-radius:50%;background:var(--p);opacity:.4;flex-shrink:0}
+.fridge-name{flex:1;font-size:14px;font-weight:500;color:var(--text)}
+.fridge-del{width:28px;height:28px;border-radius:9px;background:var(--red-l);border:none;cursor:pointer;flex-shrink:0;position:relative;transition:background .15s}
+.fridge-del::before,.fridge-del::after{content:'';position:absolute;width:10px;height:2px;background:var(--red);border-radius:1px;top:50%;left:50%;transform-origin:center}
+.fridge-del::before{transform:translate(-50%,-50%) rotate(45deg)}
+.fridge-del::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.fridge-del:active{background:#FFD6DC}
+
 .pad{padding:0 20px}
 .mt8{margin-top:8px}
 .mt12{margin-top:12px}
@@ -229,15 +246,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 
   <div class="b-hero" id="homeBudget" style="cursor:pointer" onclick="goTab('suggest');setSuggestTab('budget')"></div>
 
-  <div class="act" onclick="goTab('suggest');setSuggestTab('suggest')">
+  <div class="act" onclick="goTab('suggest');setSuggestTab('budget')">
     <div class="act-ic">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/>
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="16" y2="14"/>
       </svg>
     </div>
     <div class="act-body">
-      <div class="act-title">Tavsiya</div>
-      <div class="act-sub" id="actSuggestSub">AI ovqat tavsiya qilsin</div>
+      <div class="act-title">Haftalik reja</div>
+      <div class="act-sub">7 kunlik ovqat va xarid rejasi</div>
+    </div>
+    <span class="act-arr">›</span>
+  </div>
+
+  <div class="act" onclick="goTab('fridge')">
+    <div class="act-ic">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="9" y1="6" x2="9" y2="8"/><line x1="9" y1="14" x2="9" y2="18"/>
+      </svg>
+    </div>
+    <div class="act-body">
+      <div class="act-title">Muzlatkich</div>
+      <div class="act-sub" id="homeFridgeSub">Mahsulotlar saqlanmoqda</div>
     </div>
     <span class="act-arr">›</span>
   </div>
@@ -313,6 +343,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
   <div class="pad" style="padding-top:14px" id="shopWrap"></div>
 </div>
 
+<!-- FRIDGE -->
+<div class="scr" id="scr-fridge">
+  <div class="hdr">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="9" y1="6" x2="9" y2="8"/><line x1="9" y1="14" x2="9" y2="18"/></svg>
+    <span class="hdr-t" style="margin-left:8px" id="fridgeTitle">Muzlatkich</span>
+  </div>
+  <div class="pad" style="padding-top:14px">
+    <div class="fridge-add">
+      <input type="text" id="fridgeInput" placeholder="Mahsulot nomi qo'shing..." onkeydown="if(event.key==='Enter')addFridgeManual()">
+      <button onclick="addFridgeManual()">+</button>
+    </div>
+    <div id="fridgeWrap"></div>
+  </div>
+</div>
+
 <!-- PROFILE -->
 <div class="scr" id="scr-profile">
   <div class="hdr">
@@ -384,6 +429,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
     <span class="nl" data-uz="Ro'yxat" data-ru="Список">Ro'yxat</span>
     <div class="nb-dot"></div>
   </button>
+  <button class="nb" id="nb-fridge" onclick="goTab('fridge')">
+    <div class="nb-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="9" y1="6" x2="9" y2="8"/><line x1="9" y1="14" x2="9" y2="18"/></svg>
+    </div>
+    <span class="nl" data-uz="Muzlat." data-ru="Холодил.">Muzlat.</span>
+    <div class="nb-dot"></div>
+  </button>
   <button class="nb" id="nb-profile" onclick="goTab('profile')">
     <div class="nb-icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -441,6 +493,8 @@ const T={
 let prof={family_size:2,weekly_budget:0,language:'uz',preferences:[],meal_name:'',ingredients:[]};
 let checked={};
 try{checked=JSON.parse(localStorage.getItem('chk_'+userId)||'{}')}catch(e){}
+let fridge=[];
+try{fridge=JSON.parse(localStorage.getItem('frg_'+userId)||'[]')}catch(e){}
 let curTab='home', navStack=[], lastPlan={text:'',ingredients:[],title:''};
 const L=()=>T[prof.language]||T.uz;
 
@@ -459,11 +513,13 @@ async function loadProfile(){
   renderAll();
 }
 
+function saveFridge(){localStorage.setItem('frg_'+userId,JSON.stringify(fridge));}
+
 function renderAll(){
   const init=userName.charAt(0).toUpperCase();
   document.getElementById('homeAv').textContent=init;
   document.getElementById('profAv').textContent=init;
-  renderHome();renderProfile();renderShopList();applyLang();
+  renderHome();renderProfile();renderShopList();renderFridge();applyLang();
 }
 
 function applyLang(){
@@ -505,7 +561,8 @@ function renderHome(){
   const total=prof.ingredients?.length||0;
   const bought=prof.ingredients?.filter((_,i)=>checked[i]).length||0;
   document.getElementById('homeListSub').textContent=total>0?`${bought}/${total} ta belgilangan`:t.no_list_sub;
-  document.getElementById('actSuggestSub').textContent='AI eng yaxshi ovqatni tavsiya qilsin';
+  const fridgeSub=document.getElementById('homeFridgeSub');
+  if(fridgeSub) fridgeSub.textContent=fridge.length>0?`${fridge.length} ta mahsulot bor`:'Hozircha bo\'sh';
 
   const wrap=document.getElementById('homeLastItems');
   if(!prof.ingredients||prof.ingredients.length===0){
@@ -587,12 +644,66 @@ function renderShopList(){
     </div>`;
   }).join('');
   const bought=prof.ingredients.filter((_,i)=>checked[i]).length;
+  const fridgeBtnLabel=prof.language==='uz'?'Belgilanganlarni muzlatgichga qo\'sh':'Добавить отмеченные в холодильник';
+  const fridgeBtn=bought>0?`<button class="btn-s" onclick="addBoughtToFridge()" style="margin-top:8px">${fridgeBtnLabel} (${bought} ta)</button>`:'';
   wrap.innerHTML=`<div class="shop-card">${rows}
     <div class="shop-total">
       <span class="shop-total-l">${t.total}</span>
       <span class="shop-total-r">${bought} / ${prof.ingredients.length} ta</span>
     </div></div>
+    ${fridgeBtn}
     <button class="btn-d" onclick="clearList()">${t.clear}</button>`;
+}
+
+function renderFridge(){
+  const wrap=document.getElementById('fridgeWrap');
+  if(!wrap)return;
+  const lang=prof.language;
+  if(fridge.length===0){
+    wrap.innerHTML=`<div class="empty">
+      <div class="empty-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/></svg></div>
+      <h3>${lang==='uz'?'Muzlatkich bo\'sh':'Холодильник пуст'}</h3>
+      <p>${lang==='uz'?'Xarid qilingan mahsulotlar bu yerda ko\'rinadi':'Купленные продукты появятся здесь'}</p>
+    </div>`;
+    return;
+  }
+  const rows=fridge.map((item,i)=>`<div class="fridge-item">
+    <div class="fridge-dot"></div>
+    <span class="fridge-name">${item}</span>
+    <button class="fridge-del" onclick="delFridge(${i})"></button>
+  </div>`).join('');
+  const clearBtn=lang==='uz'?"Barchasini o'chirish":'Очистить всё';
+  wrap.innerHTML=`<div class="shop-card" style="margin-bottom:10px">${rows}</div>
+    <button class="btn-d" onclick="clearFridge()">${clearBtn}</button>`;
+  renderHome();
+}
+
+function addFridgeManual(){
+  const inp=document.getElementById('fridgeInput');
+  const val=inp.value.trim();
+  if(!val)return;
+  val.split(',').map(v=>v.trim()).filter(v=>v&&!fridge.includes(v)).forEach(v=>fridge.push(v));
+  inp.value='';saveFridge();renderFridge();
+}
+
+function addToFridge(items){
+  items.forEach(name=>{if(name&&!fridge.includes(name))fridge.push(name);});
+  saveFridge();renderFridge();renderHome();
+  toast(prof.language==='uz'?'Muzlatgichga qo\'shildi':'Добавлено в холодильник');
+}
+
+function delFridge(i){fridge.splice(i,1);saveFridge();renderFridge();}
+
+function clearFridge(){
+  const msg=prof.language==='uz'?'Muzlatgichni tozalaysizmi?':'Очистить холодильник?';
+  const go=()=>{fridge=[];saveFridge();renderFridge();};
+  if(tg){tg.showConfirm(msg,ok=>{if(ok)go();});}else if(confirm(msg))go();
+}
+
+function addBoughtToFridge(){
+  const bought=prof.ingredients.filter((_,i)=>checked[i]).map(item=>item.name);
+  if(!bought.length){toast(prof.language==='uz'?'Avval mahsulotlarni belgilang':'Сначала отметьте товары');return;}
+  addToFridge(bought);
 }
 
 function togIng(i){
