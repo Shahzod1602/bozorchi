@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bozorlik</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--tg-theme-bg-color, #f5f5f5);
+    color: var(--tg-theme-text-color, #222);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+  .header {
+    background: #4CAF50;
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .header h1 { font-size: 20px; font-weight: 700; }
+  .header span { font-size: 24px; }
+  .budget-card {
+    margin: 16px;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    border-radius: 16px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+  }
+  .budget-card .label { font-size: 13px; opacity: 0.85; margin-bottom: 4px; }
+  .budget-card .amount { font-size: 28px; font-weight: 700; }
+  .budget-card .sub { font-size: 13px; opacity: 0.85; margin-top: 8px; }
+  .budget-card .row { display: flex; justify-content: space-between; margin-top: 12px; }
+  .budget-card .col { text-align: center; }
+  .budget-card .col .val { font-size: 18px; font-weight: 600; }
+  .budget-card .col .lbl { font-size: 11px; opacity: 0.8; }
+  .section { margin: 16px; }
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meal-card {
+    background: var(--tg-theme-secondary-bg-color, white);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .meal-name {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--tg-theme-text-color, #222);
+  }
+  .ingredient-list { list-style: none; }
+  .ingredient-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    gap: 12px;
+  }
+  .ingredient-item:last-child { border-bottom: none; }
+  .check-btn {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid #4CAF50;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .check-btn.checked {
+    background: #4CAF50;
+    border-color: #4CAF50;
+  }
+  .check-btn.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .ingredient-text { flex: 1; font-size: 15px; }
+  .ingredient-text.checked { text-decoration: line-through; opacity: 0.5; }
+  .ingredient-price {
+    font-size: 13px;
+    color: #4CAF50;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .progress-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #4CAF50;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+    text-align: right;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+  }
+  .empty-state .icon { font-size: 60px; margin-bottom: 16px; }
+  .empty-state p { font-size: 16px; line-height: 1.5; }
+  .bottom-btn {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 16px;
+    background: var(--tg-theme-bg-color, #f5f5f5);
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+  .btn-primary {
+    width: 100%;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:active { opacity: 0.8; }
+  .tabs {
+    display: flex;
+    margin: 0 16px 16px;
+    background: var(--tg-theme-secondary-bg-color, white);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-weight: 500;
+  }
+  .tab.active {
+    background: #4CAF50;
+    color: white;
+    font-weight: 600;
+  }
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span>🛒</span>
+  <h1>Bozorlik</h1>
+</div>
+
+<div id="app">
+  <div class="loading">⏳ Yuklanmoqda...</div>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+tg.ready();
+
+const userId = tg.initDataUnsafe?.user?.id;
+const lang = tg.initDataUnsafe?.user?.language_code === 'ru' ? 'ru' : 'uz';
+
+const labels = {
+  uz: {
+    budget: "Haftalik byudjet",
+    daily: "Kunlik",
+    family: "Oila",
+    checked: "belgilandi",
+    items: "ta",
+    shopping_list: "🛒 Bozorlik ro'yxati",
+    no_list: "Hali ro'yxat yo'q",
+    no_list_sub: "Botda ovqat tavsiya so'rang,\nkeyin bu yerda bozorlik ro'yxati chiqadi.",
+    done_btn: "✅ Xaridni tugatdim",
+    all: "Barchasi",
+    pending: "Qolganlar",
+    bought: "Olinganlar",
+    progress: "ta olindi",
+  },
+  ru: {
+    budget: "Недельный бюджет",
+    daily: "В день",
+    family: "Семья",
+    checked: "куплено",
+    items: "шт",
+    shopping_list: "🛒 Список покупок",
+    no_list: "Список пуст",
+    no_list_sub: "Запросите рекомендацию блюда в боте,\nи список покупок появится здесь.",
+    done_btn: "✅ Покупки завершены",
+    all: "Все",
+    pending: "Осталось",
+    bought: "Куплено",
+    progress: "куплено",
+  }
+};
+const L = labels[lang];
+
+let checkedItems = JSON.parse(localStorage.getItem('checked_' + userId) || '{}');
+let activeTab = 'all';
+let appData = null;
+
+async function loadData() {
+  try {
+    const res = await fetch(`/api/webapp?user_id=${userId}`);
+    appData = await res.json();
+    render();
+  } catch (e) {
+    document.getElementById('app').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🛒</div>
+        <p>${L.no_list}</p>
+        <p style="font-size:13px;margin-top:8px;color:#bbb">${L.no_list_sub}</p>
+      </div>`;
+  }
+}
+
+function render() {
+  if (!appData || !appData.ingredients || appData.ingredients.length === 0) {
+    document.getElementById('app').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🛒</div>
+        <p>${L.no_list}</p>
+        <p style="font-size:13px;margin-top:8px;color:#bbb">${L.no_list_sub}</p>
+      </div>`;
+    return;
+  }
+
+  const total = appData.ingredients.length;
+  const bought = appData.ingredients.filter((_, i) => checkedItems[i]).length;
+  const pct = total > 0 ? Math.round(bought / total * 100) : 0;
+
+  let filtered = appData.ingredients;
+  if (activeTab === 'pending') filtered = appData.ingredients.filter((_, i) => !checkedItems[i]);
+  if (activeTab === 'bought') filtered = appData.ingredients.filter((_, i) => checkedItems[i]);
+
+  const html = `
+    ${appData.budget > 0 ? `
+    <div class="budget-card">
+      <div class="label">${L.budget}</div>
+      <div class="amount">${Number(appData.budget).toLocaleString()} so'm</div>
+      <div class="row">
+        <div class="col">
+          <div class="val">${Math.round(appData.budget/7).toLocaleString()}</div>
+          <div class="lbl">${L.daily} (so'm)</div>
+        </div>
+        <div class="col">
+          <div class="val">${appData.family_size}</div>
+          <div class="lbl">${L.family}</div>
+        </div>
+        <div class="col">
+          <div class="val">${bought}/${total}</div>
+          <div class="lbl">${L.checked}</div>
+        </div>
+      </div>
+    </div>` : ''}
+
+    <div class="tabs">
+      <button class="tab ${activeTab==='all'?'active':''}" onclick="setTab('all')">${L.all} (${total})</button>
+      <button class="tab ${activeTab==='pending'?'active':''}" onclick="setTab('pending')">${L.pending} (${total-bought})</button>
+      <button class="tab ${activeTab==='bought'?'active':''}" onclick="setTab('bought')">${L.bought} (${bought})</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">${L.shopping_list}</div>
+      <div class="meal-card">
+        <div class="meal-name">${appData.meal_name || ''}</div>
+        <ul class="ingredient-list">
+          ${filtered.map((item, idx) => {
+            const realIdx = appData.ingredients.indexOf(item);
+            const isChecked = !!checkedItems[realIdx];
+            return `
+            <li class="ingredient-item">
+              <button class="check-btn ${isChecked?'checked':''}" onclick="toggle(${realIdx})"></button>
+              <span class="ingredient-text ${isChecked?'checked':''}">${item.name}</span>
+              <span class="ingredient-price">${item.price || ''}</span>
+            </li>`;
+          }).join('')}
+        </ul>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="progress-text">${bought}/${total} ${L.progress}</div>
+      </div>
+    </div>
+
+    <div class="bottom-btn">
+      <button class="btn-primary" onclick="finish()">${L.done_btn}</button>
+    </div>
+  `;
+  document.getElementById('app').innerHTML = html;
+}
+
+function setTab(tab) {
+  activeTab = tab;
+  render();
+}
+
+function toggle(idx) {
+  checkedItems[idx] = !checkedItems[idx];
+  localStorage.setItem('checked_' + userId, JSON.stringify(checkedItems));
+  render();
+}
+
+function finish() {
+  tg.showConfirm(lang === 'uz' ? 'Barcha xaridlar tugadimi?' : 'Все покупки завершены?', (ok) => {
+    if (ok) {
+      checkedItems = {};
+      localStorage.setItem('checked_' + userId, '{}');
+      tg.close();
+    }
+  });
+}
+
+loadData();
+</script>
+</body>
+</html>
