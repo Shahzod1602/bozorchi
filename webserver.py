@@ -1,24 +1,20 @@
-import json
 import re
 import os
 from aiohttp import web
-from database import get_user_profile, get_last_shopping_list
+from database import get_user_profile, get_last_shopping_list, update_family_size, update_weekly_budget, update_language
+from ai_helper import get_meal_suggestion, get_recipe_by_name, get_weekly_plan, get_budget_weekly_plan
 
 routes = web.RouteTableDef()
 WEBAPP_DIR = os.path.join(os.path.dirname(__file__), "webapp")
 
 
 def clean_markdown(text: str) -> str:
-    """Markdown belgilarini olib tashlash"""
-    text = re.sub(r'\*+', '', text)  # ** va * ni olib tashlash
-    text = re.sub(r'_+', '', text)   # _ ni olib tashlash
+    text = re.sub(r'\*+', '', text)
+    text = re.sub(r'_+', '', text)
     return text.strip()
 
 
 def parse_ingredients(text: str) -> list:
-    """Gemini javobidan ingredientlarni ajratib olish.
-    Gemini * yoki - bilan ro'yxat chiqaradi, ** bold ishlatadi.
-    """
     ingredients = []
     in_section = False
 
@@ -26,28 +22,20 @@ def parse_ingredients(text: str) -> list:
         line = line.strip()
         line_upper = line.upper()
 
-        # Masalliqlar bo'limi boshlanishi
         if any(kw in line_upper for kw in ['МАСАЛЛИҚ', 'MASALLIQ', 'ПРОДУКТ', 'СПИСОК']):
             in_section = True
             continue
 
-        # Bo'lim tugashi (emoji bilan boshlanadigan yangi bo'lim)
         if in_section and re.match(r'^[💰⏱️💡━📅📝🍽️]', line):
             in_section = False
 
-        # - yoki * bilan boshlanadigan qatorlar (Gemini har ikkalasini ishlatadi)
         if in_section and re.match(r'^[\*\-]\s+', line):
             line_clean = re.sub(r'^[\*\-]\s+', '', line)
             line_clean = clean_markdown(line_clean)
 
-            # Narxni ajratish: "~25,500 so'm" yoki "25 500 сум"
-            price_match = re.search(
-                r'[~≈]?\s*[\d\s,]+\s*(so\'?m|сум|sum)',
-                line_clean, re.IGNORECASE
-            )
+            price_match = re.search(r'[~≈]?\s*[\d\s,]+\s*(so\'?m|сум|sum)', line_clean, re.IGNORECASE)
             price = price_match.group(0).strip() if price_match else ''
 
-            # Nomni ajratish — narxdan oldingi qism
             if ' - ' in line_clean:
                 name_part = line_clean.split(' - ')[0]
             elif ' — ' in line_clean:
@@ -58,7 +46,6 @@ def parse_ingredients(text: str) -> list:
                 name_part = line_clean.split('~')[0] if '~' in line_clean else line_clean
 
             name_part = clean_markdown(name_part).strip()
-
             if name_part and len(name_part) > 1:
                 ingredients.append({"name": name_part, "price": price})
 
@@ -70,38 +57,113 @@ async def index(request):
     return web.FileResponse(os.path.join(WEBAPP_DIR, 'index.html'))
 
 
-@routes.get('/api/webapp')
-async def webapp_api(request):
+@routes.get('/api/profile')
+async def get_profile(request):
     user_id = request.rel_url.query.get('user_id')
     if not user_id:
         return web.json_response({"error": "no user_id"}, status=400)
-
     try:
-        user_id = int(user_id)
-    except ValueError:
-        return web.json_response({"error": "invalid user_id"}, status=400)
+        profile = await get_user_profile(int(user_id))
+        last = await get_last_shopping_list(int(user_id))
+        ingredients = parse_ingredients(last[1]) if last else []
+        return web.json_response({
+            **profile,
+            "meal_name": last[0] if last else "",
+            "ingredients": ingredients,
+        })
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
 
-    profile = await get_user_profile(user_id)
-    last_list = await get_last_shopping_list(user_id)
 
-    if not last_list:
-        return web.json_response({"ingredients": [], "meal_name": "", "budget": 0, "family_size": 2})
+@routes.post('/api/profile')
+async def save_profile(request):
+    data = await request.json()
+    user_id = data.get('user_id')
+    if not user_id:
+        return web.json_response({"error": "no user_id"}, status=400)
+    try:
+        if 'family_size' in data:
+            await update_family_size(int(user_id), int(data['family_size']))
+        if 'weekly_budget' in data:
+            await update_weekly_budget(int(user_id), float(data['weekly_budget']))
+        if 'language' in data:
+            await update_language(int(user_id), data['language'])
+        return web.json_response({"ok": True})
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
 
-    meal_name, ingredients_text = last_list
-    ingredients = parse_ingredients(ingredients_text)
 
-    return web.json_response({
-        "meal_name": meal_name,
-        "ingredients": ingredients,
-        "budget": profile["weekly_budget"],
-        "family_size": profile["family_size"],
-    })
+@routes.post('/api/suggest')
+async def api_suggest(request):
+    data = await request.json()
+    user_id = data.get('user_id')
+    preference = data.get('preference', '')
+    if not user_id or not preference:
+        return web.json_response({"error": "missing fields"}, status=400)
+    try:
+        profile = await get_user_profile(int(user_id))
+        result = await get_meal_suggestion(preference, profile['family_size'], profile['language'])
+        ingredients = parse_ingredients(result['full_response'])
+        from database import save_shopping_list
+        await save_shopping_list(int(user_id), result['meal_name'], result['full_response'], result['full_response'])
+        return web.json_response({
+            "text": result['full_response'],
+            "meal_name": result['meal_name'],
+            "ingredients": ingredients,
+        })
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.post('/api/recipe')
+async def api_recipe(request):
+    data = await request.json()
+    user_id = data.get('user_id')
+    meal_name = data.get('meal_name', '')
+    if not user_id or not meal_name:
+        return web.json_response({"error": "missing fields"}, status=400)
+    try:
+        profile = await get_user_profile(int(user_id))
+        text = await get_recipe_by_name(meal_name, profile['family_size'], profile['language'])
+        ingredients = parse_ingredients(text)
+        return web.json_response({"text": text, "ingredients": ingredients})
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.post('/api/weekly-plan')
+async def api_weekly_plan(request):
+    data = await request.json()
+    user_id = data.get('user_id')
+    if not user_id:
+        return web.json_response({"error": "no user_id"}, status=400)
+    try:
+        profile = await get_user_profile(int(user_id))
+        text = await get_weekly_plan(profile['family_size'], profile['language'])
+        return web.json_response({"text": text})
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.post('/api/budget-plan')
+async def api_budget_plan(request):
+    data = await request.json()
+    user_id = data.get('user_id')
+    budget = data.get('budget')
+    if not user_id or not budget:
+        return web.json_response({"error": "missing fields"}, status=400)
+    try:
+        profile = await get_user_profile(int(user_id))
+        await update_weekly_budget(int(user_id), float(budget))
+        text = await get_budget_weekly_plan(float(budget), profile['family_size'], profile['language'])
+        return web.json_response({"text": text})
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
 
 
 async def start_webserver(port: int = 8090):
     app = web.Application()
     app.add_routes(routes)
-    app.router.add_static('/static', WEBAPP_DIR)
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', port)

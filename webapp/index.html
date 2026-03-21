@@ -2,195 +2,218 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Bozorlik</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--tg-theme-bg-color, #f5f5f5);
-    color: var(--tg-theme-text-color, #222);
-    min-height: 100vh;
-    padding-bottom: 80px;
-  }
-  .header {
-    background: #4CAF50;
-    color: white;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  }
-  .header h1 { font-size: 20px; font-weight: 700; }
-  .header span { font-size: 24px; }
-  .budget-card {
-    margin: 16px;
-    background: linear-gradient(135deg, #4CAF50, #2E7D32);
-    border-radius: 16px;
-    padding: 20px;
-    color: white;
-    box-shadow: 0 4px 12px rgba(76,175,80,0.3);
-  }
-  .budget-card .label { font-size: 13px; opacity: 0.85; margin-bottom: 4px; }
-  .budget-card .amount { font-size: 28px; font-weight: 700; }
-  .budget-card .sub { font-size: 13px; opacity: 0.85; margin-top: 8px; }
-  .budget-card .row { display: flex; justify-content: space-between; margin-top: 12px; }
-  .budget-card .col { text-align: center; }
-  .budget-card .col .val { font-size: 18px; font-weight: 600; }
-  .budget-card .col .lbl { font-size: 11px; opacity: 0.8; }
-  .section { margin: 16px; }
-  .section-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .meal-card {
-    background: var(--tg-theme-secondary-bg-color, white);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  }
-  .meal-name {
-    font-size: 17px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: var(--tg-theme-text-color, #222);
-  }
-  .ingredient-list { list-style: none; }
-  .ingredient-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    gap: 12px;
-  }
-  .ingredient-item:last-child { border-bottom: none; }
-  .check-btn {
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    border: 2px solid #4CAF50;
-    background: transparent;
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-  .check-btn.checked {
-    background: #4CAF50;
-    border-color: #4CAF50;
-  }
-  .check-btn.checked::after {
-    content: '✓';
-    color: white;
-    font-size: 13px;
-    font-weight: 700;
-  }
-  .ingredient-text { flex: 1; font-size: 15px; }
-  .ingredient-text.checked { text-decoration: line-through; opacity: 0.5; }
-  .ingredient-price {
-    font-size: 13px;
-    color: #4CAF50;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-  .progress-bar {
-    height: 6px;
-    background: #e0e0e0;
-    border-radius: 3px;
-    margin-top: 12px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: #4CAF50;
-    border-radius: 3px;
-    transition: width 0.3s;
-  }
-  .progress-text {
-    font-size: 12px;
-    color: #888;
-    margin-top: 4px;
-    text-align: right;
-  }
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: #999;
-  }
-  .empty-state .icon { font-size: 60px; margin-bottom: 16px; }
-  .empty-state p { font-size: 16px; line-height: 1.5; }
-  .bottom-btn {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    padding: 16px;
-    background: var(--tg-theme-bg-color, #f5f5f5);
-    border-top: 1px solid rgba(0,0,0,0.08);
-  }
-  .btn-primary {
-    width: 100%;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 14px;
-    padding: 16px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .btn-primary:active { opacity: 0.8; }
-  .tabs {
-    display: flex;
-    margin: 0 16px 16px;
-    background: var(--tg-theme-secondary-bg-color, white);
-    border-radius: 12px;
-    padding: 4px;
-  }
-  .tab {
-    flex: 1;
-    padding: 8px;
-    text-align: center;
-    border-radius: 10px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-    background: transparent;
-    color: #888;
-    font-weight: 500;
-  }
-  .tab.active {
-    background: #4CAF50;
-    color: white;
-    font-weight: 600;
-  }
-  .loading {
-    text-align: center;
-    padding: 40px;
-    color: #999;
-    font-size: 15px;
-  }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --green: #4CAF50;
+  --green-dark: #388E3C;
+  --green-light: #E8F5E9;
+  --bg: var(--tg-theme-bg-color, #f5f5f5);
+  --card: var(--tg-theme-secondary-bg-color, #fff);
+  --text: var(--tg-theme-text-color, #1a1a1a);
+  --hint: var(--tg-theme-hint-color, #888);
+  --radius: 14px;
+}
+
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 70px; }
+
+/* HEADER */
+.header { background: var(--green); color: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+.header h1 { font-size: 18px; font-weight: 700; flex: 1; }
+.header .back-btn { font-size: 20px; cursor: pointer; padding: 4px 8px 4px 0; display: none; }
+.header .back-btn.show { display: block; }
+
+/* SCREENS */
+.screen { display: none; padding: 16px; }
+.screen.active { display: block; }
+
+/* BOTTOM NAV */
+.nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid rgba(0,0,0,.08); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+.nav-btn { flex: 1; padding: 10px 4px 8px; text-align: center; cursor: pointer; border: none; background: none; color: var(--hint); transition: color .2s; }
+.nav-btn.active { color: var(--green); }
+.nav-btn .icon { font-size: 22px; display: block; }
+.nav-btn .label { font-size: 10px; margin-top: 2px; display: block; }
+
+/* CARDS */
+.card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+.card-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.card-sub { font-size: 13px; color: var(--hint); }
+
+/* HOME GRID */
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.home-card { background: var(--card); border-radius: var(--radius); padding: 20px 16px; text-align: center; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,.06); transition: transform .1s, box-shadow .1s; border: none; width: 100%; }
+.home-card:active { transform: scale(.97); }
+.home-card .hc-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+.home-card .hc-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.home-card .hc-sub { font-size: 11px; color: var(--hint); margin-top: 3px; }
+.home-card.accent { background: linear-gradient(135deg, var(--green), var(--green-dark)); color: #fff; }
+.home-card.accent .hc-label, .home-card.accent .hc-sub { color: rgba(255,255,255,.9); }
+
+/* BUDGET BANNER */
+.budget-banner { background: linear-gradient(135deg, var(--green), var(--green-dark)); border-radius: var(--radius); padding: 16px; color: #fff; margin-bottom: 16px; }
+.budget-banner .amount { font-size: 26px; font-weight: 700; }
+.budget-banner .row { display: flex; gap: 16px; margin-top: 10px; }
+.budget-banner .col { text-align: center; flex: 1; }
+.budget-banner .col .v { font-size: 16px; font-weight: 600; }
+.budget-banner .col .l { font-size: 11px; opacity: .8; }
+
+/* INPUT */
+.input-wrap { position: relative; margin-bottom: 12px; }
+.input-wrap textarea, .input-wrap input { width: 100%; background: var(--card); border: 1.5px solid transparent; border-radius: var(--radius); padding: 14px 16px; font-size: 15px; color: var(--text); resize: none; outline: none; transition: border-color .2s; font-family: inherit; }
+.input-wrap textarea:focus, .input-wrap input:focus { border-color: var(--green); }
+
+/* BUTTONS */
+.btn { width: 100%; padding: 15px; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; border: none; transition: opacity .2s; }
+.btn:active { opacity: .8; }
+.btn-primary { background: var(--green); color: #fff; }
+.btn-secondary { background: var(--card); color: var(--green); border: 1.5px solid var(--green); }
+.btn-sm { padding: 10px 16px; font-size: 13px; width: auto; display: inline-block; }
+
+/* CHIPS */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip { padding: 8px 14px; background: var(--card); border-radius: 20px; font-size: 13px; cursor: pointer; border: 1.5px solid transparent; transition: all .15s; white-space: nowrap; }
+.chip:active, .chip.selected { background: var(--green-light); border-color: var(--green); color: var(--green); }
+
+/* RESULT */
+.result-box { background: var(--card); border-radius: var(--radius); padding: 16px; white-space: pre-wrap; font-size: 14px; line-height: 1.7; color: var(--text); margin-bottom: 12px; max-height: 60vh; overflow-y: auto; }
+.result-box strong { font-weight: 700; }
+
+/* INGREDIENT LIST */
+.ing-list { list-style: none; }
+.ing-item { display: flex; align-items: center; padding: 11px 0; border-bottom: 1px solid rgba(0,0,0,.05); gap: 12px; }
+.ing-item:last-child { border-bottom: none; }
+.check-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--green); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; transition: all .15s; }
+.check-btn.done { background: var(--green); border-color: var(--green); color: #fff; }
+.ing-name { flex: 1; font-size: 14px; }
+.ing-name.done { text-decoration: line-through; opacity: .45; }
+.ing-price { font-size: 12px; color: var(--green); font-weight: 500; }
+
+/* PROGRESS */
+.progress-bar { height: 5px; background: #e0e0e0; border-radius: 3px; margin: 10px 0 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--green); border-radius: 3px; transition: width .3s; }
+.progress-text { font-size: 12px; color: var(--hint); text-align: right; }
+
+/* PROFILE */
+.profile-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,.06); }
+.profile-row:last-child { border-bottom: none; }
+.profile-row .pr-label { font-size: 14px; }
+.profile-row .pr-val { font-size: 14px; font-weight: 600; color: var(--green); }
+.profile-row input { width: 120px; padding: 8px 12px; border: 1.5px solid #ddd; border-radius: 10px; font-size: 14px; text-align: right; outline: none; }
+.profile-row input:focus { border-color: var(--green); }
+
+/* LANG TOGGLE */
+.lang-toggle { display: flex; background: var(--bg); border-radius: 10px; padding: 3px; }
+.lang-btn { flex: 1; padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--hint); border: none; background: none; transition: all .2s; }
+.lang-btn.active { background: var(--card); color: var(--green); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+
+/* LOADING */
+.loader { text-align: center; padding: 48px 20px; color: var(--hint); }
+.loader .spin { font-size: 36px; display: block; animation: spin 1.2s linear infinite; margin-bottom: 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* TABS */
+.tabs { display: flex; background: var(--card); border-radius: var(--radius); padding: 4px; margin-bottom: 14px; }
+.tab { flex: 1; padding: 9px; text-align: center; border-radius: 10px; font-size: 13px; cursor: pointer; font-weight: 500; color: var(--hint); border: none; background: none; transition: all .2s; }
+.tab.active { background: var(--green); color: #fff; font-weight: 600; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 50px 24px; }
+.empty .ei { font-size: 52px; margin-bottom: 14px; }
+.empty p { font-size: 15px; color: var(--hint); line-height: 1.6; }
+
+/* SECTION TITLE */
+.section-title { font-size: 13px; font-weight: 600; color: var(--hint); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; margin-top: 4px; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <span>🛒</span>
-  <h1>Bozorlik</h1>
+  <span class="back-btn" id="backBtn" onclick="goBack()">←</span>
+  <h1 id="headerTitle">🛒 Bozorlik</h1>
 </div>
 
-<div id="app">
-  <div class="loading">⏳ Yuklanmoqda...</div>
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nav-btn active" id="nav-home" onclick="showTab('home')">
+    <span class="icon">🏠</span><span class="label" data-uz="Bosh" data-ru="Главная">Bosh</span>
+  </button>
+  <button class="nav-btn" id="nav-suggest" onclick="showTab('suggest')">
+    <span class="icon">🍽️</span><span class="label" data-uz="Tavsiya" data-ru="Блюдо">Tavsiya</span>
+  </button>
+  <button class="nav-btn" id="nav-recipe" onclick="showTab('recipe')">
+    <span class="icon">📖</span><span class="label" data-uz="Retsept" data-ru="Рецепт">Retsept</span>
+  </button>
+  <button class="nav-btn" id="nav-budget" onclick="showTab('budget')">
+    <span class="icon">💰</span><span class="label" data-uz="Byudjet" data-ru="Бюджет">Byudjet</span>
+  </button>
+  <button class="nav-btn" id="nav-profile" onclick="showTab('profile')">
+    <span class="icon">👤</span><span class="label" data-uz="Profil" data-ru="Профиль">Profil</span>
+  </button>
+</nav>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div id="homeContent"></div>
+</div>
+
+<!-- SUGGEST -->
+<div class="screen" id="screen-suggest">
+  <p class="section-title" id="suggestTitle">Bugun nima yegingiz kelmoqda?</p>
+  <div class="chips" id="quickChips"></div>
+  <div class="input-wrap">
+    <textarea id="preferenceInput" rows="3" placeholder="Masalan: tez va arzon ovqat..."></textarea>
+  </div>
+  <button class="btn btn-primary" onclick="doSuggest()">🤖 AI Tavsiya qil</button>
+  <div id="suggestResult"></div>
+</div>
+
+<!-- RECIPE -->
+<div class="screen" id="screen-recipe">
+  <p class="section-title" id="recipeTitle">Qaysi ovqatni qidirmoqchisiz?</p>
+  <div class="chips" id="recipeChips"></div>
+  <div class="input-wrap">
+    <input type="text" id="recipeInput" placeholder="Osh, Lag'mon, Manti...">
+  </div>
+  <button class="btn btn-primary" onclick="doRecipe()">🔍 Retseptni ko'rish</button>
+  <div id="recipeResult"></div>
+</div>
+
+<!-- BUDGET -->
+<div class="screen" id="screen-budget">
+  <p class="section-title" id="budgetTitle">Haftalik byudjet</p>
+  <div id="budgetBanner"></div>
+  <div class="input-wrap">
+    <input type="number" id="budgetInput" placeholder="500000" inputmode="numeric">
+  </div>
+  <button class="btn btn-primary" onclick="doBudgetPlan()">📅 Reja tuzish</button>
+  <div id="budgetResult"></div>
+</div>
+
+<!-- PROFILE -->
+<div class="screen" id="screen-profile">
+  <div class="card">
+    <div class="profile-row">
+      <span class="pr-label" data-uz="Oila soni" data-ru="Размер семьи">Oila soni</span>
+      <input type="number" id="familyInput" min="1" max="20" onchange="saveProfile()">
+    </div>
+    <div class="profile-row">
+      <span class="pr-label" data-uz="Haftalik byudjet" data-ru="Недельный бюджет">Haftalik byudjet</span>
+      <input type="number" id="budgetProfileInput" placeholder="0" onchange="saveProfile()">
+    </div>
+    <div class="profile-row">
+      <span class="pr-label" data-uz="Til / Язык" data-ru="Til / Язык">Til / Язык</span>
+      <div class="lang-toggle">
+        <button class="lang-btn" id="lang-uz" onclick="setLang('uz')">🇺🇿 UZ</button>
+        <button class="lang-btn" id="lang-ru" onclick="setLang('ru')">🇷🇺 RU</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="shoppingListSection"></div>
 </div>
 
 <script>
@@ -198,160 +221,397 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
 
-const userId = tg.initDataUnsafe?.user?.id;
-const lang = tg.initDataUnsafe?.user?.language_code === 'ru' ? 'ru' : 'uz';
+const userId = tg.initDataUnsafe?.user?.id || null;
+const BASE = '';
+let profile = { family_size: 2, weekly_budget: 0, language: 'uz', meal_name: '', ingredients: [] };
+let checked = JSON.parse(localStorage.getItem('chk_' + userId) || '{}');
+let activeTab = 'home';
+let navHistory = [];
 
-const labels = {
+const L = {
   uz: {
-    budget: "Haftalik byudjet",
-    daily: "Kunlik",
-    family: "Oila",
-    checked: "belgilandi",
-    items: "ta",
-    shopping_list: "🛒 Bozorlik ro'yxati",
-    no_list: "Hali ro'yxat yo'q",
-    no_list_sub: "Botda ovqat tavsiya so'rang,\nkeyin bu yerda bozorlik ro'yxati chiqadi.",
-    done_btn: "✅ Xaridni tugatdim",
-    all: "Barchasi",
-    pending: "Qolganlar",
-    bought: "Olinganlar",
-    progress: "ta olindi",
+    home_title: '🛒 Bozorlik',
+    suggest_title: 'Bugun nima yegingiz kelmoqda?',
+    recipe_title: 'Qaysi ovqatni qidirmoqchisiz?',
+    budget_title: 'Haftalik byudjet rejasi',
+    suggest_ph: 'Masalan: tez va arzon, bolalar uchun...',
+    recipe_ph: "Osh, Lag'mon, Manti, Shurva...",
+    budget_ph: '500000',
+    suggest_btn: '🤖 AI Tavsiya qil',
+    recipe_btn: '🔍 Retseptni ko\'rish',
+    budget_btn: '📅 Reja tuzish',
+    loading: 'AI tayyorlamoqda...',
+    weekly_btn: '📅 Haftalik reja',
+    open_list: '🛒 Bozorlik ro\'yxati',
+    no_list: 'Hali ro\'yxat yo\'q',
+    no_list_sub: 'Ovqat tavsiya so\'rang — ro\'yxat shu yerda chiqadi',
+    budget_label: 'Haftalik byudjet',
+    daily_label: 'Kunlik',
+    family_label: 'Oila',
+    bought_label: 'Belgilangan',
+    progress_label: 'ta olindi',
+    done_btn: '✅ Xaridni tugatdim',
+    quick: ['Tez ovqat', 'Sho\'rvali', 'Parhezli', 'Bolalar uchun', "O'zbek taomi", 'Arzon'],
+    popular: ['Osh', "Lag'mon", 'Manti', 'Shurva', 'Somsa', 'Dimlama'],
+    home_cards: [
+      { icon:'🍽️', label:'Ovqat tavsiya', sub:'AI tavsiya beradi', tab:'suggest', accent: true },
+      { icon:'📖', label:'Retsept izla', sub:'Har qanday ovqat', tab:'recipe' },
+      { icon:'💰', label:'Byudjet rejasi', sub:"Pulingizga mos", tab:'budget' },
+      { icon:'📅', label:'Haftalik reja', sub:'7 kunlik menu', action:'weeklyPlan' },
+      { icon:'🛒', label:"Bozorlik ro'yxati", sub:'Oxirgi ro\'yxat', action:'openList' },
+      { icon:'👤', label:'Profil', sub:'Sozlamalar', tab:'profile' },
+    ]
   },
   ru: {
-    budget: "Недельный бюджет",
-    daily: "В день",
-    family: "Семья",
-    checked: "куплено",
-    items: "шт",
-    shopping_list: "🛒 Список покупок",
-    no_list: "Список пуст",
-    no_list_sub: "Запросите рекомендацию блюда в боте,\nи список покупок появится здесь.",
-    done_btn: "✅ Покупки завершены",
-    all: "Все",
-    pending: "Осталось",
-    bought: "Куплено",
-    progress: "куплено",
+    home_title: '🛒 Bozorlik',
+    suggest_title: 'Что хотите поесть сегодня?',
+    recipe_title: 'Какой рецепт ищете?',
+    budget_title: 'Недельный план по бюджету',
+    suggest_ph: 'Например: быстрое и дешёвое...',
+    recipe_ph: 'Плов, Лагман, Манты, Шурпа...',
+    budget_ph: '500000',
+    suggest_btn: '🤖 AI Рекомендация',
+    recipe_btn: '🔍 Найти рецепт',
+    budget_btn: '📅 Составить план',
+    loading: 'AI готовит...',
+    weekly_btn: '📅 Недельное меню',
+    open_list: '🛒 Список покупок',
+    no_list: 'Список пуст',
+    no_list_sub: 'Запросите рекомендацию — список появится здесь',
+    budget_label: 'Недельный бюджет',
+    daily_label: 'В день',
+    family_label: 'Семья',
+    bought_label: 'Куплено',
+    progress_label: 'куплено',
+    done_btn: '✅ Покупки завершены',
+    quick: ['Быстро', 'Суп', 'Диетическое', 'Для детей', 'Узбекская кухня', 'Дешёво'],
+    popular: ['Плов', 'Лагман', 'Манты', 'Шурпа', 'Самса', 'Димлама'],
+    home_cards: [
+      { icon:'🍽️', label:'Рекомендация', sub:'AI предложит блюдо', tab:'suggest', accent: true },
+      { icon:'📖', label:'Найти рецепт', sub:'Любое блюдо', tab:'recipe' },
+      { icon:'💰', label:'По бюджету', sub:'По вашему бюджету', tab:'budget' },
+      { icon:'📅', label:'Недельное меню', sub:'На 7 дней', action:'weeklyPlan' },
+      { icon:'🛒', label:'Список покупок', sub:'Последний список', action:'openList' },
+      { icon:'👤', label:'Профиль', sub:'Настройки', tab:'profile' },
+    ]
   }
 };
-const L = labels[lang];
 
-let checkedItems = JSON.parse(localStorage.getItem('checked_' + userId) || '{}');
-let activeTab = 'all';
-let appData = null;
+function tx(key) { return (L[profile.language] || L.uz)[key]; }
 
-async function loadData() {
+async function api(path, method='GET', body=null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(BASE + path, opts);
+  return res.json();
+}
+
+async function loadProfile() {
+  if (!userId) return;
   try {
-    const res = await fetch(`/api/webapp?user_id=${userId}`);
-    appData = await res.json();
-    render();
-  } catch (e) {
-    document.getElementById('app').innerHTML = `
-      <div class="empty-state">
-        <div class="icon">🛒</div>
-        <p>${L.no_list}</p>
-        <p style="font-size:13px;margin-top:8px;color:#bbb">${L.no_list_sub}</p>
-      </div>`;
+    const data = await api(`/api/profile?user_id=${userId}`);
+    if (!data.error) {
+      profile = { ...profile, ...data };
+      checked = JSON.parse(localStorage.getItem('chk_' + userId) || '{}');
+    }
+  } catch(e) {}
+  renderAll();
+}
+
+function renderAll() {
+  renderHome();
+  renderBudgetBanner();
+  renderProfileScreen();
+  updateTexts();
+}
+
+function updateTexts() {
+  const l = profile.language;
+  document.querySelectorAll('[data-uz]').forEach(el => {
+    el.textContent = el.dataset[l] || el.dataset.uz;
+  });
+  document.getElementById('suggestTitle').textContent = tx('suggest_title');
+  document.getElementById('recipeTitle').textContent = tx('recipe_title');
+  document.getElementById('budgetTitle').textContent = tx('budget_title');
+  document.getElementById('preferenceInput').placeholder = tx('suggest_ph');
+  document.getElementById('recipeInput').placeholder = tx('recipe_ph');
+  document.getElementById('budgetInput').placeholder = tx('budget_ph');
+  renderChips();
+}
+
+function renderHome() {
+  const cards = tx('home_cards');
+  let html = '';
+  if (profile.weekly_budget > 0) {
+    html += `<div class="budget-banner">
+      <div style="font-size:12px;opacity:.85">${tx('budget_label')}</div>
+      <div class="amount">${Number(profile.weekly_budget).toLocaleString()} so'm</div>
+      <div class="row">
+        <div class="col"><div class="v">${Math.round(profile.weekly_budget/7).toLocaleString()}</div><div class="l">${tx('daily_label')} (so'm)</div></div>
+        <div class="col"><div class="v">${profile.family_size}</div><div class="l">${tx('family_label')}</div></div>
+        <div class="col"><div class="v">${profile.ingredients.filter((_,i)=>checked[i]).length}/${profile.ingredients.length}</div><div class="l">${tx('bought_label')}</div></div>
+      </div>
+    </div>`;
+  }
+  html += '<div class="home-grid">';
+  cards.forEach(c => {
+    const cls = c.accent ? 'home-card accent' : 'home-card';
+    const onclick = c.tab ? `showTab('${c.tab}')` : `${c.action}()`;
+    html += `<button class="${cls}" onclick="${onclick}">
+      <span class="hc-icon">${c.icon}</span>
+      <div class="hc-label">${c.label}</div>
+      <div class="hc-sub">${c.sub}</div>
+    </button>`;
+  });
+  html += '</div>';
+  document.getElementById('homeContent').innerHTML = html;
+}
+
+function renderChips() {
+  const qc = document.getElementById('quickChips');
+  if (qc) qc.innerHTML = tx('quick').map(q =>
+    `<span class="chip" onclick="setChip(this,'preference','${q}')">${q}</span>`
+  ).join('');
+
+  const rc = document.getElementById('recipeChips');
+  if (rc) rc.innerHTML = tx('popular').map(r =>
+    `<span class="chip" onclick="setChip(this,'recipe','${r}')">${r}</span>`
+  ).join('');
+}
+
+function setChip(el, type, val) {
+  document.querySelectorAll(`#${type==='preference'?'quick':'recipe'}Chips .chip`).forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(type==='preference'?'preferenceInput':'recipeInput').value = val;
+}
+
+function renderBudgetBanner() {
+  const el = document.getElementById('budgetBanner');
+  if (profile.weekly_budget > 0) {
+    el.innerHTML = `<div class="budget-banner" style="margin-bottom:12px">
+      <div style="font-size:12px;opacity:.85">${tx('budget_label')}</div>
+      <div class="amount">${Number(profile.weekly_budget).toLocaleString()} so'm</div>
+    </div>`;
+    document.getElementById('budgetInput').value = profile.weekly_budget;
+  } else {
+    el.innerHTML = '';
   }
 }
 
-function render() {
-  if (!appData || !appData.ingredients || appData.ingredients.length === 0) {
-    document.getElementById('app').innerHTML = `
-      <div class="empty-state">
-        <div class="icon">🛒</div>
-        <p>${L.no_list}</p>
-        <p style="font-size:13px;margin-top:8px;color:#bbb">${L.no_list_sub}</p>
-      </div>`;
+function renderProfileScreen() {
+  document.getElementById('familyInput').value = profile.family_size;
+  document.getElementById('budgetProfileInput').value = profile.weekly_budget || '';
+  document.getElementById('lang-uz').classList.toggle('active', profile.language === 'uz');
+  document.getElementById('lang-ru').classList.toggle('active', profile.language === 'ru');
+  renderShoppingList();
+}
+
+function renderShoppingList() {
+  const sec = document.getElementById('shoppingListSection');
+  if (!profile.ingredients || profile.ingredients.length === 0) {
+    sec.innerHTML = `<div class="empty"><div class="ei">🛒</div><p>${tx('no_list')}<br><span style="font-size:13px">${tx('no_list_sub')}</span></p></div>`;
     return;
   }
 
-  const total = appData.ingredients.length;
-  const bought = appData.ingredients.filter((_, i) => checkedItems[i]).length;
-  const pct = total > 0 ? Math.round(bought / total * 100) : 0;
+  const total = profile.ingredients.length;
+  const bought = profile.ingredients.filter((_,i) => checked[i]).length;
+  const pct = total > 0 ? Math.round(bought/total*100) : 0;
 
-  let filtered = appData.ingredients;
-  if (activeTab === 'pending') filtered = appData.ingredients.filter((_, i) => !checkedItems[i]);
-  if (activeTab === 'bought') filtered = appData.ingredients.filter((_, i) => checkedItems[i]);
+  let tabs = `<div class="tabs">
+    <button class="tab active" id="tab-all" onclick="filterList('all')">Barchasi (${total})</button>
+    <button class="tab" id="tab-pending" onclick="filterList('pending')">Qoldi (${total-bought})</button>
+    <button class="tab" id="tab-done" onclick="filterList('done')">Olindi (${bought})</button>
+  </div>`;
 
-  const html = `
-    ${appData.budget > 0 ? `
-    <div class="budget-card">
-      <div class="label">${L.budget}</div>
-      <div class="amount">${Number(appData.budget).toLocaleString()} so'm</div>
-      <div class="row">
-        <div class="col">
-          <div class="val">${Math.round(appData.budget/7).toLocaleString()}</div>
-          <div class="lbl">${L.daily} (so'm)</div>
-        </div>
-        <div class="col">
-          <div class="val">${appData.family_size}</div>
-          <div class="lbl">${L.family}</div>
-        </div>
-        <div class="col">
-          <div class="val">${bought}/${total}</div>
-          <div class="lbl">${L.checked}</div>
-        </div>
-      </div>
-    </div>` : ''}
+  let items = '';
+  profile.ingredients.forEach((item, i) => {
+    const isDone = !!checked[i];
+    items += `<li class="ing-item">
+      <button class="check-btn ${isDone?'done':''}" onclick="toggleItem(${i})">${isDone?'✓':''}</button>
+      <span class="ing-name ${isDone?'done':''}">${item.name}</span>
+      <span class="ing-price">${item.price||''}</span>
+    </li>`;
+  });
 
-    <div class="tabs">
-      <button class="tab ${activeTab==='all'?'active':''}" onclick="setTab('all')">${L.all} (${total})</button>
-      <button class="tab ${activeTab==='pending'?'active':''}" onclick="setTab('pending')">${L.pending} (${total-bought})</button>
-      <button class="tab ${activeTab==='bought'?'active':''}" onclick="setTab('bought')">${L.bought} (${bought})</button>
+  sec.innerHTML = `
+    <p class="section-title" style="margin-top:8px">${tx('open_list')}: ${profile.meal_name||''}</p>
+    ${tabs}
+    <div class="card">
+      <ul class="ing-list">${items}</ul>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="progress-text">${bought}/${total} ${tx('progress_label')}</div>
     </div>
-
-    <div class="section">
-      <div class="section-title">${L.shopping_list}</div>
-      <div class="meal-card">
-        <div class="meal-name">${appData.meal_name || ''}</div>
-        <ul class="ingredient-list">
-          ${filtered.map((item, idx) => {
-            const realIdx = appData.ingredients.indexOf(item);
-            const isChecked = !!checkedItems[realIdx];
-            return `
-            <li class="ingredient-item">
-              <button class="check-btn ${isChecked?'checked':''}" onclick="toggle(${realIdx})"></button>
-              <span class="ingredient-text ${isChecked?'checked':''}">${item.name}</span>
-              <span class="ingredient-price">${item.price || ''}</span>
-            </li>`;
-          }).join('')}
-        </ul>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width:${pct}%"></div>
-        </div>
-        <div class="progress-text">${bought}/${total} ${L.progress}</div>
-      </div>
-    </div>
-
-    <div class="bottom-btn">
-      <button class="btn-primary" onclick="finish()">${L.done_btn}</button>
-    </div>
+    <button class="btn btn-secondary" onclick="clearChecked()" style="margin-bottom:8px">${tx('done_btn')}</button>
   `;
-  document.getElementById('app').innerHTML = html;
 }
 
-function setTab(tab) {
-  activeTab = tab;
-  render();
-}
-
-function toggle(idx) {
-  checkedItems[idx] = !checkedItems[idx];
-  localStorage.setItem('checked_' + userId, JSON.stringify(checkedItems));
-  render();
-}
-
-function finish() {
-  tg.showConfirm(lang === 'uz' ? 'Barcha xaridlar tugadimi?' : 'Все покупки завершены?', (ok) => {
-    if (ok) {
-      checkedItems = {};
-      localStorage.setItem('checked_' + userId, '{}');
-      tg.close();
-    }
+function filterList(mode) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + mode).classList.add('active');
+  const items = document.querySelectorAll('.ing-item');
+  items.forEach((el, i) => {
+    const isDone = !!checked[i];
+    if (mode === 'all') el.style.display = '';
+    else if (mode === 'pending') el.style.display = isDone ? 'none' : '';
+    else el.style.display = isDone ? '' : 'none';
   });
 }
 
-loadData();
+function toggleItem(i) {
+  checked[i] = !checked[i];
+  localStorage.setItem('chk_' + userId, JSON.stringify(checked));
+  renderShoppingList();
+}
+
+function clearChecked() {
+  tg.showConfirm(profile.language==='uz'?'Xaridni tugatdimi?':'Покупки завершены?', ok => {
+    if (ok) { checked = {}; localStorage.setItem('chk_'+userId, '{}'); renderShoppingList(); }
+  });
+}
+
+function showResult(containerId, text, ingredients) {
+  const el = document.getElementById(containerId);
+  const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '$1');
+  let html = `<div class="result-box">${formatted}</div>`;
+
+  if (ingredients && ingredients.length > 0) {
+    let items = ingredients.map((item, i) => `
+      <li class="ing-item">
+        <button class="check-btn ${checked[i]?'done':''}" onclick="toggleTempItem(this,${i},'${containerId}')">${checked[i]?'✓':''}</button>
+        <span class="ing-name ${checked[i]?'done':''}">${item.name}</span>
+        <span class="ing-price">${item.price||''}</span>
+      </li>`).join('');
+    html += `<div class="card"><p style="font-weight:600;margin-bottom:10px">🛒 Masalliqlar</p><ul class="ing-list">${items}</ul></div>`;
+  }
+
+  el.innerHTML = html;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleTempItem(btn, i, containerId) {
+  checked[i] = !checked[i];
+  localStorage.setItem('chk_'+userId, JSON.stringify(checked));
+  btn.classList.toggle('done');
+  btn.textContent = checked[i] ? '✓' : '';
+  btn.nextElementSibling.classList.toggle('done', !!checked[i]);
+}
+
+function showLoading(containerId) {
+  document.getElementById(containerId).innerHTML = `<div class="loader"><span class="spin">⏳</span>${tx('loading')}</div>`;
+}
+
+async function doSuggest() {
+  const pref = document.getElementById('preferenceInput').value.trim();
+  if (!pref) return;
+  showLoading('suggestResult');
+  try {
+    const data = await api('/api/suggest', 'POST', { user_id: userId, preference: pref });
+    if (data.error) throw new Error(data.error);
+    profile.meal_name = data.meal_name;
+    profile.ingredients = data.ingredients || [];
+    checked = {};
+    localStorage.setItem('chk_'+userId, '{}');
+    showResult('suggestResult', data.text, data.ingredients);
+    renderShoppingList();
+  } catch(e) {
+    document.getElementById('suggestResult').innerHTML = `<div class="card" style="color:red">Xatolik: ${e.message}</div>`;
+  }
+}
+
+async function doRecipe() {
+  const name = document.getElementById('recipeInput').value.trim();
+  if (!name) return;
+  showLoading('recipeResult');
+  try {
+    const data = await api('/api/recipe', 'POST', { user_id: userId, meal_name: name });
+    if (data.error) throw new Error(data.error);
+    showResult('recipeResult', data.text, data.ingredients);
+  } catch(e) {
+    document.getElementById('recipeResult').innerHTML = `<div class="card" style="color:red">Xatolik: ${e.message}</div>`;
+  }
+}
+
+async function doBudgetPlan() {
+  const budget = parseFloat(document.getElementById('budgetInput').value);
+  if (!budget || budget < 10000) {
+    alert(profile.language==='uz'?'Kamida 10,000 so\'m kiriting':'Введите не менее 10,000 сум');
+    return;
+  }
+  showLoading('budgetResult');
+  try {
+    const data = await api('/api/budget-plan', 'POST', { user_id: userId, budget });
+    if (data.error) throw new Error(data.error);
+    profile.weekly_budget = budget;
+    renderBudgetBanner();
+    renderHome();
+    showResult('budgetResult', data.text, null);
+  } catch(e) {
+    document.getElementById('budgetResult').innerHTML = `<div class="card" style="color:red">Xatolik: ${e.message}</div>`;
+  }
+}
+
+async function weeklyPlan() {
+  showTab('suggest');
+  document.getElementById('suggestResult').innerHTML = `<div class="loader"><span class="spin">⏳</span>${tx('loading')}</div>`;
+  try {
+    const data = await api('/api/weekly-plan', 'POST', { user_id: userId });
+    showResult('suggestResult', data.text, null);
+  } catch(e) {}
+}
+
+function openList() {
+  showTab('profile');
+}
+
+function showTab(tab) {
+  navHistory.push(activeTab);
+  activeTab = tab;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  const navBtn = document.getElementById('nav-' + tab);
+  if (navBtn) navBtn.classList.add('active');
+
+  const titles = { home: tx('home_title'), suggest: tx('suggest_title'), recipe: tx('recipe_title'), budget: tx('budget_title'), profile: 'Profil' };
+  document.getElementById('headerTitle').textContent = titles[tab] || '🛒 Bozorlik';
+  document.getElementById('backBtn').classList.toggle('show', tab !== 'home');
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  const prev = navHistory.pop() || 'home';
+  activeTab = prev;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + prev).classList.add('active');
+  const navBtn = document.getElementById('nav-' + prev);
+  if (navBtn) navBtn.classList.add('active');
+  document.getElementById('backBtn').classList.toggle('show', prev !== 'home');
+}
+
+async function saveProfile() {
+  const family = parseInt(document.getElementById('familyInput').value);
+  const budget = parseFloat(document.getElementById('budgetProfileInput').value) || 0;
+  if (family >= 1 && family <= 20) profile.family_size = family;
+  profile.weekly_budget = budget;
+  if (userId) {
+    await api('/api/profile', 'POST', { user_id: userId, family_size: family, weekly_budget: budget });
+  }
+  renderHome();
+  renderBudgetBanner();
+}
+
+async function setLang(lang) {
+  profile.language = lang;
+  document.getElementById('lang-uz').classList.toggle('active', lang==='uz');
+  document.getElementById('lang-ru').classList.toggle('active', lang==='ru');
+  if (userId) await api('/api/profile', 'POST', { user_id: userId, language: lang });
+  renderAll();
+  showTab('home');
+}
+
+// Init
+loadProfile();
 </script>
 </body>
 </html>
