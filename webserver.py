@@ -3,6 +3,7 @@ import os
 from aiohttp import web
 import json
 from database import get_user_profile, get_last_shopping_list, update_family_size, update_weekly_budget, update_language, update_preferences
+from catalog import search_products, get_all_products
 from ai_helper import get_meal_suggestion, get_recipe_by_name, get_weekly_plan, get_budget_weekly_plan
 
 routes = web.RouteTableDef()
@@ -212,6 +213,16 @@ async def api_save_plan(request):
         return web.json_response({"ok": True})
     except Exception as e:
         return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.get('/api/products')
+async def api_products(request):
+    q = request.rel_url.query.get('q', '').strip()
+    if q:
+        results = search_products(q, limit=8)
+    else:
+        results = get_all_products()
+    return web.json_response(results)
 
 
 async def start_webserver(port: int = 8090):

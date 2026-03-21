@@ -274,6 +274,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .krz-footer-l{font-size:13px;color:var(--sub);font-weight:500}
 .krz-footer-r{font-size:20px;font-weight:800;color:var(--p)}
 .krz-empty{text-align:center;padding:12px 0;font-size:13px;color:var(--sub)}
+.krz-ac{position:relative;flex:1.4;min-width:0}
+.krz-ac input{width:100%;box-sizing:border-box}
+.krz-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--p);border-radius:12px;box-shadow:0 8px 24px rgba(88,101,242,.15);z-index:999;overflow:hidden;max-height:240px;overflow-y:auto}
+.krz-opt{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;gap:8px;border-bottom:1px solid var(--border)}
+.krz-opt:last-child{border:none}
+.krz-opt:active,.krz-opt:hover{background:var(--pl)}
+.krz-opt-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.krz-opt-unit{font-size:11px;color:var(--sub)}
+.krz-opt-price{font-size:13px;font-weight:700;color:var(--p);white-space:nowrap}
 
 .pad{padding:0 20px}
 .mt8{margin-top:8px}
@@ -347,7 +356,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
     </div>
     <div class="krz-body" id="krzBody">
       <div class="krz-add">
-        <input class="ki-name" type="text" id="krzName" placeholder="Mahsulot nomi" onkeydown="if(event.key==='Enter')addKrz()">
+        <div class="krz-ac">
+          <input class="ki-name" type="text" id="krzName" placeholder="Mahsulot nomi..." autocomplete="off"
+            oninput="krzSearch(this.value)" onkeydown="krzKey(event)" onblur="setTimeout(()=>krzHideDrop(),200)">
+          <div class="krz-drop" id="krzDrop" style="display:none"></div>
+        </div>
         <input class="ki-qty" type="text" id="krzQty" placeholder="Miqdor" onkeydown="if(event.key==='Enter')addKrz()">
         <input class="ki-price" type="number" id="krzPrice" placeholder="Narx" inputmode="numeric" onkeydown="if(event.key==='Enter')addKrz()">
         <button onclick="addKrz()">+</button>
@@ -778,6 +791,42 @@ function mergeQty(existing,added){
   return existing||(added||'');
 }
 
+/* ── KORZINKA AUTOCOMPLETE ── */
+let krzDebounce=null;
+async function krzSearch(q){
+  clearTimeout(krzDebounce);
+  const drop=document.getElementById('krzDrop');
+  if(!q||q.length<2){drop.style.display='none';return;}
+  krzDebounce=setTimeout(async()=>{
+    try{
+      const res=await fetch('/api/products?q='+encodeURIComponent(q));
+      const data=await res.json();
+      if(!data.length){drop.style.display='none';return;}
+      drop.innerHTML=data.map(p=>`
+        <div class="krz-opt" onmousedown="krzSelect('${p.name.replace(/'/g,"\\'")}','${p.unit}',${p.price})">
+          <span class="krz-opt-name">${p.name}</span>
+          <span class="krz-opt-unit">${p.unit}</span>
+          <span class="krz-opt-price">${fmtNum(p.price)} so'm</span>
+        </div>`).join('');
+      drop.style.display='block';
+    }catch(e){}
+  },200);
+}
+function krzSelect(name,unit,price){
+  document.getElementById('krzName').value=name;
+  document.getElementById('krzQty').value='1 '+unit;
+  document.getElementById('krzPrice').value=price;
+  krzHideDrop();
+  document.getElementById('krzPrice').focus();
+}
+function krzHideDrop(){
+  const d=document.getElementById('krzDrop');
+  if(d) d.style.display='none';
+}
+function krzKey(e){
+  if(e.key==='Enter'){krzHideDrop();addKrz();}
+  if(e.key==='Escape') krzHideDrop();
+}
 /* ── KORZINKA ── */
 function saveKrz(){localStorage.setItem('krz_'+userId,JSON.stringify(krz));}
 function fmtPrice(n){return n>=1000?fmtNum(n)+' so\'m':n+' so\'m';}
