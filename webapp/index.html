@@ -827,7 +827,16 @@ function clearFridge(){
 function addBoughtToFridge(){
   const bought=prof.ingredients.filter((_,i)=>checked[i]);
   if(!bought.length){toast(prof.language==='uz'?'Avval mahsulotlarni belgilang':'Сначала отметьте товары');return;}
-  addToFridge(bought);
+  // Parse "Un: 2 stakan" → {name:"Un", qty:"2 stakan"}
+  const parsed=bought.map(item=>{
+    const raw=typeof item==='string'?item:item.name||'';
+    if(raw.includes(':')){
+      const [n,...rest]=raw.split(':');
+      return {name:n.trim(), qty:rest.join(':').trim()};
+    }
+    return {name:raw, qty:''};
+  });
+  addToFridge(parsed);
 }
 
 function togIng(i){
