@@ -279,8 +279,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .shop-cat-btn{flex-shrink:0;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap;transition:all .15s}
 .shop-cat-btn.on{background:var(--p);color:#fff;border-color:var(--p)}
 .prod-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.07)}
-.prod-img-wrap{width:100%;aspect-ratio:1/1;background:#f5f6f8;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-.prod-img-real{width:100%;height:100%;object-fit:contain}
+.prod-img-wrap{width:100%;padding-bottom:100%;position:relative;background:#f5f6f8;overflow:hidden}
+.prod-img-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.prod-img-real{max-width:90%;max-height:90%;object-fit:contain;display:block}
 .prod-emoji{font-size:48px}
 .prod-body{padding:8px 10px 12px}
 .prod-name{font-size:12px;font-weight:500;color:#333;line-height:1.35;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px}
@@ -978,7 +979,7 @@ function renderShopGrid(q=''){
     return `<div class="prod-card">
       <div class="prod-img-wrap">
         ${p.discount?`<div class="prod-discount">${p.discount}</div>`:''}
-        ${imgInner}
+        <div class="prod-img-inner">${imgInner}</div>
       </div>
       <div class="prod-body">
         <div class="prod-name">${name}</div>
