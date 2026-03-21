@@ -856,7 +856,7 @@ function errMsg(id){document.getElementById(id).innerHTML=`<div class="err-msg">
 function foodCard(mealName, price, ingredients, addFn){
   const t=L();
   const letter=mealName.charAt(0).toUpperCase();
-  const ingrRows=(ingredients||[]).slice(0,6).map(x=>`<li>${x.name}</li>`).join('');
+  const ingrRows=(ingredients||[]).slice(0,6).map(x=>`<li>${x.name}${x.qty?` <span style="color:var(--sub);font-size:12px">${x.qty}</span>`:''}</li>`).join('');
   return `<div class="food-card">
     <div class="food-vis">
       <span class="food-vis-letter">${letter}${mealName.charAt(1)||''}</span>
@@ -955,7 +955,7 @@ function showPlan(id, text, ingredients, title){
   const newPlanLabel=prof.language==='uz'?'Yangi reja tuzish':'Новый план';
   let ingHtml='';
   if(ingredients?.length>0){
-    const rows=ingredients.slice(0,8).map(x=>`<li>${x.name}${x.price?' — '+x.price:''}</li>`).join('');
+    const rows=ingredients.slice(0,8).map(x=>`<li>${x.name}${x.qty?' <span style="color:var(--sub);font-size:12px">'+x.qty+'</span>':''}${x.price?' — '+x.price:''}</li>`).join('');
     ingHtml=`<div class="food-card" style="margin-top:12px"><div style="padding:16px">
       <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">${t.weekly_ingr} — ${ingredients.length} ta</div>
       <ul class="food-ingr" style="margin-bottom:16px">${rows}</ul>
