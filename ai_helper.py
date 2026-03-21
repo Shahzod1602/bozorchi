@@ -21,7 +21,6 @@ CHEF_ROLE = {
 PREF_LABELS = {
     "vegetarian": {"uz": "vegetarian (go'sht yemaydi)", "ru": "вегетарианец (без мяса)"},
     "no_gluten": {"uz": "glutensiz (xamirli ovqat yemaydi)", "ru": "без глютена (не ест мучное)"},
-    "no_pork": {"uz": "cho'chqa go'shti yemaydi", "ru": "не ест свинину"},
     "no_dairy": {"uz": "sut mahsulotlari yemaydi", "ru": "без молочных продуктов"},
     "diabetic": {"uz": "qandli diabet (shakarli ovqat yemaydi)", "ru": "диабет (без сахара)"},
     "low_calorie": {"uz": "kaloriyasi kam ovqat", "ru": "низкокалорийное питание"},
