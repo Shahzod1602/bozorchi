@@ -328,14 +328,14 @@ const userId=tg?.initDataUnsafe?.user?.id||null;
 const userFirstName=tg?.initDataUnsafe?.user?.first_name||'U';
 
 const PREFS=[
-  {id:'vegetarian',   icon:'🥦', uz:"Vegetarian",           ru:"Вегетарианец"},
-  {id:'no_gluten',    icon:'🌾', uz:"Glutensiz",             ru:"Без глютена"},
-  {id:'no_pork',      icon:'🐷', uz:"Cho'chqa yemaydi",      ru:"Без свинины"},
-  {id:'no_dairy',     icon:'🥛', uz:"Sut mahsuloti yemaydi", ru:"Без молочного"},
-  {id:'diabetic',     icon:'💉', uz:"Qandli diabet",         ru:"Диабет"},
-  {id:'low_calorie',  icon:'⚖️', uz:"Kam kaloriya",          ru:"Низкокалорийное"},
-  {id:'halal',        icon:'☪️', uz:"Faqat halol",           ru:"Только халяль"},
-  {id:'no_spicy',     icon:'🌶️', uz:"Achchiq yemaydi",       ru:"Без острого"},
+  {id:'vegetarian',   icon:'🥦', uz:"Vegetarian (go'shtsiz)",   ru:"Вегетарианец (без мяса)"},
+  {id:'no_gluten',    icon:'🌾', uz:"Glutensiz (unsiz)",         ru:"Без глютена (без муки)"},
+  {id:'no_pork',      icon:'🐷', uz:"Cho'chqa go'shtisiz",       ru:"Без свинины"},
+  {id:'no_dairy',     icon:'🥛', uz:"Sut mahsulotisiz",          ru:"Без молочного"},
+  {id:'diabetic',     icon:'💉', uz:"Diabet (shakarsiz)",        ru:"Диабет (без сахара)"},
+  {id:'low_calorie',  icon:'⚖️', uz:"Kam kaloriyali",            ru:"Низкокалорийное"},
+  {id:'halal',        icon:'☪️', uz:"Faqat halol",               ru:"Только халяль"},
+  {id:'no_spicy',     icon:'🌶️', uz:"Achchiqsiz",                ru:"Без острого"},
 ];
 
 const T={
@@ -511,18 +511,21 @@ function pickChip(el,type,val){
 
 function renderPrefList(){
   const lang=prof.language;
-  document.getElementById('prefList').innerHTML=PREFS.map(p=>{
-    const on=prof.preferences.includes(p.id);
-    return `<div class="pref-row">
-      <span class="pr-icon">${p.icon}</span>
-      <span class="pref-name">${p[lang]||p.uz}</span>
-      <label class="toggle">
-        <input type="checkbox" ${on?'checked':''} onchange="togglePref('${p.id}',this)">
-        <div class="t-track"></div>
-        <div class="t-thumb"></div>
-      </label>
-    </div>`;
-  }).join('');
+  const hint=lang==='uz'?'AI bu mahsulotlarni tavsiya qilmaydi':'AI исключит эти продукты из рекомендаций';
+  document.getElementById('prefList').innerHTML=
+    `<div style="padding:10px 16px 4px;font-size:11px;color:var(--hint)">${hint}</div>`+
+    PREFS.map(p=>{
+      const on=prof.preferences.includes(p.id);
+      return `<div class="pref-row">
+        <span class="pr-icon">${p.icon}</span>
+        <span class="pref-name">${p[lang]||p.uz}</span>
+        <label class="toggle">
+          <input type="checkbox" ${on?'checked':''} onchange="togglePref('${p.id}',this)">
+          <div class="t-track"></div>
+          <div class="t-thumb"></div>
+        </label>
+      </div>`;
+    }).join('');
 }
 
 function togglePref(id,el){
