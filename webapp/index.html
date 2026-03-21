@@ -8,350 +8,404 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
-  --g1:#43A047;--g2:#2E7D32;--g3:#E8F5E9;--g4:#C8E6C9;
-  --bg:var(--tg-theme-bg-color,#F4F6F8);
-  --card:var(--tg-theme-secondary-bg-color,#fff);
-  --text:var(--tg-theme-text-color,#1C1C1E);
-  --hint:var(--tg-theme-hint-color,#8E8E93);
-  --r:16px;--shadow:0 2px 12px rgba(0,0,0,.07);
+  --bg:#111214;--card:#1C1F23;--card2:#252830;
+  --green:#4DB651;--green-d:#2D8A33;--green-bg:rgba(77,182,81,.13);
+  --text:#F2F2F2;--hint:#8A8A8E;
+  --danger:#E53935;--danger-bg:rgba(229,57,53,.13);
+  --border:rgba(255,255,255,.07);--r:16px;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;overflow-x:hidden}
-
-/* HEADER */
-.hdr{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;padding:12px 16px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(67,160,71,.3)}
-.hdr-back{font-size:22px;cursor:pointer;padding:2px 10px 2px 0;display:none;opacity:.95}
-.hdr-back.vis{display:block}
-.hdr-title{font-size:17px;font-weight:700;letter-spacing:-.2px;flex:1}
-.hdr-icon{font-size:20px}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:76px;overflow-x:hidden}
 
 /* SCREENS */
-.scr{display:none;padding:16px;animation:fadeIn .2s ease}
+.scr{display:none;animation:fadeIn .2s ease}
 .scr.on{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* HEADER */
+.hdr{padding:14px 16px 12px;display:flex;align-items:center;gap:10px;background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.hdr-av{width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
+.hdr-title{font-size:19px;font-weight:700;flex:1;letter-spacing:-.3px}
+.hdr-more{font-size:22px;color:var(--hint);cursor:pointer;padding:2px 0 2px 8px;letter-spacing:1px}
 
 /* NAV */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid rgba(0,0,0,.08);display:flex;z-index:200;padding:6px 0 calc(6px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.06)}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;cursor:pointer;border:none;background:none;color:var(--hint);transition:color .2s}
-.nb.on{color:var(--g1)}
-.nb .ni{font-size:21px;line-height:1}
-.nb .nl{font-size:10px;font-weight:500}
-.nb.on .ni{filter:drop-shadow(0 2px 4px rgba(67,160,71,.4))}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#16181C;border-top:1px solid var(--border);display:flex;z-index:200;padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 2px;cursor:pointer;border:none;background:none;color:var(--hint);transition:color .2s}
+.nb.on{color:var(--green)}
+.nb .ni{font-size:22px;line-height:1.1}
+.nb .nl{font-size:10px;font-weight:600;letter-spacing:.1px}
+.nb.on .ni{filter:drop-shadow(0 2px 6px rgba(77,182,81,.5))}
 
-/* CARDS */
-.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-.card-t{font-size:15px;font-weight:600;margin-bottom:4px}
-.card-s{font-size:13px;color:var(--hint)}
-.sec-t{font-size:12px;font-weight:600;color:var(--hint);text-transform:uppercase;letter-spacing:.6px;margin:4px 0 10px}
+/* BUDGET HERO */
+.budget-card{background:linear-gradient(135deg,#1C3A1E,#243B26);border:1px solid rgba(77,182,81,.18);border-radius:20px;padding:22px 20px;margin:16px 16px 12px;position:relative;overflow:hidden;cursor:pointer}
+.budget-card::after{content:'🛒';position:absolute;right:-8px;bottom:-14px;font-size:88px;opacity:.07;pointer-events:none}
+.budget-amount{font-size:36px;font-weight:800;letter-spacing:-1.5px;margin-bottom:6px}
+.budget-sub{font-size:13px;color:rgba(255,255,255,.55)}
+.budget-sub b{color:var(--green);font-weight:600}
 
-/* HERO BANNER */
-.hero{background:linear-gradient(135deg,var(--g1),var(--g2));border-radius:20px;padding:20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
-.hero::after{content:'🛒';position:absolute;right:-8px;bottom:-12px;font-size:80px;opacity:.12}
-.hero-label{font-size:12px;opacity:.85;margin-bottom:4px}
-.hero-amount{font-size:30px;font-weight:800;letter-spacing:-1px;margin-bottom:12px}
-.hero-row{display:flex;gap:0}
-.hero-col{flex:1;text-align:center;padding:10px 4px;background:rgba(255,255,255,.12);border-radius:12px;margin:0 3px}
-.hero-col:first-child{margin-left:0}
-.hero-col:last-child{margin-right:0}
-.hero-col .hv{font-size:17px;font-weight:700}
-.hero-col .hl{font-size:10px;opacity:.8;margin-top:2px}
+/* ACTION ROWS */
+.act-row{background:var(--card);border-radius:16px;padding:16px 18px;margin:0 16px 10px;display:flex;align-items:center;gap:14px;cursor:pointer;border:1px solid var(--border);transition:background .12s;-webkit-user-select:none;user-select:none}
+.act-row:active{background:var(--card2)}
+.act-icon{font-size:26px;flex-shrink:0}
+.act-text{flex:1}
+.act-title{font-size:15px;font-weight:600;margin-bottom:2px}
+.act-sub{font-size:12px;color:var(--hint)}
+.act-arrow{font-size:20px;color:var(--hint);opacity:.7}
 
-/* HOME GRID */
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.gc{background:var(--card);border-radius:var(--r);padding:18px 14px 16px;text-align:center;cursor:pointer;box-shadow:var(--shadow);border:none;width:100%;transition:transform .12s,box-shadow .12s;position:relative;overflow:hidden}
-.gc:active{transform:scale(.96);box-shadow:0 1px 6px rgba(0,0,0,.08)}
-.gc.acc{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff}
-.gc .gi{font-size:30px;margin-bottom:8px;display:block}
-.gc .gt{font-size:13px;font-weight:700;color:var(--text)}
-.gc.acc .gt{color:#fff}
-.gc .gs{font-size:11px;color:var(--hint);margin-top:3px}
-.gc.acc .gs{color:rgba(255,255,255,.8)}
-.gc .badge{position:absolute;top:10px;right:10px;background:#FF3B30;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+/* SECTION TITLE */
+.sec-t{font-size:12px;font-weight:600;color:var(--hint);padding:14px 16px 8px;text-transform:uppercase;letter-spacing:.5px}
 
-/* INPUTS */
-.iw{margin-bottom:12px}
-.iw textarea,.iw input{width:100%;background:var(--card);border:1.5px solid transparent;border-radius:14px;padding:13px 15px;font-size:15px;color:var(--text);resize:none;outline:none;transition:border-color .2s,box-shadow .2s;font-family:inherit;box-shadow:var(--shadow)}
-.iw textarea:focus,.iw input:focus{border-color:var(--g1);box-shadow:0 0 0 3px rgba(67,160,71,.1)}
-.iw label{display:block;font-size:12px;font-weight:600;color:var(--hint);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+/* PREV ROWS (last items on home) */
+.prev-wrap{margin:0 16px;border-radius:16px;overflow:hidden;border:1px solid var(--border);margin-bottom:16px}
+.prev-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border)}
+.prev-row:last-child{border:none}
+.prev-emoji{font-size:24px;flex-shrink:0}
+.prev-name{flex:1;font-size:14px;font-weight:500}
+.prev-name.done{text-decoration:line-through;color:var(--hint)}
+.prev-price{font-size:13px;color:var(--green);font-weight:700}
 
-/* BUTTONS */
-.btn{width:100%;padding:15px;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;border:none;transition:all .15s;letter-spacing:-.1px}
-.btn:active{transform:scale(.98);opacity:.9}
-.btn-p{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;box-shadow:0 4px 14px rgba(67,160,71,.35)}
-.btn-s{background:var(--g3);color:var(--g2);margin-top:8px}
-.btn-g{background:var(--card);color:var(--text);box-shadow:var(--shadow);margin-top:8px}
-.btn-sm{width:auto;padding:9px 18px;font-size:13px;display:inline-flex;align-items:center;gap:5px}
-.btn-danger{background:#FFF0F0;color:#FF3B30;margin-top:8px}
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:14px}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+.search-wrap input{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 16px 13px 44px;font-size:15px;color:var(--text);outline:none;font-family:inherit;transition:border-color .2s}
+.search-wrap input:focus{border-color:var(--green)}
+.search-wrap input::placeholder{color:var(--hint)}
 
 /* CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
-.chip{padding:8px 14px;background:var(--card);border-radius:20px;font-size:13px;cursor:pointer;border:1.5px solid transparent;transition:all .15s;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.06);font-weight:500;color:var(--text)}
-.chip.on{background:var(--g3);border-color:var(--g1);color:var(--g2);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{padding:8px 16px;background:var(--card);border-radius:20px;font-size:13px;cursor:pointer;border:1.5px solid var(--border);transition:all .15s;white-space:nowrap;font-weight:500;color:var(--text)}
+.chip.on{background:var(--green-bg);border-color:var(--green);color:var(--green);font-weight:700}
 
-/* PREF GRID */
-.pref-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.pref-item{background:var(--card);border-radius:14px;padding:12px;cursor:pointer;border:2px solid transparent;transition:all .15s;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px}
-.pref-item.on{background:var(--g3);border-color:var(--g1)}
-.pref-item .pi-icon{font-size:22px;flex-shrink:0}
-.pref-item .pi-text{font-size:12px;font-weight:600;line-height:1.3;color:var(--text)}
-.pref-item.on .pi-text{color:var(--g2)}
-.pref-item .pi-check{width:18px;height:18px;border-radius:50%;border:2px solid #ddd;margin-left:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px}
-.pref-item.on .pi-check{background:var(--g1);border-color:var(--g1);color:#fff}
+/* SUB-TABS */
+.sub-tabs{display:flex;gap:4px;background:var(--card);border-radius:14px;padding:4px;border:1px solid var(--border);margin-bottom:16px}
+.stab{flex:1;padding:9px 4px;text-align:center;border-radius:11px;font-size:12px;cursor:pointer;font-weight:600;color:var(--hint);border:none;background:none;transition:all .2s;white-space:nowrap}
+.stab.on{background:var(--green);color:#fff}
 
-/* CUSTOM PREF INPUT */
-.custom-pref-wrap{display:flex;gap:8px;margin-bottom:14px}
-.custom-pref-wrap input{flex:1;background:var(--card);border:1.5px solid transparent;border-radius:12px;padding:11px 14px;font-size:14px;outline:none;color:var(--text)}
-.custom-pref-wrap input:focus{border-color:var(--g1)}
-.custom-pref-wrap button{background:var(--g1);color:#fff;border:none;border-radius:12px;padding:11px 16px;font-size:20px;cursor:pointer}
+/* FOOD CARD */
+.food-card{background:var(--card);border-radius:20px;border:1px solid var(--border);margin-top:14px;overflow:hidden}
+.food-img{height:170px;background:linear-gradient(135deg,#1C3820,#192e1a);display:flex;align-items:center;justify-content:center;font-size:82px;position:relative}
+.food-img-name{position:absolute;bottom:0;left:0;right:0;padding:14px 16px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:20px;font-weight:800;color:#fff}
+.food-price{font-size:14px;color:var(--green);font-weight:700;margin-bottom:10px}
+.food-ingr-t{font-size:12px;color:var(--hint);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px}
+.food-ingr{list-style:none;margin-bottom:16px}
+.food-ingr li{font-size:14px;padding:4px 0;display:flex;align-items:center;gap:8px;color:var(--text)}
+.food-ingr li::before{content:'•';color:var(--green);font-size:18px;line-height:1}
+.add-btn{width:100%;padding:15px;background:var(--green);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.add-btn:active{opacity:.82}
+.add-btn:disabled{background:var(--green-d);opacity:.8}
 
-/* RESULT */
-.result{background:var(--card);border-radius:var(--r);padding:16px;white-space:pre-wrap;font-size:14px;line-height:1.75;color:var(--text);margin-top:14px;box-shadow:var(--shadow);max-height:65vh;overflow-y:auto}
-.result strong,.result b{font-weight:700;color:var(--g2)}
-
-/* INGREDIENT LIST */
-.ing-list{list-style:none}
-.ing-row{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.05);gap:12px}
-.ing-row:last-child{border:none}
-.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--g1);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;transition:all .15s}
-.chk.done{background:var(--g1);border-color:var(--g1);color:#fff}
-.ing-name{flex:1;font-size:14px;line-height:1.3}
-.ing-name.done{text-decoration:line-through;color:var(--hint)}
-.ing-price{font-size:12px;color:var(--g1);font-weight:600;white-space:nowrap}
-
-/* PROGRESS */
-.prog-bar{height:6px;background:var(--g4);border-radius:3px;margin:12px 0 4px;overflow:hidden}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--g1),var(--g2));border-radius:3px;transition:width .4s ease}
-.prog-txt{font-size:12px;color:var(--hint);text-align:right}
-
-/* TABS */
-.tabs{display:flex;background:var(--card);border-radius:14px;padding:4px;margin-bottom:14px;box-shadow:var(--shadow)}
-.tab{flex:1;padding:9px 4px;text-align:center;border-radius:11px;font-size:13px;cursor:pointer;font-weight:500;color:var(--hint);border:none;background:none;transition:all .2s}
-.tab.on{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;font-weight:700;box-shadow:0 2px 8px rgba(67,160,71,.3)}
+/* SHOPPING LIST */
+.shop-wrap{border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+.list-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);border-bottom:1px solid var(--border)}
+.list-item:last-child{border:none}
+.l-chk{width:28px;height:28px;border-radius:50%;border:2px solid var(--hint);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;transition:all .2s}
+.l-chk.done{background:var(--green);border-color:var(--green);color:#fff}
+.l-name{flex:1;font-size:14px;font-weight:500;line-height:1.3}
+.l-name.done{text-decoration:line-through;color:var(--hint)}
+.l-price{font-size:13px;color:var(--green);font-weight:700;margin-right:6px;white-space:nowrap}
+.l-del{width:32px;height:32px;border-radius:10px;background:var(--danger-bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:background .15s}
+.l-del:active{background:rgba(229,57,53,.3)}
+.list-total{padding:16px;background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.list-total-l{font-size:15px;color:var(--hint);font-weight:500}
+.list-total-r{font-size:20px;font-weight:800}
 
 /* PROFILE ROWS */
-.p-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.pset-wrap{border-radius:16px;overflow:hidden;border:1px solid var(--border);margin-bottom:16px}
+.p-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border-bottom:1px solid var(--border)}
 .p-row:last-child{border:none}
-.p-row .pr-l{font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px}
-.p-row .pr-l .pr-icon{font-size:18px}
-.p-row input{width:110px;padding:8px 12px;border:1.5px solid #E5E5EA;border-radius:10px;font-size:14px;text-align:right;outline:none;background:var(--bg);color:var(--text)}
-.p-row input:focus{border-color:var(--g1)}
+.pr-l{font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px}
+.pr-icon{font-size:20px}
+.p-row input[type=number]{width:80px;padding:8px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;text-align:right;outline:none;background:var(--card2);color:var(--text)}
+.p-row input[type=number]:focus{border-color:var(--green)}
 
 /* LANG SWITCH */
-.lang-sw{display:flex;background:var(--bg);border-radius:12px;padding:3px;gap:3px}
-.lsb{flex:1;padding:8px 10px;text-align:center;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:var(--hint);border:none;background:none;transition:all .2s}
-.lsb.on{background:var(--card);color:var(--g2);font-weight:700;box-shadow:0 1px 6px rgba(0,0,0,.1)}
+.lang-sw{display:flex;background:var(--card2);border-radius:12px;padding:3px;gap:3px}
+.lsb{flex:1;padding:7px 10px;text-align:center;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;color:var(--hint);border:none;background:none;transition:all .2s}
+.lsb.on{background:var(--green);color:#fff}
+
+/* PREF ROW (toggle) */
+.pref-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border-bottom:1px solid var(--border)}
+.pref-row:last-child{border:none}
+.pref-name{flex:1;font-size:14px;font-weight:500}
+
+/* TOGGLE */
+.toggle{position:relative;width:50px;height:28px;cursor:pointer;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.t-track{position:absolute;inset:0;border-radius:14px;background:#3A3A3E;transition:background .25s}
+.toggle input:checked+.t-track{background:var(--green)}
+.t-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3);transition:transform .25s;pointer-events:none}
+.toggle input:checked~.t-thumb{transform:translateX(22px)}
+
+/* BUTTONS */
+.btn{width:100%;padding:15px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .15s;letter-spacing:-.1px}
+.btn:active{opacity:.85;transform:scale(.98)}
+.btn-p{background:var(--green);color:#fff}
+.btn-s{background:var(--green-bg);color:var(--green);border:1px solid rgba(77,182,81,.2)}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(229,57,53,.2)}
+
+/* INPUT */
+.iw{margin-bottom:12px}
+.iw label{display:block;font-size:11px;font-weight:700;color:var(--hint);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.iw input,.iw textarea{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;font-size:15px;color:var(--text);resize:none;outline:none;transition:border-color .2s;font-family:inherit}
+.iw input:focus,.iw textarea:focus{border-color:var(--green)}
+.iw input::placeholder,.iw textarea::placeholder{color:var(--hint)}
+
+/* RESULT */
+.result{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:16px;white-space:pre-wrap;font-size:14px;line-height:1.8;color:var(--text);margin-top:14px;max-height:60vh;overflow-y:auto}
+.result strong,.result b{font-weight:700;color:var(--green)}
 
 /* LOADER */
-.loader{text-align:center;padding:50px 20px}
-.spin{display:inline-block;width:36px;height:36px;border:3px solid var(--g4);border-top-color:var(--g1);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
+.loader{text-align:center;padding:48px 20px}
+.spin{display:inline-block;width:36px;height:36px;border:3px solid rgba(77,182,81,.2);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loader p{font-size:14px;color:var(--hint)}
 
 /* EMPTY */
-.empty{text-align:center;padding:48px 24px}
-.empty .ei{font-size:56px;margin-bottom:14px}
-.empty h3{font-size:17px;font-weight:600;margin-bottom:8px}
+.empty{text-align:center;padding:56px 24px}
+.ei{font-size:58px;margin-bottom:14px}
+.empty h3{font-size:17px;font-weight:700;margin-bottom:8px}
 .empty p{font-size:14px;color:var(--hint);line-height:1.6}
 
 /* TOAST */
-.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1C1C1E;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);background:#2C2C2E;color:var(--text);padding:10px 20px;border-radius:20px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;border:1px solid var(--border)}
 .toast.show{opacity:1}
 
-/* DIVIDER */
-.divider{height:1px;background:rgba(0,0,0,.06);margin:4px 0 14px}
+.pad{padding:0 16px}
+.mt8{margin-top:8px}
+.mt12{margin-top:12px}
+.err{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;color:var(--danger);font-size:14px;margin-top:14px}
 </style>
 </head>
 <body>
 
-<div class="hdr">
-  <span class="hdr-back" id="backBtn" onclick="goBack()">←</span>
-  <span class="hdr-icon">🛒</span>
-  <span class="hdr-title" id="hdrTitle">Bozorlik</span>
-</div>
-
 <div class="toast" id="toast"></div>
 
-<!-- HOME -->
+<!-- ═══ HOME ═══ -->
 <div class="scr on" id="scr-home">
-  <div id="homeHero"></div>
-  <p class="sec-t" id="homeSectionTitle">Nima qilmoqchisiz?</p>
-  <div class="grid" id="homeGrid"></div>
+  <div class="hdr">
+    <div class="hdr-av" id="homeAv">B</div>
+    <span class="hdr-title">Bozorlik 👋</span>
+    <span class="hdr-more">···</span>
+  </div>
+
+  <div class="budget-card" id="homeBudget" onclick="goTab('suggest');setSuggestTab('budget')"></div>
+
+  <div class="act-row" onclick="goTab('suggest');setSuggestTab('suggest')">
+    <span class="act-icon">🍽️</span>
+    <div class="act-text">
+      <div class="act-title">Tavsiya</div>
+      <div class="act-sub">AI eng yaxshi ovqatni tavsiya qilsin</div>
+    </div>
+    <span class="act-arrow">›</span>
+  </div>
+
+  <div class="act-row" onclick="goTab('list')">
+    <span class="act-icon">🛒</span>
+    <div class="act-text">
+      <div class="act-title">Ro'yxat</div>
+      <div class="act-sub" id="homeListSub">Bozorlik ro'yxatini ko'rish</div>
+    </div>
+    <span class="act-arrow">›</span>
+  </div>
+
+  <div class="sec-t" id="homeLastTitle">Oxirgi xeridlar</div>
+  <div class="prev-wrap" id="homeLastItems"></div>
 </div>
 
-<!-- SUGGEST -->
+<!-- ═══ SUGGEST / RECIPE / BUDGET ═══ -->
 <div class="scr" id="scr-suggest">
-  <div class="iw">
-    <label id="suggestLabel">Bugun nima xohlaysiz?</label>
-    <textarea id="preferenceInput" rows="3"></textarea>
+  <div class="hdr">
+    <span class="hdr-title" id="suggestHdrT">Bugun nima yemochisiz?</span>
   </div>
-  <div class="chips" id="quickChips"></div>
-  <button class="btn btn-p" onclick="doSuggest()" id="suggestBtn">🤖 AI Tavsiya qil</button>
-  <div id="suggestResult"></div>
+  <div class="pad" style="padding-top:14px">
+    <div class="sub-tabs">
+      <button class="stab on" id="st-suggest" onclick="setSuggestTab('suggest')">🍽️ Tavsiya</button>
+      <button class="stab" id="st-recipe" onclick="setSuggestTab('recipe')">📖 Retsept</button>
+      <button class="stab" id="st-budget" onclick="setSuggestTab('budget')">💰 Byudjet</button>
+    </div>
+
+    <!-- suggest -->
+    <div id="sub-suggest">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="preferenceInput" placeholder="Tez Ovqatlar">
+      </div>
+      <div class="chips" id="quickChips"></div>
+      <button class="btn btn-p" id="suggestBtn" onclick="doSuggest()">🤖 Tavsiya qil</button>
+      <div id="suggestResult"></div>
+    </div>
+
+    <!-- recipe -->
+    <div id="sub-recipe" style="display:none">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="recipeInput" placeholder="Osh, Lag'mon...">
+      </div>
+      <div class="chips" id="recipeChips"></div>
+      <button class="btn btn-p" id="recipeBtn" onclick="doRecipe()">🔍 Retseptni ko'rish</button>
+      <div id="recipeResult"></div>
+    </div>
+
+    <!-- budget -->
+    <div id="sub-budget" style="display:none">
+      <div id="budgetHeroSub" class="mt8"></div>
+      <div class="iw mt12">
+        <label>Haftalik byudjet (so'm)</label>
+        <input type="number" id="budgetInput" placeholder="500 000" inputmode="numeric">
+      </div>
+      <button class="btn btn-p" id="budgetBtn" onclick="doBudgetPlan()">📅 Reja tuzish</button>
+      <button class="btn btn-s mt8" id="weeklyBtn" onclick="doWeeklyPlan()">📋 Byudjetsiz haftalik reja</button>
+      <div id="budgetResult"></div>
+    </div>
+  </div>
 </div>
 
-<!-- RECIPE -->
-<div class="scr" id="scr-recipe">
-  <div class="iw">
-    <label id="recipeLabel">Ovqat nomi</label>
-    <input type="text" id="recipeInput">
+<!-- ═══ SHOPPING LIST ═══ -->
+<div class="scr" id="scr-list">
+  <div class="hdr">
+    <span style="font-size:22px">🛒</span>
+    <span class="hdr-title" id="listHdrTitle">Bozorlik ro'yxati</span>
   </div>
-  <div class="chips" id="recipeChips"></div>
-  <button class="btn btn-p" onclick="doRecipe()" id="recipeBtn">🔍 Retseptni ko'rish</button>
-  <div id="recipeResult"></div>
+  <div class="pad" style="padding-top:14px" id="shopWrap"></div>
 </div>
 
-<!-- BUDGET -->
-<div class="scr" id="scr-budget">
-  <div id="budgetHero"></div>
-  <div class="iw">
-    <label id="budgetLabel">Haftalik byudjet (so'm)</label>
-    <input type="number" id="budgetInput" inputmode="numeric">
-  </div>
-  <button class="btn btn-p" onclick="doBudgetPlan()" id="budgetBtn">📅 Reja tuzish</button>
-  <button class="btn btn-s" onclick="doWeeklyPlan()" id="weeklyBtn">📋 Byudjetsiz haftalik reja</button>
-  <div id="budgetResult"></div>
-</div>
-
-<!-- PROFILE -->
+<!-- ═══ PROFILE ═══ -->
 <div class="scr" id="scr-profile">
-  <!-- Settings card -->
-  <div class="card">
-    <div class="p-row">
-      <span class="pr-l"><span class="pr-icon">👨‍👩‍👧‍👦</span><span id="familyLabel">Oila soni</span></span>
-      <input type="number" id="familyInput" min="1" max="20">
-    </div>
-    <div class="p-row">
-      <span class="pr-l"><span class="pr-icon">💰</span><span id="budgetProfileLabel">Haftalik byudjet</span></span>
-      <input type="number" id="budgetProfileInput" placeholder="0">
-    </div>
-    <div class="p-row">
-      <span class="pr-l"><span class="pr-icon">🌐</span><span>Til</span></span>
-      <div class="lang-sw">
-        <button class="lsb" id="lz" onclick="setLang('uz')">🇺🇿 UZ</button>
-        <button class="lsb" id="lr" onclick="setLang('ru')">🇷🇺 RU</button>
+  <div class="hdr">
+    <div class="hdr-av" id="profAv">B</div>
+    <span class="hdr-title" id="profTitle">Profil</span>
+    <span class="hdr-more">···</span>
+  </div>
+  <div class="pad" style="padding-top:14px">
+    <div class="pset-wrap">
+      <div class="p-row">
+        <span class="pr-l"><span class="pr-icon">👨‍👩‍👧‍👦</span><span id="familyLabel">Oila soni</span></span>
+        <input type="number" id="familyInput" min="1" max="20" value="2">
+      </div>
+      <div class="p-row">
+        <span class="pr-l"><span class="pr-icon">💰</span><span id="budgetLabel">Ro'yxat byudjeti</span></span>
+        <input type="number" id="budgetProfileInput" placeholder="0">
+      </div>
+      <div class="p-row">
+        <span class="pr-l"><span class="pr-icon">🌐</span><span>Til</span></span>
+        <div class="lang-sw">
+          <button class="lsb on" id="lz" onclick="setLang('uz')">🇺🇿 UZ</button>
+          <button class="lsb" id="lr" onclick="setLang('ru')">🇷🇺 RU</button>
+        </div>
       </div>
     </div>
+
+    <div class="sec-t" id="prefSectionTitle">Chmarglar</div>
+    <div class="pset-wrap" id="prefList" style="margin-bottom:16px"></div>
+
+    <button class="btn btn-p" onclick="saveProfile()" id="saveBtn">✅ Saqlash</button>
   </div>
-
-  <!-- Preferences -->
-  <p class="sec-t" id="prefSectionTitle">Ovqat cheklovlari</p>
-  <div class="pref-grid" id="prefGrid"></div>
-
-  <!-- Custom pref -->
-  <div class="custom-pref-wrap">
-    <input type="text" id="customPrefInput" placeholder="Boshqa cheklov...">
-    <button onclick="addCustomPref()">+</button>
-  </div>
-  <div id="customPrefs"></div>
-
-  <button class="btn btn-p" onclick="saveProfile()">✅ Saqlash</button>
-
-  <!-- Shopping list -->
-  <div id="profileListSection"></div>
 </div>
 
 <!-- NAV -->
 <nav class="nav">
   <button class="nb on" id="nb-home" onclick="goTab('home')">
-    <span class="ni">🏠</span><span class="nl" data-uz="Bosh" data-ru="Главная">Bosh</span>
+    <span class="ni">🏠</span>
+    <span class="nl" data-uz="Home" data-ru="Главная">Home</span>
   </button>
   <button class="nb" id="nb-suggest" onclick="goTab('suggest')">
-    <span class="ni">🍽️</span><span class="nl" data-uz="Tavsiya" data-ru="Блюдо">Tavsiya</span>
+    <span class="ni">🍽️</span>
+    <span class="nl" data-uz="Tavsiya" data-ru="Блюдо">Tavsiya</span>
   </button>
-  <button class="nb" id="nb-recipe" onclick="goTab('recipe')">
-    <span class="ni">📖</span><span class="nl" data-uz="Retsept" data-ru="Рецепт">Retsept</span>
-  </button>
-  <button class="nb" id="nb-budget" onclick="goTab('budget')">
-    <span class="ni">💰</span><span class="nl" data-uz="Byudjet" data-ru="Бюджет">Byudjet</span>
+  <button class="nb" id="nb-list" onclick="goTab('list')">
+    <span class="ni">🛒</span>
+    <span class="nl" data-uz="Ro'yxat" data-ru="Список">Ro'yxat</span>
   </button>
   <button class="nb" id="nb-profile" onclick="goTab('profile')">
-    <span class="ni">👤</span><span class="nl" data-uz="Profil" data-ru="Профиль">Profil</span>
+    <span class="ni">👤</span>
+    <span class="nl" data-uz="Profil" data-ru="Профиль">Profil</span>
   </button>
 </nav>
 
 <script>
-const tg = window.Telegram?.WebApp;
+const tg=window.Telegram?.WebApp;
 if(tg){tg.expand();tg.ready();}
-const userId = tg?.initDataUnsafe?.user?.id || null;
+const userId=tg?.initDataUnsafe?.user?.id||null;
+const userFirstName=tg?.initDataUnsafe?.user?.first_name||'U';
 
-const PREFS = [
-  {id:'vegetarian', icon:'🥦', uz:"Vegetarian\n(go'sht yemas)", ru:"Вегетарианец\n(без мяса)"},
-  {id:'no_gluten', icon:'🌾', uz:"Glutensiz\n(xamir yemas)", ru:"Без глютена\n(без муки)"},
-  {id:'no_pork', icon:'🐷', uz:"Cho'chqa\nyemaydi", ru:"Без свинины"},
-  {id:'no_dairy', icon:'🥛', uz:"Sut mahsuloti\nyemaydi", ru:"Без молочного"},
-  {id:'diabetic', icon:'💉', uz:"Qandli diabet\n(shakar kamroq)", ru:"Диабет\n(меньше сахара)"},
-  {id:'low_calorie', icon:'⚖️', uz:"Kaloriyasi\nkam", ru:"Низко-\nкалорийное"},
-  {id:'halal', icon:'☪️', uz:"Faqat\nhalol", ru:"Только\nхаляль"},
-  {id:'no_spicy', icon:'🌶️', uz:"Achchiq\nyemaydi", ru:"Без острого"},
+const PREFS=[
+  {id:'vegetarian',   icon:'🥦', uz:"Vegetarian",           ru:"Вегетарианец"},
+  {id:'no_gluten',    icon:'🌾', uz:"Glutensiz",             ru:"Без глютена"},
+  {id:'no_pork',      icon:'🐷', uz:"Cho'chqa yemaydi",      ru:"Без свинины"},
+  {id:'no_dairy',     icon:'🥛', uz:"Sut mahsuloti yemaydi", ru:"Без молочного"},
+  {id:'diabetic',     icon:'💉', uz:"Qandli diabet",         ru:"Диабет"},
+  {id:'low_calorie',  icon:'⚖️', uz:"Kam kaloriya",          ru:"Низкокалорийное"},
+  {id:'halal',        icon:'☪️', uz:"Faqat halol",           ru:"Только халяль"},
+  {id:'no_spicy',     icon:'🌶️', uz:"Achchiq yemaydi",       ru:"Без острого"},
 ];
 
-const TEXTS = {
+const T={
   uz:{
-    home_title:'🛒 Bozorlik', home_sec:'Nima qilmoqchisiz?',
-    suggest_title:'Ovqat tavsiya', recipe_title:'Retsept izla',
-    budget_title:'Byudjet rejasi', profile_title:'Profil',
-    suggest_label:'Bugun nima xohlaysiz?', recipe_label:'Ovqat nomi',
-    budget_label:'Haftalik byudjet (so\'m)',
-    suggest_btn:'🤖 AI Tavsiya qil', recipe_btn:'🔍 Retseptni ko\'rish',
-    budget_btn:'📅 Haftalik reja tuzish', weekly_btn:'📋 Byudjetsiz haftalik reja',
-    loading:'AI tayyorlamoqda...', family_label:'Oila soni',
-    budget_profile_label:'Haftalik byudjet', pref_section:'Ovqat cheklovlari',
-    save_btn:'✅ Saqlash', saved:'✅ Saqlandi!',
-    no_list:'Hali ro\'yxat yo\'q', no_list_sub:'Ovqat tavsiya so\'rang — ro\'yxat shu yerda chiqadi',
-    shopping_title:'🛒 Bozorlik ro\'yxati', done_btn:'✅ Xarid tugadi',
-    all:'Barchasi', pending:'Qoldi', bought:'Olindi', progress_suf:'ta olindi',
-    budget_label2:'Haftalik byudjet', daily_label:'Kunlik', family_stat:'Oila',
-    bought_stat:'Belgilangan', custom_ph:'Boshqa cheklov...',
-    home_cards:[
-      {icon:'🍽️',t:'Ovqat tavsiya',s:'AI eng yaxshi tavsiya beradi',tab:'suggest',acc:true},
-      {icon:'📖',t:'Retsept izla',s:'Har qanday ovqat retsepti',tab:'recipe'},
-      {icon:'💰',t:'Byudjet rejasi',s:"Pulingizga mos haftalik plan",tab:'budget'},
-      {icon:'📅',t:'Haftalik reja',s:'7 kunlik menu',action:'doWeeklyPlan'},
-      {icon:'🛒',t:"Bozorlik ro'yxati",s:'Oxirgi masalliqlar',action:'openList'},
-      {icon:'⚙️',t:'Sozlamalar',s:'Profil va cheklovlar',tab:'profile'},
-    ],
-    quick:['Tez ovqat','Sho\'rvali','Parhezli','Bolalar uchun',"O'zbek taomi",'Arzon','Go\'shtli'],
-    popular:['Osh','Lag\'mon','Manti','Shurva','Somsa','Dimlama','Kovurma'],
+    quick:['Tez','Arzon',"Go'shtli","O'zbek taomi",'Parhezli','Bolalar uchun'],
+    popular:['Osh',"Lag'mon",'Manti','Shurva','Somsa','Dimlama','Kovurma'],
+    no_list:"Hali ro'yxat yo'q",
+    no_list_sub:"Tavsiyadan so'ng Ro'yxatga qo'shing",
+    list_empty:"Ro'yxat bo'sh",
+    list_empty_sub:"Ovqat tavsiyasidan so'ng Ro'yxatga qo'shing",
+    loading:'AI tayyorlamoqda...',
+    saved:'✅ Saqlandi!',
+    added:"✅ Ro'yxatga qo'shildi!",
+    add_btn:"🛒 Ro'yxatga qo'sh",
+    clear:'🗑️ Ro\'yxatni tozalash',
+    clear_confirm:"Ro'yxatni tozalaysizmi?",
+    ingr_title:'Ingredientlar:',
+    weekly_ingr:'Haftalik masalliqlar',
+    total:"Total:",
+    family_label:'Oila soni',
+    budget_label:"Ro'yxat byudjeti",
+    pref_section:'Chmarglar',
+    save_btn:'✅ Saqlash',
+    daily:'kunlik',
+    kishi:'kishi',
+    err:'Xatolik yuz berdi. Qaytadan urining.',
+    suggest_h:'Bugun nima yemochisiz?',
+    recipe_h:'Retsept izla',
+    budget_h:'Byudjet rejasi',
   },
   ru:{
-    home_title:'🛒 Bozorlik', home_sec:'Что хотите сделать?',
-    suggest_title:'Рекомендация', recipe_title:'Найти рецепт',
-    budget_title:'План по бюджету', profile_title:'Профиль',
-    suggest_label:'Что хотите поесть сегодня?', recipe_label:'Название блюда',
-    budget_label:'Недельный бюджет (сум)',
-    suggest_btn:'🤖 AI Рекомендация', recipe_btn:'🔍 Найти рецепт',
-    budget_btn:'📅 Составить план', weekly_btn:'📋 Меню без бюджета',
-    loading:'AI готовит...', family_label:'Размер семьи',
-    budget_profile_label:'Недельный бюджет', pref_section:'Пищевые ограничения',
-    save_btn:'✅ Сохранить', saved:'✅ Сохранено!',
-    no_list:'Список пуст', no_list_sub:'Запросите рекомендацию — список появится здесь',
-    shopping_title:'🛒 Список покупок', done_btn:'✅ Покупки завершены',
-    all:'Все', pending:'Осталось', bought:'Куплено', progress_suf:'куплено',
-    budget_label2:'Недельный бюджет', daily_label:'В день', family_stat:'Семья',
-    bought_stat:'Куплено', custom_ph:'Другое ограничение...',
-    home_cards:[
-      {icon:'🍽️',t:'Рекомендация',s:'AI предложит лучшее блюдо',tab:'suggest',acc:true},
-      {icon:'📖',t:'Найти рецепт',s:'Рецепт любого блюда',tab:'recipe'},
-      {icon:'💰',t:'По бюджету',s:'Недельный план по бюджету',tab:'budget'},
-      {icon:'📅',t:'Меню на неделю',s:'7-дневное меню',action:'doWeeklyPlan'},
-      {icon:'🛒',t:'Список покупок',s:'Последние продукты',action:'openList'},
-      {icon:'⚙️',t:'Настройки',s:'Профиль и ограничения',tab:'profile'},
-    ],
-    quick:['Быстро','Суп','Диетическое','Для детей','Узбекская кухня','Дёшево','С мясом'],
+    quick:['Быстро','Дёшево','С мясом','Узбекская','Диетическое','Для детей'],
     popular:['Плов','Лагман','Манты','Шурпа','Самса','Димлама','Жаркое'],
+    no_list:'Список пуст',
+    no_list_sub:'Запросите рекомендацию — список появится здесь',
+    list_empty:'Список пуст',
+    list_empty_sub:'Добавьте блюдо в список покупок',
+    loading:'AI готовит...',
+    saved:'✅ Сохранено!',
+    added:'✅ Добавлено в список!',
+    add_btn:'🛒 Добавить в список',
+    clear:'🗑️ Очистить список',
+    clear_confirm:'Очистить список?',
+    ingr_title:'Ингредиенты:',
+    weekly_ingr:'Список покупок',
+    total:'Итого:',
+    family_label:'Размер семьи',
+    budget_label:'Бюджет',
+    pref_section:'Ограничения',
+    save_btn:'✅ Сохранить',
+    daily:'в день',
+    kishi:'чел.',
+    err:'Ошибка. Попробуйте снова.',
+    suggest_h:'Что хотите есть?',
+    recipe_h:'Найти рецепт',
+    budget_h:'План по бюджету',
   }
 };
 
-let prof = {family_size:2,weekly_budget:0,language:'uz',preferences:[],meal_name:'',ingredients:[]};
-let checked = JSON.parse(localStorage.getItem('chk_'+userId)||'{}');
-let curTab = 'home', navStack = [];
-let lastPlan = {text:'', ingredients:[], title:''};
-const L = () => TEXTS[prof.language] || TEXTS.uz;
+let prof={family_size:2,weekly_budget:0,language:'uz',preferences:[],meal_name:'',ingredients:[]};
+let checked={};
+try{checked=JSON.parse(localStorage.getItem('chk_'+userId)||'{}')}catch(e){}
+let curTab='home', navStack=[], lastPlan={text:'',ingredients:[],title:''};
+const L=()=>T[prof.language]||T.uz;
 
 // ─── API ────────────────────────────────────────
-async function api(path, method='GET', body=null){
-  const opts={method,headers:{'Content-Type':'application/json'}};
-  if(body) opts.body=JSON.stringify(body);
-  const r=await fetch(path,opts);
+async function api(path,method='GET',body=null){
+  const o={method,headers:{'Content-Type':'application/json'}};
+  if(body) o.body=JSON.stringify(body);
+  const r=await fetch(path,o);
   return r.json();
 }
 
@@ -361,7 +415,7 @@ async function loadProfile(){
     const d=await api(`/api/profile?user_id=${userId}`);
     if(!d.error){
       prof={...prof,...d};
-      checked=JSON.parse(localStorage.getItem('chk_'+userId)||'{}');
+      try{checked=JSON.parse(localStorage.getItem('chk_'+userId)||'{}')}catch(e){}
     }
   }catch(e){}
   renderAll();
@@ -369,369 +423,315 @@ async function loadProfile(){
 
 // ─── RENDER ─────────────────────────────────────
 function renderAll(){
-  renderHome();renderBudgetHero();renderProfilePage();applyTexts();
+  const init=userFirstName.charAt(0).toUpperCase();
+  document.getElementById('homeAv').textContent=init;
+  document.getElementById('profAv').textContent=init;
+  renderHome();
+  renderProfile();
+  renderShopList();
+  applyLang();
 }
 
-function applyTexts(){
+function applyLang(){
   const t=L();
   document.querySelectorAll('[data-uz]').forEach(el=>{
     el.textContent=el.dataset[prof.language]||el.dataset.uz;
   });
-  document.getElementById('suggestLabel').textContent=t.suggest_label;
-  document.getElementById('recipeLabel').textContent=t.recipe_label;
-  document.getElementById('budgetLabel').textContent=t.budget_label;
-  document.getElementById('preferenceInput').placeholder=t.quick?.[0]||'';
-  document.getElementById('recipeInput').placeholder=t.popular?.[0]||'';
-  document.getElementById('budgetInput').placeholder='500000';
-  document.getElementById('suggestBtn').textContent=t.suggest_btn;
-  document.getElementById('recipeBtn').textContent=t.recipe_btn;
-  document.getElementById('budgetBtn').textContent=t.budget_btn;
-  document.getElementById('weeklyBtn').textContent=t.weekly_btn;
   document.getElementById('familyLabel').textContent=t.family_label;
-  document.getElementById('budgetProfileLabel').textContent=t.budget_profile_label;
+  document.getElementById('budgetLabel').textContent=t.budget_label;
   document.getElementById('prefSectionTitle').textContent=t.pref_section;
-  document.getElementById('customPrefInput').placeholder=t.custom_ph;
-  renderChips();renderPrefGrid();
+  document.getElementById('saveBtn').textContent=t.save_btn;
+  document.getElementById('listHdrTitle').textContent=t.list_empty?'Bozorlik ro\'yxati':'Список покупок';
+  setSuggestTabText();
+  renderChips();
+  renderPrefList();
 }
 
 function renderHome(){
   const t=L();
-  document.getElementById('homeSectionTitle').textContent=t.home_sec;
-  let hero='';
+  // Budget card
+  const bc=document.getElementById('homeBudget');
   if(prof.weekly_budget>0){
-    const total=prof.ingredients.length;
-    const bought=prof.ingredients.filter((_,i)=>checked[i]).length;
-    hero=`<div class="hero">
-      <div class="hero-label">${t.budget_label2}</div>
-      <div class="hero-amount">${fmtNum(prof.weekly_budget)} so'm</div>
-      <div class="hero-row">
-        <div class="hero-col"><div class="hv">${fmtNum(Math.round(prof.weekly_budget/7))}</div><div class="hl">${t.daily_label} (so'm)</div></div>
-        <div class="hero-col"><div class="hv">${prof.family_size}</div><div class="hl">${t.family_stat}</div></div>
-        <div class="hero-col"><div class="hv">${bought}/${total}</div><div class="hl">${t.bought_stat}</div></div>
-      </div>
-    </div>`;
+    const daily=Math.round(prof.weekly_budget/7);
+    bc.innerHTML=`<div class="budget-amount">${fmtNum(prof.weekly_budget)} so'm</div>
+      <div class="budget-sub">${fmtNum(daily)} ${t.daily} · <b>${prof.family_size} ${t.kishi}</b></div>`;
+  } else {
+    bc.innerHTML=`<div class="budget-amount" style="font-size:28px;opacity:.5">Byudjet yo'q</div>
+      <div class="budget-sub">Byudjet belgilash uchun bosing · <b>${prof.family_size} ${t.kishi}</b></div>`;
   }
-  document.getElementById('homeHero').innerHTML=hero;
+  // Budget hero in budget sub
+  const bhs=document.getElementById('budgetHeroSub');
+  if(bhs&&prof.weekly_budget>0){
+    bhs.innerHTML=`<div class="budget-card" style="margin:0 0 14px">
+      <div class="budget-amount" style="font-size:26px">${fmtNum(prof.weekly_budget)} so'm</div>
+      <div class="budget-sub">Joriy byudjet</div></div>`;
+    document.getElementById('budgetInput').value=prof.weekly_budget;
+  }
+  // List sub
+  const total=prof.ingredients?.length||0;
+  const bought=prof.ingredients?.filter((_,i)=>checked[i]).length||0;
+  document.getElementById('homeListSub').textContent=
+    total>0?`${bought}/${total} ta belgilangan`:t.no_list_sub;
 
-  const hasPrefs=prof.preferences&&prof.preferences.length>0;
-  let grid='';
-  t.home_cards.forEach(c=>{
-    const onclick=c.tab?`goTab('${c.tab}')`:`${c.action}()`;
-    const badge=c.tab==='profile'&&hasPrefs?`<span class="badge">${prof.preferences.length}</span>`:'';
-    grid+=`<button class="gc${c.acc?' acc':''}" onclick="${onclick}">
-      ${badge}
-      <span class="gi">${c.icon}</span>
-      <div class="gt">${c.t}</div>
-      <div class="gs">${c.s}</div>
-    </button>`;
-  });
-  document.getElementById('homeGrid').innerHTML=grid;
+  // Last items
+  const wrap=document.getElementById('homeLastItems');
+  if(!prof.ingredients||prof.ingredients.length===0){
+    wrap.innerHTML=`<div class="prev-row" style="justify-content:center;padding:20px 16px">
+      <span style="font-size:13px;color:var(--hint)">${t.no_list}</span></div>`;
+    return;
+  }
+  const EMOJIS=['🥩','🥔','🧅','🥕','🍅','🧄','🌿','🫙','🧂','🍞','🥚','🧈','🫒','🍋','🍗','🌾'];
+  const rows=prof.ingredients.slice(0,5).map((item,i)=>{
+    const d=!!checked[i];
+    return `<div class="prev-row">
+      <span class="prev-emoji">${EMOJIS[i%EMOJIS.length]}</span>
+      <span class="prev-name${d?' done':''}">${item.name}</span>
+      <span class="prev-price">${item.price||''}</span>
+    </div>`;
+  }).join('');
+  const more=prof.ingredients.length>5
+    ?`<div class="prev-row" style="justify-content:center"><span style="font-size:12px;color:var(--hint)">+${prof.ingredients.length-5} ta ko'proq →</span></div>`:'';
+  wrap.innerHTML=rows+more;
 }
 
 function renderChips(){
   const t=L();
   const qc=document.getElementById('quickChips');
-  if(qc) qc.innerHTML=t.quick.map(q=>`<span class="chip" onclick="pickChip(this,'pref','${q}')">${q}</span>`).join('');
+  if(qc) qc.innerHTML=t.quick.map(q=>`<span class="chip" onclick="pickChip(this,'q','${q}')">${q}</span>`).join('');
   const rc=document.getElementById('recipeChips');
-  if(rc) rc.innerHTML=t.popular.map(r=>`<span class="chip" onclick="pickChip(this,'rec','${r}')">${r}</span>`).join('');
+  if(rc) rc.innerHTML=t.popular.map(r=>`<span class="chip" onclick="pickChip(this,'r','${r}')">${r}</span>`).join('');
 }
 
 function pickChip(el,type,val){
-  const container=type==='pref'?'quickChips':'recipeChips';
-  document.querySelectorAll(`#${container} .chip`).forEach(c=>c.classList.remove('on'));
+  const id=type==='q'?'quickChips':'recipeChips';
+  document.querySelectorAll(`#${id} .chip`).forEach(c=>c.classList.remove('on'));
   el.classList.add('on');
-  document.getElementById(type==='pref'?'preferenceInput':'recipeInput').value=val;
+  document.getElementById(type==='q'?'preferenceInput':'recipeInput').value=val;
 }
 
-function renderBudgetHero(){
-  const t=L();
-  const el=document.getElementById('budgetHero');
-  if(prof.weekly_budget>0){
-    el.innerHTML=`<div class="hero" style="margin-bottom:14px">
-      <div class="hero-label">${t.budget_label2}</div>
-      <div class="hero-amount">${fmtNum(prof.weekly_budget)} so'm</div>
-    </div>`;
-    document.getElementById('budgetInput').value=prof.weekly_budget;
-  } else {
-    el.innerHTML='';
-  }
-}
-
-function renderPrefGrid(){
-  const grid=document.getElementById('prefGrid');
+function renderPrefList(){
   const lang=prof.language;
-  grid.innerHTML=PREFS.map(p=>{
+  document.getElementById('prefList').innerHTML=PREFS.map(p=>{
     const on=prof.preferences.includes(p.id);
-    return `<div class="pref-item${on?' on':''}" onclick="togglePref('${p.id}',this)">
-      <span class="pi-icon">${p.icon}</span>
-      <span class="pi-text">${p[lang]||p.uz}</span>
-      <span class="pi-check">${on?'✓':''}</span>
+    return `<div class="pref-row">
+      <span class="pr-icon">${p.icon}</span>
+      <span class="pref-name">${p[lang]||p.uz}</span>
+      <label class="toggle">
+        <input type="checkbox" ${on?'checked':''} onchange="togglePref('${p.id}',this)">
+        <div class="t-track"></div>
+        <div class="t-thumb"></div>
+      </label>
     </div>`;
   }).join('');
-  renderCustomPrefs();
-}
-
-function renderCustomPrefs(){
-  const customs=prof.preferences.filter(p=>!PREFS.find(x=>x.id===p));
-  const el=document.getElementById('customPrefs');
-  if(!customs.length){el.innerHTML='';return;}
-  el.innerHTML='<div class="chips">'+customs.map(c=>
-    `<span class="chip on" onclick="removeCustomPref('${c}')">${c} ✕</span>`
-  ).join('')+'</div>';
 }
 
 function togglePref(id,el){
   const idx=prof.preferences.indexOf(id);
-  if(idx>-1) prof.preferences.splice(idx,1);
-  else prof.preferences.push(id);
-  el.classList.toggle('on');
-  el.querySelector('.pi-check').textContent=prof.preferences.includes(id)?'✓':'';
-  renderHome();
+  if(el.checked){if(idx===-1)prof.preferences.push(id);}
+  else{if(idx>-1)prof.preferences.splice(idx,1);}
 }
 
-function addCustomPref(){
-  const input=document.getElementById('customPrefInput');
-  const val=input.value.trim();
-  if(val&&!prof.preferences.includes(val)){
-    prof.preferences.push(val);
-    input.value='';
-    renderCustomPrefs();
-    renderHome();
-  }
-}
-
-function removeCustomPref(val){
-  prof.preferences=prof.preferences.filter(p=>p!==val);
-  renderCustomPrefs();renderHome();
-}
-
-function renderProfilePage(){
+function renderProfile(){
   document.getElementById('familyInput').value=prof.family_size;
   document.getElementById('budgetProfileInput').value=prof.weekly_budget||'';
   document.getElementById('lz').classList.toggle('on',prof.language==='uz');
   document.getElementById('lr').classList.toggle('on',prof.language==='ru');
-  renderPrefGrid();
-  renderShoppingList();
+  renderPrefList();
 }
 
-function renderShoppingList(){
+function renderShopList(){
   const t=L();
-  const sec=document.getElementById('profileListSection');
+  const wrap=document.getElementById('shopWrap');
   if(!prof.ingredients||prof.ingredients.length===0){
-    sec.innerHTML=`<div style="height:12px"></div><div class="empty">
-      <div class="ei">🛒</div>
-      <h3>${t.no_list}</h3>
-      <p>${t.no_list_sub}</p>
-    </div>`;
+    wrap.innerHTML=`<div class="empty"><div class="ei">🛒</div><h3>${t.list_empty}</h3><p>${t.list_empty_sub}</p></div>`;
     return;
   }
-  const total=prof.ingredients.length;
-  const boughtCount=prof.ingredients.filter((_,i)=>checked[i]).length;
-  const pct=total>0?Math.round(boughtCount/total*100):0;
   const rows=prof.ingredients.map((item,i)=>{
     const d=!!checked[i];
-    return `<li class="ing-row">
-      <button class="chk${d?' done':''}" onclick="toggleIng(${i})">${d?'✓':''}</button>
-      <span class="ing-name${d?' done':''}">${item.name}</span>
-      <span class="ing-price">${item.price||''}</span>
-    </li>`;
+    return `<div class="list-item">
+      <button class="l-chk${d?' done':''}" onclick="togIng(${i})">${d?'✓':''}</button>
+      <span class="l-name${d?' done':''}">${item.name}</span>
+      <span class="l-price">${item.price||''}</span>
+      <button class="l-del" onclick="delIng(${i})">🗑️</button>
+    </div>`;
   }).join('');
-
-  sec.innerHTML=`<div style="height:16px"></div>
-    <p class="sec-t">${t.shopping_title}: ${prof.meal_name||''}</p>
-    <div class="tabs">
-      <button class="tab on" id="tab-all" onclick="filterIng('all')">${t.all} (${total})</button>
-      <button class="tab" id="tab-p" onclick="filterIng('pending')">${t.pending} (${total-boughtCount})</button>
-      <button class="tab" id="tab-d" onclick="filterIng('done')">${t.bought} (${boughtCount})</button>
+  const bought=prof.ingredients.filter((_,i)=>checked[i]).length;
+  wrap.innerHTML=`<div class="shop-wrap">
+    ${rows}
+    <div class="list-total">
+      <span class="list-total-l">${t.total}</span>
+      <span class="list-total-r">${bought}/${prof.ingredients.length} ta</span>
     </div>
-    <div class="card">
-      <ul class="ing-list">${rows}</ul>
-      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-      <div class="prog-txt">${boughtCount}/${total} ${t.progress_suf}</div>
-    </div>
-    <button class="btn btn-danger" onclick="clearChecked()">${t.done_btn}</button>`;
+  </div>
+  <button class="btn btn-danger mt8" onclick="clearList()">${t.clear}</button>`;
 }
 
-function filterIng(mode){
-  ['all','p','d'].forEach(t=>document.getElementById('tab-'+t)?.classList.remove('on'));
-  document.getElementById('tab-'+(mode==='all'?'all':mode==='pending'?'p':'d')).classList.add('on');
-  document.querySelectorAll('.ing-row').forEach((el,i)=>{
-    const d=!!checked[i];
-    el.style.display=mode==='all'?'':(mode==='pending'?d?'none':'':d?'':'none');
-  });
-}
-
-function toggleIng(i){
+function togIng(i){
   checked[i]=!checked[i];
   localStorage.setItem('chk_'+userId,JSON.stringify(checked));
-  renderShoppingList();
+  renderShopList();renderHome();
 }
 
-function clearChecked(){
-  const msg=prof.language==='uz'?'Xaridni tugatdimi?':'Покупки завершены?';
-  if(tg){tg.showConfirm(msg,ok=>{if(ok){checked={};localStorage.setItem('chk_'+userId,'{}');renderShoppingList();}});}
-  else if(confirm(msg)){checked={};localStorage.setItem('chk_'+userId,'{}');renderShoppingList();}
+function delIng(i){
+  prof.ingredients.splice(i,1);
+  const nc={};
+  Object.keys(checked).forEach(k=>{const ki=parseInt(k);if(ki<i)nc[k]=checked[k];else if(ki>i)nc[ki-1]=checked[k];});
+  checked=nc;
+  localStorage.setItem('chk_'+userId,JSON.stringify(checked));
+  renderShopList();renderHome();
 }
 
-// ─── AI ACTIONS ─────────────────────────────────
-function showLoader(id){
+function clearList(){
+  const t=L();
+  const go=()=>{prof.ingredients=[];checked={};localStorage.setItem('chk_'+userId,'{}');renderShopList();renderHome();};
+  if(tg){tg.showConfirm(t.clear_confirm,ok=>{if(ok)go();});}
+  else if(confirm(t.clear_confirm))go();
+}
+
+// ─── AI ─────────────────────────────────────────
+function loader(id){
   document.getElementById(id).innerHTML=`<div class="loader"><div class="spin"></div><p>${L().loading}</p></div>`;
 }
 
-function showAIResult(id,text,ingredients){
-  const fmtText=text
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g,'$1');
-  let html=`<div class="result">${fmtText}</div>`;
-  if(ingredients&&ingredients.length>0){
-    const rows=ingredients.map((item,i)=>{
-      const d=!!checked[i];
-      return `<li class="ing-row">
-        <button class="chk${d?' done':''}" onclick="tempToggle(${i},'${id}')">${d?'✓':''}</button>
-        <span class="ing-name${d?' done':''}">${item.name}</span>
-        <span class="ing-price">${item.price||''}</span>
-      </li>`;
-    }).join('');
-    html+=`<div class="card" style="margin-top:12px">
-      <p class="card-t">🛒 Masalliqlar</p>
-      <ul class="ing-list">${rows}</ul>
-    </div>`;
-  }
-  const el=document.getElementById(id);
-  el.innerHTML=html;
-  el.scrollIntoView({behavior:'smooth',block:'start'});
+function errMsg(id){
+  document.getElementById(id).innerHTML=`<div class="err">${L().err}</div>`;
 }
 
-function tempToggle(i,containerId){
-  checked[i]=!checked[i];
-  localStorage.setItem('chk_'+userId,JSON.stringify(checked));
-  const btns=document.querySelectorAll(`#${containerId} .ing-row .chk`);
-  if(btns[i]){
-    btns[i].classList.toggle('done',!!checked[i]);
-    btns[i].textContent=checked[i]?'✓':'';
-    btns[i].nextElementSibling.classList.toggle('done',!!checked[i]);
+function foodCard(mealName, priceStr, ingredients, addFn){
+  const t=L();
+  const MAP={'osh':'🍛',"lag'mon":'🍜','manti':'🥟','shurva':'🍲','somsa':'🥮','dimlama':'🥘','пlov':'🍛','плов':'🍛','лагман':'🍜','суп':'🍲','манты':'🥟'};
+  let emoji='🍽️';
+  const low=mealName.toLowerCase();
+  for(const[k,v]of Object.entries(MAP)){if(low.includes(k)){emoji=v;break;}}
+  const ingrRows=(ingredients||[]).slice(0,6).map(x=>`<li>${x.name}</li>`).join('');
+  return `<div class="food-card">
+    <div class="food-img">
+      <span style="filter:drop-shadow(0 4px 16px rgba(0,0,0,.5))">${emoji}</span>
+      <div class="food-img-name">${mealName}</div>
+    </div>
+    <div style="padding:16px">
+      ${priceStr?`<div class="food-price">${priceStr}</div>`:''}
+      ${ingrRows?`<div class="food-ingr-t">${t.ingr_title}</div><ul class="food-ingr">${ingrRows}</ul>`:''}
+      <button class="add-btn" onclick="${addFn}">🛒 ${t.add_btn}</button>
+    </div>
+  </div>`;
+}
+
+function showResult(id, text, mealName, ingredients){
+  const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'$1');
+  const pm=text.match(/[~≈]?\s*([\d\s,]+)\s*(so['']?m|сум)/i);
+  const price=pm?pm[0]:'';
+  let html=`<div class="result">${fmt}</div>`;
+  if(mealName&&ingredients&&ingredients.length>0){
+    html+=foodCard(mealName,price,ingredients,`addToList(this,'${mealName.replace(/'/g,"\\'")}')`);
   }
+  document.getElementById(id).innerHTML=html;
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function addToList(btn,name){
+  // ingredients already in prof from doSuggest/doRecipe
+  checked={};localStorage.setItem('chk_'+userId,'{}');
+  renderShopList();renderHome();
+  btn.textContent='✅ '+( prof.language==='uz'?'Qo\'shildi!':'Добавлено!');
+  btn.style.background='var(--green-d)';btn.disabled=true;
+  toast(L().added);
+  setTimeout(()=>goTab('list'),1000);
 }
 
 async function doSuggest(){
   const pref=document.getElementById('preferenceInput').value.trim();
-  if(!pref){toast(prof.language==='uz'?"Iltimos, yozing":'Пожалуйста, введите');return;}
-  showLoader('suggestResult');
+  if(!pref){toast(prof.language==='uz'?"Iltimos, yozing":'Введите текст');return;}
+  loader('suggestResult');
   try{
     const d=await api('/api/suggest','POST',{user_id:userId,preference:pref});
-    if(d.error) throw new Error(d.error);
-    prof.meal_name=d.meal_name;
-    prof.ingredients=d.ingredients||[];
+    if(d.error)throw new Error(d.error);
+    prof.meal_name=d.meal_name;prof.ingredients=d.ingredients||[];
     checked={};localStorage.setItem('chk_'+userId,'{}');
-    showAIResult('suggestResult',d.text,d.ingredients);
-    renderShoppingList();renderHome();
-  }catch(e){
-    document.getElementById('suggestResult').innerHTML=`<div class="card" style="color:#FF3B30">Xatolik yuz berdi. Qaytadan urining.</div>`;
-  }
+    showResult('suggestResult',d.text,d.meal_name,d.ingredients);
+    renderHome();
+  }catch(e){errMsg('suggestResult');}
 }
 
 async function doRecipe(){
   const name=document.getElementById('recipeInput').value.trim();
   if(!name){toast(prof.language==='uz'?"Ovqat nomini yozing":'Введите название');return;}
-  showLoader('recipeResult');
+  loader('recipeResult');
   try{
     const d=await api('/api/recipe','POST',{user_id:userId,meal_name:name});
-    if(d.error) throw new Error(d.error);
-    showAIResult('recipeResult',d.text,d.ingredients);
-  }catch(e){
-    document.getElementById('recipeResult').innerHTML=`<div class="card" style="color:#FF3B30">Xatolik yuz berdi.</div>`;
-  }
+    if(d.error)throw new Error(d.error);
+    if(d.ingredients&&d.ingredients.length>0){prof.meal_name=name;prof.ingredients=d.ingredients;}
+    showResult('recipeResult',d.text,name,d.ingredients);
+    renderHome();
+  }catch(e){errMsg('recipeResult');}
 }
 
 async function doBudgetPlan(){
   const budget=parseFloat(document.getElementById('budgetInput').value);
-  if(!budget||budget<10000){toast(prof.language==='uz'?'Kamida 10,000 so\'m':'Минимум 10,000 сум');return;}
-  showLoader('budgetResult');
+  if(!budget||budget<10000){toast(prof.language==='uz'?'Kamida 10 000 so\'m':'Минимум 10 000 сум');return;}
+  loader('budgetResult');
   try{
     const d=await api('/api/budget-plan','POST',{user_id:userId,budget});
-    if(d.error) throw new Error(d.error);
-    prof.weekly_budget=budget;
-    renderBudgetHero();renderHome();
-    const title=prof.language==='uz'?'Haftalik reja':'Недельный план';
-    showPlanResult('budgetResult',d.text,d.ingredients||[],title);
-  }catch(e){
-    document.getElementById('budgetResult').innerHTML=`<div class="card" style="color:#FF3B30">Xatolik yuz berdi.</div>`;
-  }
+    if(d.error)throw new Error(d.error);
+    prof.weekly_budget=budget;renderHome();
+    showPlan('budgetResult',d.text,d.ingredients||[],prof.language==='uz'?'Haftalik reja':'Недельный план');
+  }catch(e){errMsg('budgetResult');}
 }
 
 async function doWeeklyPlan(){
-  goTab('budget');
-  showLoader('budgetResult');
+  loader('budgetResult');
   try{
     const d=await api('/api/weekly-plan','POST',{user_id:userId});
-    if(d.error) throw new Error(d.error);
-    const title=prof.language==='uz'?'Haftalik reja':'Недельный план';
-    showPlanResult('budgetResult',d.text,d.ingredients||[],title);
-  }catch(e){
-    document.getElementById('budgetResult').innerHTML=`<div class="card" style="color:#FF3B30">Xatolik yuz berdi.</div>`;
-  }
+    if(d.error)throw new Error(d.error);
+    showPlan('budgetResult',d.text,d.ingredients||[],prof.language==='uz'?'Haftalik reja':'Недельный план');
+  }catch(e){errMsg('budgetResult');}
 }
 
-function showPlanResult(id, text, ingredients, planTitle){
-  lastPlan={text, ingredients, title:planTitle};
-  const fmtText=text
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g,'$1');
-  const saveLabel=prof.language==='uz'?'🛒 Korzinkaga saqlash':'🛒 Добавить в корзину';
-  let html=`<div class="result">${fmtText}</div>`;
+function showPlan(id, text, ingredients, title){
+  lastPlan={text,ingredients,title};
+  const t=L();
+  const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'$1');
+  let ingHtml='';
   if(ingredients&&ingredients.length>0){
-    const rows=ingredients.map(item=>`<li class="ing-row">
-      <span class="ing-name">${item.name}</span>
-      <span class="ing-price">${item.price||''}</span>
-    </li>`).join('');
-    html+=`<div class="card" style="margin-top:12px">
-      <p class="card-t">🛒 ${prof.language==='uz'?'Haftalik masalliqlar':'Список покупок'} (${ingredients.length})</p>
-      <ul class="ing-list">${rows}</ul>
+    const rows=ingredients.slice(0,8).map(x=>`<li>${x.name}${x.price?' — '+x.price:''}</li>`).join('');
+    ingHtml=`<div class="food-card" style="margin-top:12px">
+      <div style="padding:16px">
+        <div style="font-size:15px;font-weight:700;margin-bottom:10px">🛒 ${t.weekly_ingr} (${ingredients.length} ta)</div>
+        <ul class="food-ingr" style="margin-bottom:16px">${rows}</ul>
+        <button class="add-btn" onclick="savePlan(this)">${t.add_btn}</button>
+      </div>
     </div>`;
   }
-  html+=`<button class="btn btn-p" style="margin-top:10px" id="savePlanBtn" onclick="savePlanToBasket(this)">${saveLabel}</button>`;
-  const el=document.getElementById(id);
-  el.innerHTML=html;
-  el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById(id).innerHTML=`<div class="result">${fmt}</div>${ingHtml}`;
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-async function savePlanToBasket(btn){
-  btn.disabled=true;
-  const savedLabel=prof.language==='uz'?'✅ Saqlandi!':'✅ Сохранено!';
+async function savePlan(btn){
+  btn.disabled=true;const t=L();
   try{
-    if(userId){
-      await api('/api/save-plan','POST',{user_id:userId,meal_name:lastPlan.title,plan_text:lastPlan.text});
-    }
-    prof.meal_name=lastPlan.title;
-    prof.ingredients=lastPlan.ingredients||[];
+    if(userId) await api('/api/save-plan','POST',{user_id:userId,meal_name:lastPlan.title,plan_text:lastPlan.text});
+    prof.meal_name=lastPlan.title;prof.ingredients=lastPlan.ingredients||[];
     checked={};localStorage.setItem('chk_'+userId,'{}');
-    renderShoppingList();renderHome();
-    btn.textContent=savedLabel;
-    btn.classList.remove('btn-p');btn.classList.add('btn-s');
-    toast(savedLabel);
-  }catch(e){
-    btn.disabled=false;
-    toast(prof.language==='uz'?'Xatolik yuz berdi':'Ошибка');
-  }
+    renderShopList();renderHome();
+    btn.textContent='✅ '+( prof.language==='uz'?'Qo\'shildi!':'Добавлено!');
+    btn.style.background='var(--green-d)';
+    toast(t.added);
+    setTimeout(()=>goTab('list'),1000);
+  }catch(e){btn.disabled=false;toast(t.err);}
 }
-
-function openList(){ goTab('profile'); }
 
 // ─── PROFILE SAVE ────────────────────────────────
 async function saveProfile(){
-  const family=parseInt(document.getElementById('familyInput').value)||2;
-  const budget=parseFloat(document.getElementById('budgetProfileInput').value)||0;
-  prof.family_size=Math.max(1,Math.min(20,family));
-  prof.weekly_budget=budget;
+  prof.family_size=Math.max(1,Math.min(20,parseInt(document.getElementById('familyInput').value)||2));
+  prof.weekly_budget=parseFloat(document.getElementById('budgetProfileInput').value)||0;
   if(userId){
     await api('/api/profile','POST',{
-      user_id:userId, family_size:prof.family_size,
-      weekly_budget:prof.weekly_budget, language:prof.language,
+      user_id:userId,family_size:prof.family_size,
+      weekly_budget:prof.weekly_budget,language:prof.language,
       preferences:prof.preferences
     });
   }
-  toast(L().saved);
-  renderAll();
+  toast(L().saved);renderAll();
 }
 
 async function setLang(lang){
@@ -739,44 +739,43 @@ async function setLang(lang){
   document.getElementById('lz').classList.toggle('on',lang==='uz');
   document.getElementById('lr').classList.toggle('on',lang==='ru');
   if(userId) await api('/api/profile','POST',{user_id:userId,language:lang});
-  renderAll();goTab('home');
+  renderAll();
 }
 
-// ─── NAV ────────────────────────────────────────
+// ─── NAV ─────────────────────────────────────────
 function goTab(tab){
   navStack.push(curTab);curTab=tab;
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
   document.getElementById('scr-'+tab).classList.add('on');
   const nb=document.getElementById('nb-'+tab);
-  if(nb) nb.classList.add('on');
-  const titles={home:L().home_title,suggest:L().suggest_title,recipe:L().recipe_title,budget:L().budget_title,profile:L().profile_title};
-  document.getElementById('hdrTitle').textContent=titles[tab]||'🛒 Bozorlik';
-  document.getElementById('backBtn').classList.toggle('vis',tab!=='home');
+  if(nb)nb.classList.add('on');
   window.scrollTo(0,0);
 }
 
-function goBack(){
-  const prev=navStack.pop()||'home';
-  curTab=prev;
-  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
-  document.getElementById('scr-'+prev).classList.add('on');
-  const nb=document.getElementById('nb-'+prev);
-  if(nb) nb.classList.add('on');
-  document.getElementById('backBtn').classList.toggle('vis',prev!=='home');
+function setSuggestTab(tab){
+  ['suggest','recipe','budget'].forEach(t=>{
+    document.getElementById('st-'+t).classList.toggle('on',t===tab);
+    document.getElementById('sub-'+t).style.display=t===tab?'block':'none';
+  });
+  setSuggestTabText(tab);
 }
 
-// ─── UTILS ──────────────────────────────────────
-function fmtNum(n){ return Number(n).toLocaleString('uz-UZ'); }
+function setSuggestTabText(tab){
+  const cur=tab||(['suggest','recipe','budget'].find(t=>document.getElementById('st-'+t).classList.contains('on'))||'suggest');
+  const map={suggest:L().suggest_h,recipe:L().recipe_h,budget:L().budget_h};
+  const el=document.getElementById('suggestHdrT');
+  if(el)el.textContent=map[cur]||map.suggest;
+}
 
+// ─── UTILS ───────────────────────────────────────
+function fmtNum(n){return Number(n).toLocaleString('uz-UZ');}
 function toast(msg){
   const el=document.getElementById('toast');
   el.textContent=msg;el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2000);
+  setTimeout(()=>el.classList.remove('show'),2200);
 }
 
-// ─── INIT ────────────────────────────────────────
 loadProfile();
 </script>
 </body>
