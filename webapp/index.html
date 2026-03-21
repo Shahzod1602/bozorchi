@@ -141,6 +141,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .li-chk.done::after{content:'';position:absolute;width:6px;height:10px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px)}
 .li-name{flex:1;font-size:14px;font-weight:500;color:var(--text)}
 .li-name.done{text-decoration:line-through;color:var(--sub)}
+.li-qty{font-size:12px;color:var(--sub);font-weight:500;white-space:nowrap;margin-right:4px}
 .li-price{font-size:13px;color:var(--p);font-weight:700;margin-right:8px;white-space:nowrap}
 .li-del{width:30px;height:30px;border-radius:10px;background:var(--red-l);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;position:relative}
 .li-del::before,.li-del::after{content:'';position:absolute;width:12px;height:2px;background:var(--red);border-radius:1px}
@@ -617,7 +618,7 @@ function renderHome(){
     const d=!!checked[i];
     return `<div class="prev-row">
       <div class="prev-dot${d?' done':''}"></div>
-      <span class="prev-name${d?' done':''}">${item.name}</span>
+      <span class="prev-name${d?' done':''}">${item.name}${item.qty?' <span style="color:var(--sub);font-weight:400;font-size:12px">'+item.qty+'</span>':''}</span>
       <span class="prev-price">${item.price||''}</span>
     </div>`;
   }).join('');
@@ -690,6 +691,7 @@ function renderShopList(){
     return `<div class="li">
       <button class="li-chk${d?' done':''}" onclick="togIng(${i})"></button>
       <span class="li-name${d?' done':''}">${item.name}</span>
+      ${item.qty?`<span class="li-qty">${item.qty}</span>`:''}
       <span class="li-price">${item.price||''}</span>
       <button class="li-del" onclick="delIng(${i})"></button>
     </div>`;
@@ -827,16 +829,7 @@ function clearFridge(){
 function addBoughtToFridge(){
   const bought=prof.ingredients.filter((_,i)=>checked[i]);
   if(!bought.length){toast(prof.language==='uz'?'Avval mahsulotlarni belgilang':'Сначала отметьте товары');return;}
-  // Parse "Un: 2 stakan" → {name:"Un", qty:"2 stakan"}
-  const parsed=bought.map(item=>{
-    const raw=typeof item==='string'?item:item.name||'';
-    if(raw.includes(':')){
-      const [n,...rest]=raw.split(':');
-      return {name:n.trim(), qty:rest.join(':').trim()};
-    }
-    return {name:raw, qty:''};
-  });
-  addToFridge(parsed);
+  addToFridge(bought);
 }
 
 function togIng(i){

@@ -50,20 +50,31 @@ def parse_ingredients(text: str) -> list:
         price_match = re.search(r'[~≈]?\s*[\d\s,]+\s*(so\'?m|сум|sum)', line_clean, re.IGNORECASE)
         price = price_match.group(0).strip() if price_match else ''
 
+        # Split left side (before price dash) into name and qty
         if ' - ' in line_clean:
-            name_part = line_clean.split(' - ')[0]
+            left = line_clean.split(' - ')[0]
         elif ' — ' in line_clean:
-            name_part = line_clean.split(' — ')[0]
+            left = line_clean.split(' — ')[0]
         elif ':' in line_clean:
-            name_part = line_clean.split(':')[0]
+            left = line_clean  # handle below
         else:
-            name_part = line_clean.split('~')[0] if '~' in line_clean else line_clean
+            left = line_clean.split('~')[0] if '~' in line_clean else line_clean
 
-        name_part = clean_markdown(name_part).strip()
+        left = clean_markdown(left).strip()
+
+        # Separate "Name: qty" → name, qty
+        if ':' in left:
+            parts = left.split(':', 1)
+            name_part = parts[0].strip()
+            qty_part = parts[1].strip()
+        else:
+            name_part = left
+            qty_part = ''
+
         key = name_part.lower()
         if name_part and len(name_part) > 1 and key not in seen:
             seen.add(key)
-            ingredients.append({"name": name_part, "price": price})
+            ingredients.append({"name": name_part, "qty": qty_part, "price": price})
 
     return ingredients
 
