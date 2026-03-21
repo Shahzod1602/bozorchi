@@ -286,11 +286,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .prod-unit{font-size:11px;color:var(--sub)}
 .prod-price{font-size:14px;font-weight:800;color:var(--p);margin-top:2px}
 .prod-ctrl{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
-.prod-add{flex:1;padding:8px 0;background:var(--p);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;text-align:center}
-.prod-add:active{opacity:.8}
-.prod-stepper{display:flex;align-items:center;gap:0;flex:1;background:var(--pl);border-radius:10px;overflow:hidden}
-.prod-stepper button{flex:1;height:32px;border:none;background:none;font-size:18px;font-weight:700;color:var(--p);cursor:pointer}
-.prod-stepper span{font-size:14px;font-weight:700;color:var(--text);min-width:22px;text-align:center}
+.prod-discount{position:absolute;top:8px;left:8px;background:#FF3B30;color:#fff;font-size:11px;font-weight:800;padding:3px 7px;border-radius:8px}
+.prod-old-price{font-size:11px;color:var(--sub);text-decoration:line-through}
+.prod-img-real{width:100%;height:110px;object-fit:contain;padding:10px;box-sizing:border-box;background:#fff}
 .krz-ac{position:relative;flex:1.4;min-width:0}
 .krz-ac input{width:100%;box-sizing:border-box}
 .krz-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--p);border-radius:12px;box-shadow:0 8px 24px rgba(88,101,242,.15);z-index:999;overflow:hidden;max-height:240px;overflow-y:auto}
@@ -916,38 +914,39 @@ function delKrz(i){
   saveKrz();renderKrz();
 }
 /* ── SHOP ── */
-let shopProducts=[], shopCat='Barchasi', shopCart={};
+let shopProducts=[], shopCat='Barchasi', shopLoaded=false;
+const shopLang=()=>prof.language||'uz';
 
 async function openShop(){
   document.getElementById('scr-shop').style.transform='translateX(0)';
-  if(!shopProducts.length) await loadShopProducts();
-  renderShopGrid();
+  if(!shopLoaded) await loadShopProducts();
 }
 function closeShop(){
   document.getElementById('scr-shop').style.transform='translateX(100%)';
-  // sync cart to krz
-  Object.entries(shopCart).forEach(([name,v])=>{
-    if(!v.qty) return;
-    const key=fridgeKey(name);
-    const idx=krz.findIndex(i=>fridgeKey(i.name)===key);
-    const entry={name,qty:v.qty+' '+v.unit,qty_n:v.qty,price:v.price*v.qty};
-    if(idx>-1) krz[idx]=entry; else krz.push(entry);
-  });
-  saveKrz();renderKrz();
 }
 
 async function loadShopProducts(){
+  const grid=document.getElementById('shopGrid');
+  grid.style.gridTemplateColumns='1fr';
+  grid.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--sub)">Yuklanmoqda...</div>`;
   try{
-    const [cats, prods]=await Promise.all([
-      fetch('/api/categories').then(r=>r.json()),
-      fetch('/api/products').then(r=>r.json())
-    ]);
-    shopProducts=prods;
-    const catBar=document.getElementById('shopCats');
-    catBar.innerHTML=[{name:'Barchasi'},...cats.map(c=>({name:c}))].map(c=>
-      `<button class="shop-cat-btn${c.name==='Barchasi'?' on':''}" onclick="shopSetCat('${c.name}')">${c.name}</button>`
+    const data=await fetch('/api/korzinka-products').then(r=>r.json());
+    if(data.error) throw new Error(data.error);
+    shopProducts=data;
+    shopLoaded=true;
+    grid.style.gridTemplateColumns='1fr 1fr';
+    const isUz=shopLang()==='uz';
+    const cats=[...new Set(data.map(p=>isUz?p.category_uz:p.category_ru))].filter(Boolean);
+    const allLabel=isUz?'Barchasi':'Все';
+    shopCat=allLabel;
+    document.getElementById('shopCats').innerHTML=[allLabel,...cats].map(c=>
+      `<button class="shop-cat-btn${c===allLabel?' on':''}" onclick="shopSetCat('${c.replace(/'/g,"\\'")}')">${c}</button>`
     ).join('');
-  }catch(e){}
+    renderShopGrid();
+  }catch(e){
+    grid.style.gridTemplateColumns='1fr';
+    grid.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--sub)">Yuklab bo'lmadi</div>`;
+  }
 }
 
 function shopSetCat(cat){
@@ -957,42 +956,39 @@ function shopSetCat(cat){
 }
 
 function shopFilter(){
-  const q=document.getElementById('shopSearch').value.trim();
-  renderShopGrid(q);
+  renderShopGrid(document.getElementById('shopSearch').value.trim());
 }
 
 function renderShopGrid(q=''){
   const grid=document.getElementById('shopGrid');
+  const isUz=shopLang()==='uz';
+  const allLabel=isUz?'Barchasi':'Все';
   let items=shopProducts;
-  if(shopCat&&shopCat!=='Barchasi') items=items.filter(p=>p.category===shopCat);
-  if(q) items=items.filter(p=>p.name.toLowerCase().includes(q.toLowerCase()));
-  grid.innerHTML=items.map(p=>`
-    <div class="prod-card">
-      <div class="prod-img" style="background:${p.color||'#F5F5F5'}">${p.emoji||'🛒'}</div>
+  if(shopCat&&shopCat!==allLabel)
+    items=items.filter(p=>(isUz?p.category_uz:p.category_ru)===shopCat);
+  if(q) items=items.filter(p=>(isUz?p.name_uz:p.name_ru).toLowerCase().includes(q.toLowerCase()));
+  if(!items.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--sub)">Topilmadi</div>`;
+    return;
+  }
+  grid.innerHTML=items.map(p=>{
+    const name=isUz?p.name_uz:p.name_ru;
+    const img=p.image
+      ?`<img class="prod-img-real" src="${p.image}" alt="" loading="lazy">`
+      :`<div class="prod-img" style="font-size:44px;background:#f5f5f5">🛒</div>`;
+    return `<div class="prod-card" style="position:relative">
+      ${p.discount?`<div class="prod-discount">${p.discount}</div>`:''}
+      ${img}
       <div class="prod-body">
-        <div class="prod-name">${p.name}</div>
-        <div class="prod-unit">${p.unit}</div>
-        <div class="prod-price">${fmtNum(p.price)} so'm</div>
+        <div class="prod-name">${name}</div>
+        <div class="prod-unit">${p.unit||''}</div>
+        <div style="margin-top:4px">
+          ${p.old_price?`<div class="prod-old-price">${p.old_price} so'm</div>`:''}
+          <div class="prod-price">${p.price} so'm</div>
+        </div>
       </div>
-    </div>`).join('');
-  updateShopCart();
-}
-
-function shopChange(name,price,unit,delta){
-  if(!shopCart[name]) shopCart[name]={qty:0,price,unit};
-  shopCart[name].qty=Math.max(0,shopCart[name].qty+delta);
-  if(shopCart[name].qty===0) delete shopCart[name];
-  renderShopGrid(document.getElementById('shopSearch').value.trim());
-}
-
-function updateShopCart(){
-  const entries=Object.values(shopCart);
-  const total=entries.reduce((s,v)=>s+v.price*v.qty,0);
-  const count=entries.reduce((s,v)=>s+v.qty,0);
-  document.getElementById('shopCartCount').textContent=count;
-  document.getElementById('shopCartBadge').style.display=count>0?'flex':'none';
-  document.getElementById('shopCartTotal').textContent=fmtNum(total)+' so\'m';
-  document.getElementById('shopCartBar').style.display=count>0?'flex':'none';
+    </div>`;
+  }).join('');
 }
 /* ────────── */
 

@@ -1,5 +1,7 @@
 import re
 import os
+import time
+import aiohttp as aiohttp_client
 from aiohttp import web
 import json
 from database import get_user_profile, get_last_shopping_list, update_family_size, update_weekly_budget, update_language, update_preferences
@@ -231,6 +233,47 @@ async def api_products(request):
 @routes.get('/api/categories')
 async def api_categories(request):
     return web.json_response(get_categories())
+
+
+_krz_cache = {"data": None, "ts": 0}
+CACHE_TTL = 1800  # 30 min
+
+@routes.get('/api/korzinka-products')
+async def api_korzinka_products(request):
+    global _krz_cache
+    now = time.time()
+    if _krz_cache["data"] and now - _krz_cache["ts"] < CACHE_TTL:
+        return web.json_response(_krz_cache["data"])
+    try:
+        async with aiohttp_client.ClientSession() as session:
+            async with session.get(
+                "https://catalog.korzinka.uz/api/catalogs/categories/",
+                headers={"Accept": "application/json", "User-Agent": "Mozilla/5.0"},
+                timeout=aiohttp_client.ClientTimeout(total=10)
+            ) as resp:
+                raw = await resp.json(content_type=None)
+        categories = raw.get("data", raw) if isinstance(raw, dict) else raw
+        result = []
+        for cat in categories:
+            cat_name_uz = cat.get("title_uz") or cat.get("title_ru", "")
+            cat_name_ru = cat.get("title_ru", "")
+            for p in cat.get("products", []):
+                result.append({
+                    "id": p.get("id"),
+                    "name_uz": p.get("title_uz") or p.get("title_ru", ""),
+                    "name_ru": p.get("title_ru", ""),
+                    "price": p.get("actual_price", ""),
+                    "old_price": p.get("old_price", ""),
+                    "discount": p.get("discount", ""),
+                    "unit": p.get("weight_param", ""),
+                    "image": p.get("small_image_url", ""),
+                    "category_uz": cat_name_uz,
+                    "category_ru": cat_name_ru,
+                })
+        _krz_cache = {"data": result, "ts": now}
+        return web.json_response(result)
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
 
 
 async def start_webserver(port: int = 8090):
