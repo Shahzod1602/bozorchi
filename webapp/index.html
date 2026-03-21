@@ -699,10 +699,13 @@ function renderShopList(){
   const bought=prof.ingredients.filter((_,i)=>checked[i]).length;
   const fridgeBtnLabel=prof.language==='uz'?'Belgilanganlarni muzlatgichga qo\'sh':'Добавить отмеченные в холодильник';
   const fridgeBtn=bought>0?`<button class="btn-s" onclick="addBoughtToFridge()" style="margin-top:8px">${fridgeBtnLabel} (${bought} ta)</button>`:'';
-  wrap.innerHTML=`<div class="shop-card">${rows}
+  const n=prof.ingredients.length;
+  const label=prof.language==='uz'?`Haftalik masalliqlar — ${n} ta`:`Список покупок — ${n} шт.`;
+  wrap.innerHTML=`<div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">${label}</div>
+  <div class="shop-card">${rows}
     <div class="shop-total">
       <span class="shop-total-l">${t.total}</span>
-      <span class="shop-total-r">${bought} / ${prof.ingredients.length} ta</span>
+      <span class="shop-total-r">${bought} / ${n} ta</span>
     </div></div>
     ${fridgeBtn}
     <button class="btn-d" onclick="clearList()">${t.clear}</button>`;
