@@ -116,11 +116,15 @@ async def api_suggest(request):
     data = await request.json()
     user_id = data.get('user_id')
     preference = data.get('preference', '')
+    fridge_items = data.get('fridge_items', [])
     if not user_id or not preference:
         return web.json_response({"error": "missing fields"}, status=400)
     try:
         profile = await get_user_profile(int(user_id))
-        result = await get_meal_suggestion(preference, profile['family_size'], profile['language'], profile.get('preferences', []))
+        result = await get_meal_suggestion(
+            preference, profile['family_size'], profile['language'],
+            profile.get('preferences', []), fridge_items
+        )
         ingredients = parse_ingredients(result['full_response'])
         from database import save_shopping_list
         await save_shopping_list(int(user_id), result['meal_name'], result['full_response'], result['full_response'])

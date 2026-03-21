@@ -44,15 +44,24 @@ def build_pref_text(preferences: list, lang: str) -> str:
         return f"\n⚠️ ВАЖНЫЕ ОГРАНИЧЕНИЯ (ОБЯЗАТЕЛЬНО УЧТИ):\n" + "\n".join(f"  - {i}" for i in items) + "\n"
 
 
-async def get_meal_suggestion(preferences: str, family_size: int, lang: str = "uz", user_prefs: list = None) -> dict:
+async def get_meal_suggestion(preferences: str, family_size: int, lang: str = "uz", user_prefs: list = None, fridge_items: list = None) -> dict:
     prices = get_price_reference()
     pref_text = build_pref_text(user_prefs or [], lang)
+
+    fridge_text = ""
+    if fridge_items:
+        items_str = ", ".join(fridge_items)
+        if lang == "uz":
+            fridge_text = f"\n🧊 MUZLATGICHDAGI MAVJUD MAHSULOTLAR (albatta shu mahsulotlardan foydalanib tavsiya ber):\n{items_str}\n"
+        else:
+            fridge_text = f"\n🧊 ПРОДУКТЫ В ХОЛОДИЛЬНИКЕ (обязательно используй эти продукты в рецепте):\n{items_str}\n"
+
     prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Foydalanuvchi:
 - Oila: {family_size} kishi
 - Istak: {preferences}
-{pref_text}
+{pref_text}{fridge_text}
 {prices}
 
 Yuqoridagi REAL narxlardan foydalanib javob ber:
@@ -72,7 +81,7 @@ Yuqoridagi REAL narxlardan foydalanib javob ber:
 Пользователь:
 - Семья: {family_size} человек
 - Пожелание: {preferences}
-{pref_text}
+{pref_text}{fridge_text}
 {prices}
 
 Используй РЕАЛЬНЫЕ цены выше и отвечай:
