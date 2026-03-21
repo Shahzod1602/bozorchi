@@ -598,7 +598,7 @@ let checked={};
 try{checked=JSON.parse(localStorage.getItem('chk_'+userId)||'{}')}catch(e){}
 let krz=[];
 try{krz=JSON.parse(localStorage.getItem('krz_'+userId)||'[]')}catch(e){}
-let krzOpen=krz.length>0;
+let krzOpen=true;
 let fridge=[];
 try{
   const _fr=JSON.parse(localStorage.getItem('frg_'+userId)||'[]');
