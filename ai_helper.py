@@ -248,7 +248,10 @@ DUSHANBA:
 
 [Qolgan kunlar ham]
 
-🛒 UMUMIY MASALLIQLAR: [ro'yxat]"""
+🛒 UMUMIY MASALLIQLAR ({family_size} kishi, 7 kun):
+- [masalliq]: [miqdor] — ~[narx] so'm
+
+💰 TAXMINIY JAMI: ~[narx] so'm"""
     else:
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
@@ -264,7 +267,10 @@ DUSHANBA:
 
 [Остальные дни аналогично]
 
-🛒 ОБЩИЙ СПИСОК ПРОДУКТОВ: [список]"""
+🛒 ОБЩИЙ СПИСОК ПРОДУКТОВ ({family_size} чел., 7 дней):
+- [продукт]: [количество] — ~[цена] сум
+
+💰 ПРИМЕРНАЯ СТОИМОСТЬ: ~[цена] сум"""
 
     response = client.models.generate_content(model=MODEL, contents=prompt)
     return response.text
