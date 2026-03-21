@@ -258,13 +258,14 @@ async def api_korzinka_products(request):
             cat_name_uz = cat.get("title_uz") or cat.get("title_ru", "")
             cat_name_ru = cat.get("title_ru", "")
             for p in cat.get("products", []):
+                prices = p.get("prices", {}) or {}
                 result.append({
                     "id": p.get("id"),
                     "name_uz": p.get("title_uz") or p.get("title_ru", ""),
                     "name_ru": p.get("title_ru", ""),
-                    "price": p.get("actual_price", ""),
-                    "old_price": p.get("old_price", ""),
-                    "discount": p.get("discount", ""),
+                    "price": prices.get("actual_price", ""),
+                    "old_price": prices.get("old_price", ""),
+                    "discount": prices.get("price_tag_name", ""),
                     "unit": p.get("weight_param", ""),
                     "image": p.get("small_image_url", ""),
                     "category_uz": cat_name_uz,

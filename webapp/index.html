@@ -982,7 +982,7 @@ function renderShopGrid(q=''){
       <div class="prod-body">
         <div class="prod-name">${name}</div>
         ${p.old_price?`<div class="prod-old-price">${p.old_price} so'm</div>`:''}
-        <div class="prod-price">${p.price} so'm</div>
+        <div class="prod-price">${p.price?p.price+' so\'m':'—'}</div>
         ${p.unit?`<div class="prod-unit">${p.unit}</div>`:''}
       </div>
     </div>`;
