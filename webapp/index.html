@@ -375,16 +375,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
       </div>
     </div>
     <div class="krz-body" id="krzBody">
-      <div class="krz-add">
-        <div class="krz-ac">
-          <input class="ki-name" type="text" id="krzName" placeholder="Mahsulot nomi..." autocomplete="off"
-            oninput="krzSearch(this.value)" onkeydown="krzKey(event)" onblur="setTimeout(()=>krzHideDrop(),200)">
-          <div class="krz-drop" id="krzDrop" style="display:none"></div>
-        </div>
-        <input class="ki-qty" type="text" id="krzQty" placeholder="Miqdor" onkeydown="if(event.key==='Enter')addKrz()">
-        <input class="ki-price" type="number" id="krzPrice" placeholder="Narx" inputmode="numeric" onkeydown="if(event.key==='Enter')addKrz()">
-        <button onclick="addKrz()">+</button>
-      </div>
       <div id="krzList"></div>
     </div>
   </div>
