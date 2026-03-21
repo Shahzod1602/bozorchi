@@ -116,12 +116,21 @@ async def process_preference(message: Message, state: FSMContext):
 
     await thinking_msg.delete()
     await message.answer(result["full_response"])
+
+    inline_buttons = [
+        [InlineKeyboardButton(text=t(lang, "btn_new_suggest"), callback_data="new_suggestion")],
+    ]
+    if WEBAPP_URL:
+        inline_buttons.append([
+            InlineKeyboardButton(
+                text="🛒 Bozorlik ro'yxatini ko'rish" if lang == "uz" else "🛒 Открыть список покупок",
+                web_app=WebAppInfo(url=WEBAPP_URL)
+            )
+        ])
+
     await message.answer(
         t(lang, "suggest_again"),
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=t(lang, "btn_new_suggest"), callback_data="new_suggestion")],
-            [InlineKeyboardButton(text=t(lang, "btn_save_list"), callback_data="save_list")],
-        ])
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=inline_buttons)
     )
 
 

@@ -8,39 +8,56 @@ routes = web.RouteTableDef()
 WEBAPP_DIR = os.path.join(os.path.dirname(__file__), "webapp")
 
 
+def clean_markdown(text: str) -> str:
+    """Markdown belgilarini olib tashlash"""
+    text = re.sub(r'\*+', '', text)  # ** va * ni olib tashlash
+    text = re.sub(r'_+', '', text)   # _ ni olib tashlash
+    return text.strip()
+
+
 def parse_ingredients(text: str) -> list:
-    """Shopping list textidan ingredientlarni ajratib olish"""
+    """Gemini javobidan ingredientlarni ajratib olish.
+    Gemini * yoki - bilan ro'yxat chiqaradi, ** bold ishlatadi.
+    """
     ingredients = []
     in_section = False
 
     for line in text.split('\n'):
         line = line.strip()
+        line_upper = line.upper()
 
         # Masalliqlar bo'limi boshlanishi
-        if any(kw in line.upper() for kw in ['МАСАЛЛИҚ', 'MASALLIQ', 'ПРОДУКТ', 'СПИСОК', 'BOZORLIK']):
+        if any(kw in line_upper for kw in ['МАСАЛЛИҚ', 'MASALLIQ', 'ПРОДУКТ', 'СПИСОК']):
             in_section = True
             continue
 
-        # Bo'lim tugashi
-        if in_section and line.startswith(('💰', '⏱️', '💡', '━', '📅', '📝')):
+        # Bo'lim tugashi (emoji bilan boshlanadigan yangi bo'lim)
+        if in_section and re.match(r'^[💰⏱️💡━📅📝🍽️]', line):
             in_section = False
 
-        if in_section and line.startswith('-'):
-            # "- kartoshka: 1 kg — ~3,000 so'm" formatini parse qilish
-            line_clean = line.lstrip('- ').strip()
-            # Narxni ajratish
-            price_match = re.search(r'[~≈]?\s*[\d,\s]+\s*(so\'?m|сум)', line_clean, re.IGNORECASE)
+        # - yoki * bilan boshlanadigan qatorlar (Gemini har ikkalasini ishlatadi)
+        if in_section and re.match(r'^[\*\-]\s+', line):
+            line_clean = re.sub(r'^[\*\-]\s+', '', line)
+            line_clean = clean_markdown(line_clean)
+
+            # Narxni ajratish: "~25,500 so'm" yoki "25 500 сум"
+            price_match = re.search(
+                r'[~≈]?\s*[\d\s,]+\s*(so\'?m|сум|sum)',
+                line_clean, re.IGNORECASE
+            )
             price = price_match.group(0).strip() if price_match else ''
 
-            # Nomni ajratish (narxdan oldingi qism)
-            if '—' in line_clean:
-                name_part = line_clean.split('—')[0].strip()
-            elif '-' in line_clean[2:]:
-                name_part = line_clean.rsplit('-', 1)[0].strip()
+            # Nomni ajratish — narxdan oldingi qism
+            if ' - ' in line_clean:
+                name_part = line_clean.split(' - ')[0]
+            elif ' — ' in line_clean:
+                name_part = line_clean.split(' — ')[0]
+            elif ':' in line_clean:
+                name_part = line_clean.split(':')[0]
             else:
-                name_part = line_clean.split('~')[0].strip() if '~' in line_clean else line_clean
+                name_part = line_clean.split('~')[0] if '~' in line_clean else line_clean
 
-            name_part = name_part.rstrip(':').strip()
+            name_part = clean_markdown(name_part).strip()
 
             if name_part and len(name_part) > 1:
                 ingredients.append({"name": name_part, "price": price})
