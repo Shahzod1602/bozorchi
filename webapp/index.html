@@ -837,6 +837,7 @@ async function doWeeklyPlan(){
 function showPlan(id, text, ingredients, title){
   lastPlan={text,ingredients,title};const t=L();
   const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'$1');
+  const newPlanLabel=prof.language==='uz'?'Yangi reja tuzish':'Новый план';
   let ingHtml='';
   if(ingredients?.length>0){
     const rows=ingredients.slice(0,8).map(x=>`<li>${x.name}${x.price?' — '+x.price:''}</li>`).join('');
@@ -846,8 +847,15 @@ function showPlan(id, text, ingredients, title){
       <button class="btn-p" onclick="savePlan(this)">${t.add_btn}</button>
     </div></div>`;
   }
-  document.getElementById(id).innerHTML=`<div class="result">${fmt}</div>${ingHtml}`;
-  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+  const el=document.getElementById(id);
+  el.innerHTML=`<button class="btn-s" style="margin-bottom:12px" onclick="clearPlan('${id}')">${newPlanLabel}</button>
+    <div class="result">${fmt}</div>${ingHtml}`;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function clearPlan(id){
+  document.getElementById(id).innerHTML='';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 async function savePlan(btn){
   btn.disabled=true;const t=L();
