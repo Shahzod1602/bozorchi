@@ -1,7 +1,8 @@
 import re
 import os
 from aiohttp import web
-from database import get_user_profile, get_last_shopping_list, update_family_size, update_weekly_budget, update_language
+import json
+from database import get_user_profile, get_last_shopping_list, update_family_size, update_weekly_budget, update_language, update_preferences
 from ai_helper import get_meal_suggestion, get_recipe_by_name, get_weekly_plan, get_budget_weekly_plan
 
 routes = web.RouteTableDef()
@@ -88,6 +89,8 @@ async def save_profile(request):
             await update_weekly_budget(int(user_id), float(data['weekly_budget']))
         if 'language' in data:
             await update_language(int(user_id), data['language'])
+        if 'preferences' in data:
+            await update_preferences(int(user_id), json.dumps(data['preferences']))
         return web.json_response({"ok": True})
     except Exception as e:
         return web.json_response({"error": str(e)}, status=500)
@@ -102,7 +105,7 @@ async def api_suggest(request):
         return web.json_response({"error": "missing fields"}, status=400)
     try:
         profile = await get_user_profile(int(user_id))
-        result = await get_meal_suggestion(preference, profile['family_size'], profile['language'])
+        result = await get_meal_suggestion(preference, profile['family_size'], profile['language'], profile.get('preferences', []))
         ingredients = parse_ingredients(result['full_response'])
         from database import save_shopping_list
         await save_shopping_list(int(user_id), result['meal_name'], result['full_response'], result['full_response'])
@@ -139,7 +142,7 @@ async def api_weekly_plan(request):
         return web.json_response({"error": "no user_id"}, status=400)
     try:
         profile = await get_user_profile(int(user_id))
-        text = await get_weekly_plan(profile['family_size'], profile['language'])
+        text = await get_weekly_plan(profile['family_size'], profile['language'], profile.get('preferences', []))
         return web.json_response({"text": text})
     except Exception as e:
         return web.json_response({"error": str(e)}, status=500)
@@ -155,7 +158,7 @@ async def api_budget_plan(request):
     try:
         profile = await get_user_profile(int(user_id))
         await update_weekly_budget(int(user_id), float(budget))
-        text = await get_budget_weekly_plan(float(budget), profile['family_size'], profile['language'])
+        text = await get_budget_weekly_plan(float(budget), profile['family_size'], profile['language'], profile.get('preferences', []))
         return web.json_response({"text": text})
     except Exception as e:
         return web.json_response({"error": str(e)}, status=500)

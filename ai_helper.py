@@ -18,15 +18,42 @@ CHEF_ROLE = {
     "ru": "Ты узбекский кулинарный ассистент.",
 }
 
+PREF_LABELS = {
+    "vegetarian": {"uz": "vegetarian (go'sht yemaydi)", "ru": "вегетарианец (без мяса)"},
+    "no_gluten": {"uz": "glutensiz (xamirli ovqat yemaydi)", "ru": "без глютена (не ест мучное)"},
+    "no_pork": {"uz": "cho'chqa go'shti yemaydi", "ru": "не ест свинину"},
+    "no_dairy": {"uz": "sut mahsulotlari yemaydi", "ru": "без молочных продуктов"},
+    "diabetic": {"uz": "qandli diabet (shakarli ovqat yemaydi)", "ru": "диабет (без сахара)"},
+    "low_calorie": {"uz": "kaloriyasi kam ovqat", "ru": "низкокалорийное питание"},
+    "halal": {"uz": "faqat halol mahsulotlar", "ru": "только халяль продукты"},
+    "no_spicy": {"uz": "achchiq ovqat yemaydi", "ru": "без острого"},
+}
 
-async def get_meal_suggestion(preferences: str, family_size: int, lang: str = "uz") -> dict:
+
+def build_pref_text(preferences: list, lang: str) -> str:
+    if not preferences:
+        return ""
+    items = []
+    for p in preferences:
+        if p in PREF_LABELS:
+            items.append(PREF_LABELS[p][lang])
+        else:
+            items.append(p)  # custom preference
+    if lang == "uz":
+        return f"\n⚠️ MUHIM CHEKLOVLAR (ALBATTA HISOBGA OL):\n" + "\n".join(f"  - {i}" for i in items) + "\n"
+    else:
+        return f"\n⚠️ ВАЖНЫЕ ОГРАНИЧЕНИЯ (ОБЯЗАТЕЛЬНО УЧТИ):\n" + "\n".join(f"  - {i}" for i in items) + "\n"
+
+
+async def get_meal_suggestion(preferences: str, family_size: int, lang: str = "uz", user_prefs: list = None) -> dict:
     prices = get_price_reference()
+    pref_text = build_pref_text(user_prefs or [], lang)
     prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Foydalanuvchi:
 - Oila: {family_size} kishi
 - Istak: {preferences}
-
+{pref_text}
 {prices}
 
 Yuqoridagi REAL narxlardan foydalanib javob ber:
@@ -46,7 +73,7 @@ Yuqoridagi REAL narxlardan foydalanib javob ber:
 Пользователь:
 - Семья: {family_size} человек
 - Пожелание: {preferences}
-
+{pref_text}
 {prices}
 
 Используй РЕАЛЬНЫЕ цены выше и отвечай:
@@ -123,14 +150,15 @@ Format:
     return response.text
 
 
-async def get_budget_weekly_plan(budget: float, family_size: int, lang: str = "uz") -> str:
+async def get_budget_weekly_plan(budget: float, family_size: int, lang: str = "uz", user_prefs: list = None) -> str:
     daily_budget = budget / 7
     prices = get_price_reference()
+    pref_text = build_pref_text(user_prefs or [], lang)
     if lang == "uz":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 {family_size} kishilik oila, haftalik byudjet: {budget:,.0f} so'm (kuniga ~{daily_budget:,.0f} so'm).
-
+{pref_text}
 {prices}
 
 Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
@@ -161,7 +189,7 @@ Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Семья {family_size} человек, недельный бюджет: {budget:,.0f} сум (в день ~{daily_budget:,.0f} сум).
-
+{pref_text}
 {prices}
 
 Используй РЕАЛЬНЫЕ цены и составь план на 7 дней в рамках бюджета:
@@ -193,11 +221,13 @@ Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
     return response.text
 
 
-async def get_weekly_plan(family_size: int, lang: str = "uz") -> str:
+async def get_weekly_plan(family_size: int, lang: str = "uz", user_prefs: list = None) -> str:
+    pref_text = build_pref_text(user_prefs or [], lang)
     if lang == "uz":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 {family_size} kishilik oila uchun 7 kunlik ovqat rejasi. O'zbek taomlarini ko'proq qo'sh.
+{pref_text}
 
 📅 HAFTALIK OVQAT REJASI ({family_size} kishi)
 
@@ -213,6 +243,7 @@ DUSHANBA:
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Меню на 7 дней для семьи {family_size} человек. Больше узбекских блюд.
+{pref_text}
 
 📅 НЕДЕЛЬНОЕ МЕНЮ ({family_size} человек)
 

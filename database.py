@@ -15,6 +15,7 @@ async def init_db():
                 family_size INTEGER DEFAULT 2,
                 weekly_budget REAL DEFAULT 0,
                 language TEXT DEFAULT 'uz',
+                preferences TEXT DEFAULT '[]',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
@@ -125,13 +126,26 @@ async def get_family_size(telegram_id: int) -> int:
             return row[0] if row else 2
 
 
+async def update_preferences(telegram_id: int, preferences: str):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(
+            "UPDATE users SET preferences = ? WHERE telegram_id = ?",
+            (preferences, telegram_id)
+        )
+        await db.commit()
+
+
 async def get_user_profile(telegram_id: int) -> dict:
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute(
-            "SELECT family_size, weekly_budget, language FROM users WHERE telegram_id = ?",
+            "SELECT family_size, weekly_budget, language, preferences FROM users WHERE telegram_id = ?",
             (telegram_id,)
         ) as cursor:
             row = await cursor.fetchone()
             if row:
-                return {"family_size": row[0], "weekly_budget": row[1], "language": row[2]}
-            return {"family_size": 2, "weekly_budget": 0, "language": "uz"}
+                import json
+                return {
+                    "family_size": row[0], "weekly_budget": row[1],
+                    "language": row[2], "preferences": json.loads(row[3] or '[]')
+                }
+            return {"family_size": 2, "weekly_budget": 0, "language": "uz", "preferences": []}
