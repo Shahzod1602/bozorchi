@@ -157,11 +157,12 @@ async def api_recipe(request):
 async def api_weekly_plan(request):
     data = await request.json()
     user_id = data.get('user_id')
+    wish = data.get('wish', '')
     if not user_id:
         return web.json_response({"error": "no user_id"}, status=400)
     try:
         profile = await get_user_profile(int(user_id))
-        text = await get_weekly_plan(profile['family_size'], profile['language'], profile.get('preferences', []))
+        text = await get_weekly_plan(profile['family_size'], profile['language'], profile.get('preferences', []), wish)
         ingredients = parse_ingredients(text)
         return web.json_response({"text": text, "ingredients": ingredients})
     except Exception as e:
@@ -173,12 +174,13 @@ async def api_budget_plan(request):
     data = await request.json()
     user_id = data.get('user_id')
     budget = data.get('budget')
+    wish = data.get('wish', '')
     if not user_id or not budget:
         return web.json_response({"error": "missing fields"}, status=400)
     try:
         profile = await get_user_profile(int(user_id))
         await update_weekly_budget(int(user_id), float(budget))
-        text = await get_budget_weekly_plan(float(budget), profile['family_size'], profile['language'], profile.get('preferences', []))
+        text = await get_budget_weekly_plan(float(budget), profile['family_size'], profile['language'], profile.get('preferences', []), wish)
         ingredients = parse_ingredients(text)
         return web.json_response({"text": text, "ingredients": ingredients})
     except Exception as e:

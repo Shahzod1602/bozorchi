@@ -158,15 +158,16 @@ Format:
     return response.text
 
 
-async def get_budget_weekly_plan(budget: float, family_size: int, lang: str = "uz", user_prefs: list = None) -> str:
+async def get_budget_weekly_plan(budget: float, family_size: int, lang: str = "uz", user_prefs: list = None, wish: str = "") -> str:
     daily_budget = budget / 7
     prices = get_price_reference()
     pref_text = build_pref_text(user_prefs or [], lang)
+    wish_text = f"\n🗒️ Foydalanuvchi istagi: {wish}\n" if wish and lang == "uz" else (f"\n🗒️ Пожелание пользователя: {wish}\n" if wish else "")
     if lang == "uz":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 {family_size} kishilik oila, haftalik byudjet: {budget:,.0f} so'm (kuniga ~{daily_budget:,.0f} so'm).
-{pref_text}
+{pref_text}{wish_text}
 {prices}
 
 Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
@@ -197,7 +198,7 @@ Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Семья {family_size} человек, недельный бюджет: {budget:,.0f} сум (в день ~{daily_budget:,.0f} сум).
-{pref_text}
+{pref_text}{wish_text}
 {prices}
 
 Используй РЕАЛЬНЫЕ цены и составь план на 7 дней в рамках бюджета:
@@ -229,13 +230,14 @@ Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
     return response.text
 
 
-async def get_weekly_plan(family_size: int, lang: str = "uz", user_prefs: list = None) -> str:
+async def get_weekly_plan(family_size: int, lang: str = "uz", user_prefs: list = None, wish: str = "") -> str:
     pref_text = build_pref_text(user_prefs or [], lang)
+    wish_text = f"\n🗒️ Foydalanuvchi istagi: {wish}\n" if wish and lang == "uz" else (f"\n🗒️ Пожелание пользователя: {wish}\n" if wish else "")
     if lang == "uz":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 {family_size} kishilik oila uchun 7 kunlik ovqat rejasi. O'zbek taomlarini ko'proq qo'sh.
-{pref_text}
+{pref_text}{wish_text}
 
 📅 HAFTALIK OVQAT REJASI ({family_size} kishi)
 
@@ -251,7 +253,7 @@ DUSHANBA:
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Меню на 7 дней для семьи {family_size} человек. Больше узбекских блюд.
-{pref_text}
+{pref_text}{wish_text}
 
 📅 НЕДЕЛЬНОЕ МЕНЮ ({family_size} человек)
 

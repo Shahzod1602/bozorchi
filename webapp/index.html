@@ -334,8 +334,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
         <label>Haftalik byudjet (so'm)</label>
         <input type="number" id="budgetInput" placeholder="500 000" inputmode="numeric">
       </div>
+      <div class="iw">
+        <label id="weeklyWishLabel">Qo'shimcha xohishlar (ixtiyoriy)</label>
+        <textarea id="weeklyWish" rows="2" placeholder="Masalan: ko'proq sabzavotli, tez tayyorlanadigan..."></textarea>
+      </div>
       <button class="btn-p" onclick="doBudgetPlan()">Haftalik reja tuzish</button>
-      <button class="btn-s" onclick="doWeeklyPlan()">Byudjetsiz haftalik reja</button>
       <div id="budgetResult"></div>
     </div>
   </div>
@@ -815,20 +818,14 @@ async function doRecipe(){
   }catch(e){errMsg('recipeResult');}
 }
 async function doBudgetPlan(){
-  const budget=parseFloat(document.getElementById('budgetInput').value);
-  if(!budget||budget<10000){toast(prof.language==='uz'?'Kamida 10 000 so\'m':'Минимум 10 000 сум');return;}
+  const budget=parseFloat(document.getElementById('budgetInput').value)||0;
+  const wish=document.getElementById('weeklyWish')?.value.trim()||'';
   ldr('budgetResult');
   try{
-    const d=await api('/api/budget-plan','POST',{user_id:userId,budget});
-    if(d.error)throw new Error(d.error);
-    prof.weekly_budget=budget;renderHome();
-    showPlan('budgetResult',d.text,d.ingredients||[],prof.language==='uz'?'Haftalik reja':'Недельный план');
-  }catch(e){errMsg('budgetResult');}
-}
-async function doWeeklyPlan(){
-  ldr('budgetResult');
-  try{
-    const d=await api('/api/weekly-plan','POST',{user_id:userId});
+    const body={user_id:userId,wish};
+    if(budget>=10000){body.budget=budget;prof.weekly_budget=budget;renderHome();}
+    const endpoint=budget>=10000?'/api/budget-plan':'/api/weekly-plan';
+    const d=await api(endpoint,'POST',body);
     if(d.error)throw new Error(d.error);
     showPlan('budgetResult',d.text,d.ingredients||[],prof.language==='uz'?'Haftalik reja':'Недельный план');
   }catch(e){errMsg('budgetResult');}
