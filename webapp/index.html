@@ -344,6 +344,7 @@ const TEXTS = {
 let prof = {family_size:2,weekly_budget:0,language:'uz',preferences:[],meal_name:'',ingredients:[]};
 let checked = JSON.parse(localStorage.getItem('chk_'+userId)||'{}');
 let curTab = 'home', navStack = [];
+let lastPlan = {text:'', ingredients:[], title:''};
 const L = () => TEXTS[prof.language] || TEXTS.uz;
 
 // ─── API ────────────────────────────────────────
@@ -651,7 +652,8 @@ async function doBudgetPlan(){
     if(d.error) throw new Error(d.error);
     prof.weekly_budget=budget;
     renderBudgetHero();renderHome();
-    showAIResult('budgetResult',d.text,null);
+    const title=prof.language==='uz'?'Haftalik reja':'Недельный план';
+    showPlanResult('budgetResult',d.text,d.ingredients||[],title);
   }catch(e){
     document.getElementById('budgetResult').innerHTML=`<div class="card" style="color:#FF3B30">Xatolik yuz berdi.</div>`;
   }
@@ -663,9 +665,53 @@ async function doWeeklyPlan(){
   try{
     const d=await api('/api/weekly-plan','POST',{user_id:userId});
     if(d.error) throw new Error(d.error);
-    showAIResult('budgetResult',d.text,null);
+    const title=prof.language==='uz'?'Haftalik reja':'Недельный план';
+    showPlanResult('budgetResult',d.text,d.ingredients||[],title);
   }catch(e){
     document.getElementById('budgetResult').innerHTML=`<div class="card" style="color:#FF3B30">Xatolik yuz berdi.</div>`;
+  }
+}
+
+function showPlanResult(id, text, ingredients, planTitle){
+  lastPlan={text, ingredients, title:planTitle};
+  const fmtText=text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'$1');
+  const saveLabel=prof.language==='uz'?'🛒 Korzinkaga saqlash':'🛒 Добавить в корзину';
+  let html=`<div class="result">${fmtText}</div>`;
+  if(ingredients&&ingredients.length>0){
+    const rows=ingredients.map(item=>`<li class="ing-row">
+      <span class="ing-name">${item.name}</span>
+      <span class="ing-price">${item.price||''}</span>
+    </li>`).join('');
+    html+=`<div class="card" style="margin-top:12px">
+      <p class="card-t">🛒 ${prof.language==='uz'?'Haftalik masalliqlar':'Список покупок'} (${ingredients.length})</p>
+      <ul class="ing-list">${rows}</ul>
+    </div>`;
+  }
+  html+=`<button class="btn btn-p" style="margin-top:10px" id="savePlanBtn" onclick="savePlanToBasket(this)">${saveLabel}</button>`;
+  const el=document.getElementById(id);
+  el.innerHTML=html;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function savePlanToBasket(btn){
+  btn.disabled=true;
+  const savedLabel=prof.language==='uz'?'✅ Saqlandi!':'✅ Сохранено!';
+  try{
+    if(userId){
+      await api('/api/save-plan','POST',{user_id:userId,meal_name:lastPlan.title,plan_text:lastPlan.text});
+    }
+    prof.meal_name=lastPlan.title;
+    prof.ingredients=lastPlan.ingredients||[];
+    checked={};localStorage.setItem('chk_'+userId,'{}');
+    renderShoppingList();renderHome();
+    btn.textContent=savedLabel;
+    btn.classList.remove('btn-p');btn.classList.add('btn-s');
+    toast(savedLabel);
+  }catch(e){
+    btn.disabled=false;
+    toast(prof.language==='uz'?'Xatolik yuz berdi':'Ошибка');
   }
 }
 

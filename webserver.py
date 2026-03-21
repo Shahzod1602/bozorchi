@@ -23,7 +23,7 @@ def parse_ingredients(text: str) -> list:
         line = line.strip()
         line_upper = line.upper()
 
-        if any(kw in line_upper for kw in ['МАСАЛЛИҚ', 'MASALLIQ', 'ПРОДУКТ', 'СПИСОК']):
+        if any(kw in line_upper for kw in ['МАСАЛЛИҚ', 'MASALLIQ', 'ПРОДУКТ', 'СПИСОК', 'BOZORLIK', 'RO\'YXATI', 'ПОКУПОК']):
             in_section = True
             continue
 
@@ -143,7 +143,8 @@ async def api_weekly_plan(request):
     try:
         profile = await get_user_profile(int(user_id))
         text = await get_weekly_plan(profile['family_size'], profile['language'], profile.get('preferences', []))
-        return web.json_response({"text": text})
+        ingredients = parse_ingredients(text)
+        return web.json_response({"text": text, "ingredients": ingredients})
     except Exception as e:
         return web.json_response({"error": str(e)}, status=500)
 
@@ -159,7 +160,24 @@ async def api_budget_plan(request):
         profile = await get_user_profile(int(user_id))
         await update_weekly_budget(int(user_id), float(budget))
         text = await get_budget_weekly_plan(float(budget), profile['family_size'], profile['language'], profile.get('preferences', []))
-        return web.json_response({"text": text})
+        ingredients = parse_ingredients(text)
+        return web.json_response({"text": text, "ingredients": ingredients})
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.post('/api/save-plan')
+async def api_save_plan(request):
+    data = await request.json()
+    user_id = data.get('user_id')
+    meal_name = data.get('meal_name', '')
+    plan_text = data.get('plan_text', '')
+    if not user_id or not plan_text:
+        return web.json_response({"error": "missing fields"}, status=400)
+    try:
+        from database import save_shopping_list
+        await save_shopping_list(int(user_id), meal_name, plan_text, plan_text)
+        return web.json_response({"ok": True})
     except Exception as e:
         return web.json_response({"error": str(e)}, status=500)
 
