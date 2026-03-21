@@ -261,8 +261,8 @@ async def api_korzinka_products(request):
                 prices = p.get("prices", {}) or {}
                 result.append({
                     "id": p.get("id"),
-                    "name_uz": p.get("title_uz") or p.get("title_ru", ""),
-                    "name_ru": p.get("title_ru", ""),
+                    "name_uz": (p.get("title_uz") or "").strip() or (p.get("title_ru") or "").strip() or p.get("title", ""),
+                    "name_ru": (p.get("title_ru") or "").strip() or p.get("title", ""),
                     "price": prices.get("actual_price", ""),
                     "old_price": prices.get("old_price", ""),
                     "discount": prices.get("price_tag_name", ""),

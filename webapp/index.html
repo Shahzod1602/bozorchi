@@ -283,7 +283,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .prod-img-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:10px;box-sizing:border-box}
 .prod-img-real{max-width:100%;max-height:110px;object-fit:contain;display:block}
 .prod-emoji{font-size:48px}
-.prod-body{padding:14px 14px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.prod-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:3px}
 .prod-name{font-size:14px;font-weight:600;color:#222;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .prod-price{font-size:18px;font-weight:800;color:#111;letter-spacing:-.3px;margin-top:4px}
 .prod-old-price{font-size:12px;color:#aaa;text-decoration:line-through}
@@ -980,10 +980,12 @@ function renderShopGrid(q=''){
         <div class="prod-img-inner">${imgInner}</div>
       </div>
       <div class="prod-body">
-        <div class="prod-name">${name}</div>
-        ${p.old_price?`<div class="prod-old-price">${p.old_price} so'm</div>`:''}
+        <div class="prod-name">${name||p.name_ru||'—'}</div>
         <div class="prod-price">${p.price?p.price+' so\'m':'—'}</div>
-        ${p.unit?`<div class="prod-unit">${p.unit}</div>`:''}
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          ${p.old_price?`<span class="prod-old-price">${p.old_price} so'm</span>`:''}
+          ${p.unit?`<span class="prod-unit">${p.unit}</span>`:''}
+        </div>
       </div>
     </div>`;
   }).join('');
