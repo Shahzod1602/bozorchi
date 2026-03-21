@@ -15,40 +15,55 @@ def clean_markdown(text: str) -> str:
     return text.strip()
 
 
+SECTION_KEYWORDS = ['МАСАЛЛИҚ', 'MASALLIQ', 'ПРОДУКТ', 'СПИСОК ПОКУПОК', 'ПОКУПОК НА НЕДЕЛЮ',
+                    "BOZORLIK RO'YXATI", 'HAFTALIK BOZORLIK', 'UMUMIY MASALLIQ']
+
 def parse_ingredients(text: str) -> list:
+    lines = text.split('\n')
+
+    # Find the LAST shopping list section header to avoid duplicates
+    last_idx = -1
+    for i, line in enumerate(lines):
+        lu = line.strip().upper()
+        if any(kw in lu for kw in SECTION_KEYWORDS):
+            last_idx = i
+
+    if last_idx == -1:
+        return []
+
     ingredients = []
-    in_section = False
+    seen = set()
 
-    for line in text.split('\n'):
+    for line in lines[last_idx + 1:]:
         line = line.strip()
-        line_upper = line.upper()
-
-        if any(kw in line_upper for kw in ['МАСАЛЛИҚ', 'MASALLIQ', 'ПРОДУКТ', 'СПИСОК', 'BOZORLIK', 'RO\'YXATI', 'ПОКУПОК']):
-            in_section = True
+        if not line:
+            continue
+        # Stop at summary/tip/separator lines
+        if re.match(r'^[💰⏱️💡━📅📝🍽️💚]', line):
+            break
+        if not re.match(r'^[\*\-]\s+', line):
             continue
 
-        if in_section and re.match(r'^[💰⏱️💡━📅📝🍽️]', line):
-            in_section = False
+        line_clean = re.sub(r'^[\*\-]\s+', '', line)
+        line_clean = clean_markdown(line_clean)
 
-        if in_section and re.match(r'^[\*\-]\s+', line):
-            line_clean = re.sub(r'^[\*\-]\s+', '', line)
-            line_clean = clean_markdown(line_clean)
+        price_match = re.search(r'[~≈]?\s*[\d\s,]+\s*(so\'?m|сум|sum)', line_clean, re.IGNORECASE)
+        price = price_match.group(0).strip() if price_match else ''
 
-            price_match = re.search(r'[~≈]?\s*[\d\s,]+\s*(so\'?m|сум|sum)', line_clean, re.IGNORECASE)
-            price = price_match.group(0).strip() if price_match else ''
+        if ' - ' in line_clean:
+            name_part = line_clean.split(' - ')[0]
+        elif ' — ' in line_clean:
+            name_part = line_clean.split(' — ')[0]
+        elif ':' in line_clean:
+            name_part = line_clean.split(':')[0]
+        else:
+            name_part = line_clean.split('~')[0] if '~' in line_clean else line_clean
 
-            if ' - ' in line_clean:
-                name_part = line_clean.split(' - ')[0]
-            elif ' — ' in line_clean:
-                name_part = line_clean.split(' — ')[0]
-            elif ':' in line_clean:
-                name_part = line_clean.split(':')[0]
-            else:
-                name_part = line_clean.split('~')[0] if '~' in line_clean else line_clean
-
-            name_part = clean_markdown(name_part).strip()
-            if name_part and len(name_part) > 1:
-                ingredients.append({"name": name_part, "price": price})
+        name_part = clean_markdown(name_part).strip()
+        key = name_part.lower()
+        if name_part and len(name_part) > 1 and key not in seen:
+            seen.add(key)
+            ingredients.append({"name": name_part, "price": price})
 
     return ingredients
 
