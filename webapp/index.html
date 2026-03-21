@@ -153,17 +153,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 
 /* PROFILE ROWS */
 .pset{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-s)}
-.p-row{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--border)}
+.p-row{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border)}
 .p-row:last-child{border:none}
-.pr-l{font-size:14px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:10px}
-.pr-icon-box{width:32px;height:32px;border-radius:9px;background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.p-row input[type=number]{width:84px;padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;text-align:right;outline:none;background:var(--bg);color:var(--text);font-family:inherit}
-.p-row input[type=number]:focus{border-color:var(--p)}
-
+.pr-l{font-size:14px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:12px}
+.pr-icon-box{width:36px;height:36px;border-radius:10px;background:var(--pl);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* stepper */
+.stepper{display:flex;align-items:center;gap:0;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;overflow:hidden}
+.stepper button{width:34px;height:34px;border:none;background:none;font-size:18px;font-weight:600;color:var(--p);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0}
+.stepper button:active{background:var(--pl)}
+.stepper span{min-width:28px;text-align:center;font-size:15px;font-weight:700;color:var(--text);user-select:none}
+/* budget input */
+.budget-inp-wrap{display:flex;align-items:center;gap:5px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:0 12px;height:38px;transition:border-color .2s}
+.budget-inp-wrap:focus-within{border-color:var(--p)}
+.budget-inp-wrap input{border:none;background:none;outline:none;font-size:14px;font-weight:700;color:var(--text);width:90px;text-align:right;font-family:inherit}
+.budget-inp-wrap input::-webkit-inner-spin-button,.budget-inp-wrap input::-webkit-outer-spin-button{-webkit-appearance:none}
+.budget-inp-wrap span{font-size:12px;color:var(--sub);font-weight:500;white-space:nowrap}
 /* LANG SWITCH */
-.lang-sw{display:flex;background:var(--bg);border-radius:12px;padding:3px;gap:3px}
-.lsb{flex:1;padding:7px 12px;text-align:center;border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;color:var(--sub);border:none;background:none;transition:all .2s}
-.lsb.on{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(88,101,242,.3)}
+.lang-sw{display:flex;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:3px;gap:3px}
+.lsb{padding:6px 14px;text-align:center;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;color:var(--sub);border:none;background:none;transition:all .2s}
+.lsb.on{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(88,101,242,.25)}
 
 /* PREF ROW */
 .pref-row{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--white)}
@@ -380,25 +388,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
       <div class="p-row">
         <span class="pr-l">
           <div class="pr-icon-box">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
           </div>
           <span id="familyLabel">Oila soni</span>
         </span>
-        <input type="number" id="familyInput" min="1" max="20" value="2">
+        <div class="stepper">
+          <button onclick="stepFamily(-1)">−</button>
+          <span id="familyVal">2</span>
+          <button onclick="stepFamily(1)">+</button>
+        </div>
+        <input type="hidden" id="familyInput" value="2">
       </div>
       <div class="p-row">
         <span class="pr-l">
           <div class="pr-icon-box">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           </div>
           <span id="budgetLabel">Byudjet</span>
         </span>
-        <input type="number" id="budgetProfileInput" placeholder="0">
+        <div class="budget-inp-wrap">
+          <input type="number" id="budgetProfileInput" placeholder="0" inputmode="numeric">
+          <span>so'm</span>
+        </div>
       </div>
       <div class="p-row">
         <span class="pr-l">
           <div class="pr-icon-box">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
           </div>
           <span>Til</span>
         </span>
@@ -629,8 +645,16 @@ function togglePref(id,el){
   else{if(idx>-1)prof.preferences.splice(idx,1);}
 }
 
+function stepFamily(delta){
+  const cur=parseInt(document.getElementById('familyInput').value)||2;
+  const next=Math.max(1,Math.min(20,cur+delta));
+  document.getElementById('familyInput').value=next;
+  document.getElementById('familyVal').textContent=next;
+}
 function renderProfile(){
-  document.getElementById('familyInput').value=prof.family_size;
+  const fs=prof.family_size;
+  document.getElementById('familyInput').value=fs;
+  document.getElementById('familyVal').textContent=fs;
   document.getElementById('budgetProfileInput').value=prof.weekly_budget||'';
   document.getElementById('lz').classList.toggle('on',prof.language==='uz');
   document.getElementById('lr').classList.toggle('on',prof.language==='ru');
