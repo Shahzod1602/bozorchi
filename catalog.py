@@ -1,75 +1,73 @@
 # Korzinka.uz narxlari asosida mahsulotlar katalogi
-# Narxlar taxminiy (so'm), yangilanishi mumkin
 
 PRODUCTS = [
     # Go'sht
-    {"name": "Mol go'shti", "price": 110000, "unit": "kg", "category": "Go'sht"},
-    {"name": "Tovuq go'shti", "price": 48000, "unit": "kg", "category": "Go'sht"},
-    {"name": "Tovuq filesi", "price": 62000, "unit": "kg", "category": "Go'sht"},
-    {"name": "Qo'y go'shti", "price": 145000, "unit": "kg", "category": "Go'sht"},
-    {"name": "Qiyma (mol)", "price": 90000, "unit": "kg", "category": "Go'sht"},
-    {"name": "Sosiska", "price": 66000, "unit": "kg", "category": "Go'sht"},
+    {"name": "Mol go'shti", "price": 110000, "unit": "kg", "category": "Go'sht", "emoji": "🥩", "color": "#FFEAEA"},
+    {"name": "Tovuq go'shti", "price": 48000, "unit": "kg", "category": "Go'sht", "emoji": "🍗", "color": "#FFEAEA"},
+    {"name": "Tovuq filesi", "price": 62000, "unit": "kg", "category": "Go'sht", "emoji": "🍗", "color": "#FFEAEA"},
+    {"name": "Qo'y go'shti", "price": 145000, "unit": "kg", "category": "Go'sht", "emoji": "🥩", "color": "#FFEAEA"},
+    {"name": "Qiyma", "price": 90000, "unit": "kg", "category": "Go'sht", "emoji": "🥩", "color": "#FFEAEA"},
+    {"name": "Sosiska", "price": 66000, "unit": "kg", "category": "Go'sht", "emoji": "🌭", "color": "#FFEAEA"},
 
     # Sabzavotlar
-    {"name": "Kartoshka", "price": 5000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Piyoz", "price": 4000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Sabzi", "price": 6000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Pomidor", "price": 12000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Bodring", "price": 10000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Karam", "price": 5000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Qalampir (bolgar)", "price": 18000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Ko'k piyoz", "price": 6000, "unit": "bog'", "category": "Sabzavot"},
-    {"name": "Sarimsoq", "price": 30000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Baqlajon", "price": 12000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Qovoq", "price": 8000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Limon", "price": 25000, "unit": "kg", "category": "Sabzavot"},
-    {"name": "Ukrop", "price": 5000, "unit": "bog'", "category": "Sabzavot"},
-    {"name": "Kashnich", "price": 5000, "unit": "bog'", "category": "Sabzavot"},
+    {"name": "Kartoshka", "price": 5000, "unit": "kg", "category": "Sabzavot", "emoji": "🥔", "color": "#FFFBE6"},
+    {"name": "Piyoz", "price": 4000, "unit": "kg", "category": "Sabzavot", "emoji": "🧅", "color": "#FFFBE6"},
+    {"name": "Sabzi", "price": 6000, "unit": "kg", "category": "Sabzavot", "emoji": "🥕", "color": "#FFFBE6"},
+    {"name": "Pomidor", "price": 12000, "unit": "kg", "category": "Sabzavot", "emoji": "🍅", "color": "#FFFBE6"},
+    {"name": "Bodring", "price": 10000, "unit": "kg", "category": "Sabzavot", "emoji": "🥒", "color": "#FFFBE6"},
+    {"name": "Karam", "price": 5000, "unit": "kg", "category": "Sabzavot", "emoji": "🥬", "color": "#FFFBE6"},
+    {"name": "Qalampir", "price": 18000, "unit": "kg", "category": "Sabzavot", "emoji": "🫑", "color": "#FFFBE6"},
+    {"name": "Ko'k piyoz", "price": 5000, "unit": "bog'", "category": "Sabzavot", "emoji": "🌿", "color": "#FFFBE6"},
+    {"name": "Sarimsoq", "price": 30000, "unit": "kg", "category": "Sabzavot", "emoji": "🧄", "color": "#FFFBE6"},
+    {"name": "Baqlajon", "price": 12000, "unit": "kg", "category": "Sabzavot", "emoji": "🍆", "color": "#FFFBE6"},
+    {"name": "Limon", "price": 25000, "unit": "kg", "category": "Sabzavot", "emoji": "🍋", "color": "#FFFBE6"},
+    {"name": "Ukrop", "price": 5000, "unit": "bog'", "category": "Sabzavot", "emoji": "🌿", "color": "#FFFBE6"},
+    {"name": "Kashnich", "price": 5000, "unit": "bog'", "category": "Sabzavot", "emoji": "🌿", "color": "#FFFBE6"},
 
     # Mevalar
-    {"name": "Olma", "price": 15000, "unit": "kg", "category": "Meva"},
-    {"name": "Banan", "price": 18000, "unit": "kg", "category": "Meva"},
-    {"name": "Apelsin", "price": 20000, "unit": "kg", "category": "Meva"},
-    {"name": "Uzum", "price": 25000, "unit": "kg", "category": "Meva"},
-    {"name": "Nok", "price": 18000, "unit": "kg", "category": "Meva"},
+    {"name": "Olma", "price": 15000, "unit": "kg", "category": "Meva", "emoji": "🍎", "color": "#FFE8F0"},
+    {"name": "Banan", "price": 18000, "unit": "kg", "category": "Meva", "emoji": "🍌", "color": "#FFE8F0"},
+    {"name": "Apelsin", "price": 20000, "unit": "kg", "category": "Meva", "emoji": "🍊", "color": "#FFE8F0"},
+    {"name": "Uzum", "price": 25000, "unit": "kg", "category": "Meva", "emoji": "🍇", "color": "#FFE8F0"},
+    {"name": "Nok", "price": 18000, "unit": "kg", "category": "Meva", "emoji": "🍐", "color": "#FFE8F0"},
+    {"name": "Qovun", "price": 12000, "unit": "kg", "category": "Meva", "emoji": "🍈", "color": "#FFE8F0"},
+    {"name": "Tarvuz", "price": 6000, "unit": "kg", "category": "Meva", "emoji": "🍉", "color": "#FFE8F0"},
+    {"name": "Shaftoli", "price": 22000, "unit": "kg", "category": "Meva", "emoji": "🍑", "color": "#FFE8F0"},
 
     # Sut mahsulotlari
-    {"name": "Sut", "price": 15000, "unit": "litr", "category": "Sut"},
-    {"name": "Tuxum", "price": 28000, "unit": "10 ta", "category": "Sut"},
-    {"name": "Sariyog'", "price": 85000, "unit": "kg", "category": "Sut"},
-    {"name": "Qatiq", "price": 18000, "unit": "litr", "category": "Sut"},
-    {"name": "Pishloq", "price": 80000, "unit": "kg", "category": "Sut"},
-    {"name": "Qaymoq", "price": 25000, "unit": "200g", "category": "Sut"},
-    {"name": "Tvorog", "price": 35000, "unit": "kg", "category": "Sut"},
+    {"name": "Sut", "price": 15000, "unit": "litr", "category": "Sut", "emoji": "🥛", "color": "#EAF4FF"},
+    {"name": "Tuxum", "price": 28000, "unit": "10 ta", "category": "Sut", "emoji": "🥚", "color": "#EAF4FF"},
+    {"name": "Sariyog'", "price": 85000, "unit": "kg", "category": "Sut", "emoji": "🧈", "color": "#EAF4FF"},
+    {"name": "Qatiq", "price": 18000, "unit": "litr", "category": "Sut", "emoji": "🍶", "color": "#EAF4FF"},
+    {"name": "Pishloq", "price": 80000, "unit": "kg", "category": "Sut", "emoji": "🧀", "color": "#EAF4FF"},
+    {"name": "Qaymoq", "price": 25000, "unit": "200g", "category": "Sut", "emoji": "🫙", "color": "#EAF4FF"},
+    {"name": "Tvorog", "price": 35000, "unit": "kg", "category": "Sut", "emoji": "🫙", "color": "#EAF4FF"},
 
     # Don mahsulotlari
-    {"name": "Guruch", "price": 19000, "unit": "kg", "category": "Don"},
-    {"name": "Un", "price": 8000, "unit": "kg", "category": "Don"},
-    {"name": "Makaron", "price": 12000, "unit": "kg", "category": "Don"},
-    {"name": "Semolina (manno)", "price": 14000, "unit": "kg", "category": "Don"},
-    {"name": "Grechixa", "price": 25000, "unit": "kg", "category": "Don"},
-    {"name": "Suli (ovyos)", "price": 18000, "unit": "kg", "category": "Don"},
+    {"name": "Guruch", "price": 19000, "unit": "kg", "category": "Don", "emoji": "🌾", "color": "#FFF8E1"},
+    {"name": "Un", "price": 8000, "unit": "kg", "category": "Don", "emoji": "🌾", "color": "#FFF8E1"},
+    {"name": "Makaron", "price": 12000, "unit": "kg", "category": "Don", "emoji": "🍝", "color": "#FFF8E1"},
+    {"name": "Grechixa", "price": 25000, "unit": "kg", "category": "Don", "emoji": "🌾", "color": "#FFF8E1"},
+    {"name": "Suli (ovyos)", "price": 18000, "unit": "kg", "category": "Don", "emoji": "🌾", "color": "#FFF8E1"},
+    {"name": "Non (oq)", "price": 6000, "unit": "dona", "category": "Don", "emoji": "🍞", "color": "#FFF8E1"},
+    {"name": "Lavash", "price": 8000, "unit": "dona", "category": "Don", "emoji": "🫓", "color": "#FFF8E1"},
 
     # Yog' va ziravorlar
-    {"name": "O'simlik yog'i", "price": 25000, "unit": "litr", "category": "Yog'"},
-    {"name": "Shakar", "price": 15000, "unit": "kg", "category": "Ziravorlar"},
-    {"name": "Tuz", "price": 4000, "unit": "kg", "category": "Ziravorlar"},
-    {"name": "Qora murch", "price": 25000, "unit": "100g", "category": "Ziravorlar"},
-    {"name": "Zira", "price": 30000, "unit": "100g", "category": "Ziravorlar"},
-    {"name": "Ketchup", "price": 18000, "unit": "500g", "category": "Ziravorlar"},
-    {"name": "Majonez", "price": 16000, "unit": "500g", "category": "Ziravorlar"},
-    {"name": "Tomato pasta", "price": 14000, "unit": "500g", "category": "Ziravorlar"},
+    {"name": "O'simlik yog'i", "price": 25000, "unit": "litr", "category": "Ziravorlar", "emoji": "🫙", "color": "#F0EAFF"},
+    {"name": "Shakar", "price": 15000, "unit": "kg", "category": "Ziravorlar", "emoji": "🍬", "color": "#F0EAFF"},
+    {"name": "Tuz", "price": 4000, "unit": "kg", "category": "Ziravorlar", "emoji": "🧂", "color": "#F0EAFF"},
+    {"name": "Qora murch", "price": 25000, "unit": "100g", "category": "Ziravorlar", "emoji": "🌶️", "color": "#F0EAFF"},
+    {"name": "Zira", "price": 30000, "unit": "100g", "category": "Ziravorlar", "emoji": "🌿", "color": "#F0EAFF"},
+    {"name": "Ketchup", "price": 18000, "unit": "500g", "category": "Ziravorlar", "emoji": "🍅", "color": "#F0EAFF"},
+    {"name": "Majonez", "price": 16000, "unit": "500g", "category": "Ziravorlar", "emoji": "🫙", "color": "#F0EAFF"},
+    {"name": "Tomato pasta", "price": 14000, "unit": "500g", "category": "Ziravorlar", "emoji": "🍅", "color": "#F0EAFF"},
 
     # Ichimliklar
-    {"name": "Mineral suv", "price": 8000, "unit": "1.5 L", "category": "Ichimlik"},
-    {"name": "Limonid", "price": 13000, "unit": "1.5 L", "category": "Ichimlik"},
-    {"name": "Sharbat", "price": 12000, "unit": "litr", "category": "Ichimlik"},
-    {"name": "Choy (qora)", "price": 35000, "unit": "100g", "category": "Ichimlik"},
-
-    # Non-pishloq
-    {"name": "Non (oq)", "price": 6000, "unit": "dona", "category": "Non"},
-    {"name": "Lavaş", "price": 8000, "unit": "dona", "category": "Non"},
-    {"name": "Печенье", "price": 20000, "unit": "kg", "category": "Non"},
+    {"name": "Mineral suv", "price": 8000, "unit": "1.5 L", "category": "Ichimlik", "emoji": "💧", "color": "#E6FAFF"},
+    {"name": "Limonid", "price": 13000, "unit": "1.5 L", "category": "Ichimlik", "emoji": "🥤", "color": "#E6FAFF"},
+    {"name": "Sharbat", "price": 12000, "unit": "litr", "category": "Ichimlik", "emoji": "🧃", "color": "#E6FAFF"},
+    {"name": "Choy (qora)", "price": 35000, "unit": "100g", "category": "Ichimlik", "emoji": "🍵", "color": "#E6FAFF"},
+    {"name": "Kofe", "price": 60000, "unit": "100g", "category": "Ichimlik", "emoji": "☕", "color": "#E6FAFF"},
 ]
 
 
@@ -88,3 +86,15 @@ def search_products(query: str, limit: int = 8) -> list:
 
 def get_all_products() -> list:
     return PRODUCTS
+
+
+def get_categories() -> list:
+    seen = []
+    for p in PRODUCTS:
+        if p["category"] not in seen:
+            seen.append(p["category"])
+    return seen
+
+
+def get_by_category(category: str) -> list:
+    return [p for p in PRODUCTS if p["category"] == category]

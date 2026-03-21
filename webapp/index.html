@@ -274,6 +274,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .krz-footer-l{font-size:13px;color:var(--sub);font-weight:500}
 .krz-footer-r{font-size:20px;font-weight:800;color:var(--p)}
 .krz-empty{text-align:center;padding:12px 0;font-size:13px;color:var(--sub)}
+
+/* SHOP */
+.shop-cat-btn{flex-shrink:0;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap;transition:all .15s}
+.shop-cat-btn.on{background:var(--p);color:#fff;border-color:var(--p)}
+.prod-card{background:#fff;border-radius:16px;border:1px solid var(--border);overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);display:flex;flex-direction:column;transition:transform .15s}
+.prod-card:active{transform:scale(.97)}
+.prod-img{display:flex;align-items:center;justify-content:center;font-size:52px;height:110px;flex-shrink:0}
+.prod-body{padding:10px 12px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
+.prod-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+.prod-unit{font-size:11px;color:var(--sub)}
+.prod-price{font-size:14px;font-weight:800;color:var(--p);margin-top:2px}
+.prod-ctrl{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.prod-add{flex:1;padding:8px 0;background:var(--p);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;text-align:center}
+.prod-add:active{opacity:.8}
+.prod-stepper{display:flex;align-items:center;gap:0;flex:1;background:var(--pl);border-radius:10px;overflow:hidden}
+.prod-stepper button{flex:1;height:32px;border:none;background:none;font-size:18px;font-weight:700;color:var(--p);cursor:pointer}
+.prod-stepper span{font-size:14px;font-weight:700;color:var(--text);min-width:22px;text-align:center}
 .krz-ac{position:relative;flex:1.4;min-width:0}
 .krz-ac input{width:100%;box-sizing:border-box}
 .krz-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--p);border-radius:12px;box-shadow:0 8px 24px rgba(88,101,242,.15);z-index:999;overflow:hidden;max-height:240px;overflow-y:auto}
@@ -345,14 +362,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 
   <!-- KORZINKA -->
   <div class="krz-card" id="krzCard">
-    <div class="krz-head" onclick="toggleKrz()">
+    <div class="krz-head" onclick="openShop()">
       <div class="krz-head-l">
         <div class="krz-head-ic">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
         </div>
         Korzinka
       </div>
-      <div class="krz-badge" id="krzBadge"><span id="krzCount">0</span> ta · <span id="krzTotalBadge">0</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="krz-badge" id="krzBadge"><span id="krzCount">0</span> ta · <span id="krzTotalBadge">0</span></div>
+        <span style="font-size:20px;color:var(--sub)">›</span>
+      </div>
     </div>
     <div class="krz-body" id="krzBody">
       <div class="krz-add">
@@ -506,6 +526,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
     <div class="pset" id="prefList"></div>
 
     <button class="btn-p mt16" onclick="saveProfile()" id="saveBtn">Saqlash</button>
+  </div>
+</div>
+
+<!-- KORZINKA SHOP -->
+<div id="scr-shop" style="position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)">
+  <div class="hdr" style="flex-shrink:0">
+    <button onclick="closeShop()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="hdr-t" style="margin-left:4px">Do'kon</span>
+    <div class="krz-badge" id="shopCartBadge" style="margin-left:auto;cursor:pointer" onclick="closeShop()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+      <span id="shopCartCount">0</span> ta
+    </div>
+  </div>
+
+  <!-- search -->
+  <div style="padding:0 16px 10px;flex-shrink:0">
+    <div class="srch" style="margin:0">
+      <div class="srch-ic"></div>
+      <input type="text" class="srch-inp" id="shopSearch" placeholder="Mahsulot qidirish..." oninput="shopFilter()" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- categories -->
+  <div id="shopCats" style="display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px;flex-shrink:0;scrollbar-width:none"></div>
+
+  <!-- product grid -->
+  <div id="shopGrid" style="flex:1;overflow-y:auto;padding:0 12px 100px;display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start"></div>
+
+  <!-- cart bar -->
+  <div id="shopCartBar" style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:14px 20px;display:none;align-items:center;justify-content:space-between;box-shadow:0 -4px 20px rgba(0,0,0,.08)">
+    <div>
+      <div style="font-size:12px;color:var(--sub)">Jami:</div>
+      <div style="font-size:18px;font-weight:800;color:var(--p)" id="shopCartTotal">0 so'm</div>
+    </div>
+    <button class="btn-p" style="width:auto;padding:12px 24px" onclick="closeShop()">Savatga qo'shish</button>
   </div>
 </div>
 
@@ -886,6 +943,95 @@ function addKrz(){
 function delKrz(i){
   krz.splice(i,1);
   saveKrz();renderKrz();
+}
+/* ── SHOP ── */
+let shopProducts=[], shopCat='Barchasi', shopCart={};
+
+async function openShop(){
+  document.getElementById('scr-shop').style.transform='translateX(0)';
+  if(!shopProducts.length) await loadShopProducts();
+  renderShopGrid();
+}
+function closeShop(){
+  document.getElementById('scr-shop').style.transform='translateX(100%)';
+  // sync cart to krz
+  Object.entries(shopCart).forEach(([name,v])=>{
+    if(!v.qty) return;
+    const key=fridgeKey(name);
+    const idx=krz.findIndex(i=>fridgeKey(i.name)===key);
+    const entry={name,qty:v.qty+' '+v.unit,qty_n:v.qty,price:v.price*v.qty};
+    if(idx>-1) krz[idx]=entry; else krz.push(entry);
+  });
+  saveKrz();renderKrz();
+}
+
+async function loadShopProducts(){
+  try{
+    const [cats, prods]=await Promise.all([
+      fetch('/api/categories').then(r=>r.json()),
+      fetch('/api/products').then(r=>r.json())
+    ]);
+    shopProducts=prods;
+    const catBar=document.getElementById('shopCats');
+    catBar.innerHTML=[{name:'Barchasi'},...cats.map(c=>({name:c}))].map(c=>
+      `<button class="shop-cat-btn${c.name==='Barchasi'?' on':''}" onclick="shopSetCat('${c.name}')">${c.name}</button>`
+    ).join('');
+  }catch(e){}
+}
+
+function shopSetCat(cat){
+  shopCat=cat;
+  document.querySelectorAll('.shop-cat-btn').forEach(b=>b.classList.toggle('on',b.textContent===cat));
+  renderShopGrid();
+}
+
+function shopFilter(){
+  const q=document.getElementById('shopSearch').value.trim();
+  renderShopGrid(q);
+}
+
+function renderShopGrid(q=''){
+  const grid=document.getElementById('shopGrid');
+  let items=shopProducts;
+  if(shopCat&&shopCat!=='Barchasi') items=items.filter(p=>p.category===shopCat);
+  if(q) items=items.filter(p=>p.name.toLowerCase().includes(q.toLowerCase()));
+  grid.innerHTML=items.map(p=>{
+    const c=shopCart[p.name]||{qty:0};
+    const ctrl=c.qty>0
+      ?`<div class="prod-stepper">
+          <button onclick="shopChange('${p.name.replace(/'/g,"\\'")}',${p.price},'${p.unit}',-1)">−</button>
+          <span>${c.qty}</span>
+          <button onclick="shopChange('${p.name.replace(/'/g,"\\'")}',${p.price},'${p.unit}',1)">+</button>
+        </div>`
+      :`<button class="prod-add" onclick="shopChange('${p.name.replace(/'/g,"\\'")}',${p.price},'${p.unit}',1)">+ Qo'sh</button>`;
+    return `<div class="prod-card">
+      <div class="prod-img" style="background:${p.color||'#F5F5F5'}">${p.emoji||'🛒'}</div>
+      <div class="prod-body">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-unit">${p.unit}</div>
+        <div class="prod-price">${fmtNum(p.price)} so'm</div>
+        <div class="prod-ctrl">${ctrl}</div>
+      </div>
+    </div>`;
+  }).join('');
+  updateShopCart();
+}
+
+function shopChange(name,price,unit,delta){
+  if(!shopCart[name]) shopCart[name]={qty:0,price,unit};
+  shopCart[name].qty=Math.max(0,shopCart[name].qty+delta);
+  if(shopCart[name].qty===0) delete shopCart[name];
+  renderShopGrid(document.getElementById('shopSearch').value.trim());
+}
+
+function updateShopCart(){
+  const entries=Object.values(shopCart);
+  const total=entries.reduce((s,v)=>s+v.price*v.qty,0);
+  const count=entries.reduce((s,v)=>s+v.qty,0);
+  document.getElementById('shopCartCount').textContent=count;
+  document.getElementById('shopCartBadge').style.display=count>0?'flex':'none';
+  document.getElementById('shopCartTotal').textContent=fmtNum(total)+' so\'m';
+  document.getElementById('shopCartBar').style.display=count>0?'flex':'none';
 }
 /* ────────── */
 
