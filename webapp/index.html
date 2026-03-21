@@ -246,6 +246,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .fridge-save-btn{width:30px;height:30px;border-radius:9px;background:var(--p);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .fridge-cancel-btn{width:30px;height:30px;border-radius:9px;background:var(--bg);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
+/* KORZINKA */
+.krz-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-s);margin:14px 20px 0}
+.krz-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none}
+.krz-head-l{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:var(--text)}
+.krz-head-ic{width:34px;height:34px;border-radius:10px;background:var(--pl);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.krz-badge{font-size:12px;font-weight:700;color:var(--p);background:var(--pl);padding:4px 10px;border-radius:8px;display:flex;align-items:center;gap:4px}
+.krz-body{border-top:1px solid var(--border);padding:14px 16px}
+.krz-add{display:flex;gap:6px;margin-bottom:12px}
+.krz-add input{border:1.5px solid var(--border);border-radius:10px;padding:9px 10px;font-size:13px;font-family:inherit;outline:none;background:var(--bg);color:var(--text);transition:border-color .2s}
+.krz-add input:focus{border-color:var(--p)}
+.krz-add input::placeholder{color:var(--sub)}
+.krz-add .ki-name{flex:1.4;min-width:0}
+.krz-add .ki-qty{width:58px;text-align:center}
+.krz-add .ki-price{width:76px;text-align:right}
+.krz-add button{padding:9px 13px;background:var(--p);color:#fff;border:none;border-radius:10px;font-size:18px;font-weight:700;cursor:pointer;flex-shrink:0;line-height:1}
+.krz-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border)}
+.krz-item:last-of-type{border:none}
+.krz-item-name{flex:1;font-size:14px;font-weight:500;color:var(--text);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.krz-item-qty{font-size:12px;color:var(--sub);white-space:nowrap;flex-shrink:0}
+.krz-item-price{font-size:13px;font-weight:700;color:var(--p);white-space:nowrap;flex-shrink:0}
+.krz-item-del{width:26px;height:26px;border-radius:8px;background:var(--red-l);border:none;cursor:pointer;flex-shrink:0;position:relative}
+.krz-item-del::before,.krz-item-del::after{content:'';position:absolute;width:9px;height:1.8px;background:var(--red);border-radius:1px;top:50%;left:50%;transform-origin:center}
+.krz-item-del::before{transform:translate(-50%,-50%) rotate(45deg)}
+.krz-item-del::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.krz-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1.5px solid var(--border);margin-top:8px}
+.krz-footer-l{font-size:13px;color:var(--sub);font-weight:500}
+.krz-footer-r{font-size:20px;font-weight:800;color:var(--p)}
+.krz-empty{text-align:center;padding:12px 0;font-size:13px;color:var(--sub)}
+
 .pad{padding:0 20px}
 .mt8{margin-top:8px}
 .mt12{margin-top:12px}
@@ -305,7 +334,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
     <span class="act-arr">›</span>
   </div>
 
-  <div class="sec" id="homeLastT">Oxirgi xeridlar</div>
+  <!-- KORZINKA -->
+  <div class="krz-card" id="krzCard">
+    <div class="krz-head" onclick="toggleKrz()">
+      <div class="krz-head-l">
+        <div class="krz-head-ic">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </div>
+        Korzinka
+      </div>
+      <div class="krz-badge" id="krzBadge"><span id="krzCount">0</span> ta · <span id="krzTotalBadge">0</span></div>
+    </div>
+    <div class="krz-body" id="krzBody">
+      <div class="krz-add">
+        <input class="ki-name" type="text" id="krzName" placeholder="Mahsulot nomi" onkeydown="if(event.key==='Enter')addKrz()">
+        <input class="ki-qty" type="text" id="krzQty" placeholder="Miqdor" onkeydown="if(event.key==='Enter')addKrz()">
+        <input class="ki-price" type="number" id="krzPrice" placeholder="Narx" inputmode="numeric" onkeydown="if(event.key==='Enter')addKrz()">
+        <button onclick="addKrz()">+</button>
+      </div>
+      <div id="krzList"></div>
+    </div>
+  </div>
+
+  <div class="sec" id="homeLastT" style="margin-top:18px">Oxirgi xeridlar</div>
   <div class="prev-wrap" id="homeLastItems"></div>
 </div>
 
@@ -532,6 +583,9 @@ const T={
 let prof={family_size:2,weekly_budget:0,language:'uz',preferences:[],meal_name:'',ingredients:[]};
 let checked={};
 try{checked=JSON.parse(localStorage.getItem('chk_'+userId)||'{}')}catch(e){}
+let krz=[];
+try{krz=JSON.parse(localStorage.getItem('krz_'+userId)||'[]')}catch(e){}
+let krzOpen=krz.length>0;
 let fridge=[];
 try{
   const _fr=JSON.parse(localStorage.getItem('frg_'+userId)||'[]');
@@ -563,7 +617,7 @@ function renderAll(){
   const init=userName.charAt(0).toUpperCase();
   document.getElementById('homeAv').textContent=init;
   document.getElementById('profAv').textContent=init;
-  renderHome();renderProfile();renderShopList();renderFridge();applyLang();
+  renderHome();renderProfile();renderShopList();renderFridge();renderKrz();applyLang();
 }
 
 function applyLang(){
@@ -723,6 +777,68 @@ function mergeQty(existing,added){
   }
   return existing||(added||'');
 }
+
+/* ── KORZINKA ── */
+function saveKrz(){localStorage.setItem('krz_'+userId,JSON.stringify(krz));}
+function fmtPrice(n){return n>=1000?fmtNum(n)+' so\'m':n+' so\'m';}
+
+function toggleKrz(){
+  krzOpen=!krzOpen;
+  document.getElementById('krzBody').style.display=krzOpen?'block':'none';
+}
+
+function renderKrz(){
+  const body=document.getElementById('krzBody');
+  if(body) body.style.display=krzOpen?'block':'none';
+
+  const total=krz.reduce((s,i)=>s+(i.price||0)*(i.qty_n||1),0);
+  const count=krz.length;
+  const badge=document.getElementById('krzBadge');
+  if(badge) badge.innerHTML=`<span>${count}</span> ta · <span>${total>=1000?fmtNum(total)+' so\'m':total+' so\'m'}</span>`;
+
+  const list=document.getElementById('krzList');
+  if(!list) return;
+  if(krz.length===0){
+    list.innerHTML=`<div class="krz-empty">Hali mahsulot qo'shilmagan</div>`;
+  } else {
+    const rows=krz.map((item,i)=>`
+      <div class="krz-item">
+        <span class="krz-item-name">${item.name}</span>
+        ${item.qty?`<span class="krz-item-qty">${item.qty}</span>`:''}
+        <span class="krz-item-price">${item.price?fmtNum(item.price)+' so\'m':''}</span>
+        <button class="krz-item-del" onclick="delKrz(${i})"></button>
+      </div>`).join('');
+    const total2=krz.reduce((s,i)=>s+(i.price||0)*(i.qty_n||1),0);
+    const footer=total2>0?`<div class="krz-footer">
+      <span class="krz-footer-l">Jami:</span>
+      <span class="krz-footer-r">${fmtNum(total2)} so'm</span>
+    </div>`:'';
+    list.innerHTML=rows+footer;
+  }
+}
+
+function addKrz(){
+  const name=(document.getElementById('krzName')?.value||'').trim();
+  const qty=(document.getElementById('krzQty')?.value||'').trim();
+  const priceRaw=(document.getElementById('krzPrice')?.value||'').trim();
+  if(!name) return;
+  const price=parseFloat(priceRaw.replace(/\s/g,''))||0;
+  // parse numeric qty for total calc
+  const qty_n=parseFloat(qty)||1;
+  krz.push({name,qty,qty_n,price});
+  document.getElementById('krzName').value='';
+  document.getElementById('krzQty').value='';
+  document.getElementById('krzPrice').value='';
+  document.getElementById('krzName').focus();
+  krzOpen=true;
+  saveKrz();renderKrz();
+}
+
+function delKrz(i){
+  krz.splice(i,1);
+  saveKrz();renderKrz();
+}
+/* ────────── */
 
 function renderFridge(){
   const wrap=document.getElementById('fridgeWrap');
