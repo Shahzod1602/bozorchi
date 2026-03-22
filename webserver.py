@@ -4,12 +4,23 @@ import time
 import aiohttp as aiohttp_client
 from aiohttp import web
 import json
-from database import get_user_profile, get_last_shopping_list, update_family_size, update_weekly_budget, update_language, update_preferences
+from database import (
+    get_user_profile, get_last_shopping_list, update_family_size,
+    update_weekly_budget, update_language, update_preferences,
+    get_all_users, get_users_count, get_stats, get_recent_lists, delete_user
+)
 from catalog import search_products, get_all_products, get_categories, get_by_category
 from ai_helper import get_meal_suggestion, get_recipe_by_name, get_weekly_plan, get_budget_weekly_plan
 
 routes = web.RouteTableDef()
 WEBAPP_DIR = os.path.join(os.path.dirname(__file__), "webapp")
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "")
+
+
+def check_admin(request):
+    auth = request.headers.get("Authorization", "")
+    token = auth.removeprefix("Bearer ").strip()
+    return token and token == ADMIN_TOKEN
 
 
 def clean_markdown(text: str) -> str:
@@ -277,8 +288,96 @@ async def api_korzinka_products(request):
         return web.json_response({"error": str(e)}, status=500)
 
 
-async def start_webserver(port: int = 8090):
+@routes.get('/admin')
+async def admin_panel(request):
+    return web.FileResponse(os.path.join(WEBAPP_DIR, 'admin.html'))
+
+
+@routes.get('/api/admin/stats')
+async def admin_stats(request):
+    if not check_admin(request):
+        return web.json_response({"error": "Unauthorized"}, status=401)
+    try:
+        stats = await get_stats()
+        return web.json_response(stats)
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.get('/api/admin/users')
+async def admin_users(request):
+    if not check_admin(request):
+        return web.json_response({"error": "Unauthorized"}, status=401)
+    try:
+        limit = int(request.rel_url.query.get('limit', 50))
+        offset = int(request.rel_url.query.get('offset', 0))
+        users = await get_all_users(limit, offset)
+        total = await get_users_count()
+        for u in users:
+            if u.get("created_at"):
+                u["created_at"] = u["created_at"].isoformat()
+        return web.json_response({"users": users, "total": total})
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.delete('/api/admin/users/{telegram_id}')
+async def admin_delete_user(request):
+    if not check_admin(request):
+        return web.json_response({"error": "Unauthorized"}, status=401)
+    try:
+        telegram_id = int(request.match_info['telegram_id'])
+        await delete_user(telegram_id)
+        return web.json_response({"ok": True})
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.get('/api/admin/lists')
+async def admin_lists(request):
+    if not check_admin(request):
+        return web.json_response({"error": "Unauthorized"}, status=401)
+    try:
+        limit = int(request.rel_url.query.get('limit', 20))
+        offset = int(request.rel_url.query.get('offset', 0))
+        lists = await get_recent_lists(limit, offset)
+        for row in lists:
+            if row.get("created_at"):
+                row["created_at"] = row["created_at"].isoformat()
+        return web.json_response(lists)
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+@routes.post('/api/admin/broadcast')
+async def admin_broadcast(request):
+    if not check_admin(request):
+        return web.json_response({"error": "Unauthorized"}, status=401)
+    try:
+        data = await request.json()
+        message = data.get("message", "").strip()
+        if not message:
+            return web.json_response({"error": "message required"}, status=400)
+        bot = request.app.get("bot")
+        if not bot:
+            return web.json_response({"error": "bot not available"}, status=503)
+        users = await get_all_users(limit=10000)
+        sent, failed = 0, 0
+        for u in users:
+            try:
+                await bot.send_message(u["telegram_id"], message)
+                sent += 1
+            except Exception:
+                failed += 1
+        return web.json_response({"sent": sent, "failed": failed})
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
+
+async def start_webserver(port: int = 8090, bot=None):
     app = web.Application()
+    if bot:
+        app["bot"] = bot
     app.add_routes(routes)
     runner = web.AppRunner(app)
     await runner.setup()

@@ -1,4 +1,14 @@
 services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: bozorlik
+      POSTGRES_USER: bozorlik
+      POSTGRES_PASSWORD: bozorlik
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
   bot:
     build: .
     restart: always
@@ -7,3 +17,8 @@ services:
       - "127.0.0.1:8090:8090"
     volumes:
       - ./data:/app/data
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

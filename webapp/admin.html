@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bozorlik — Admin Panel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+  /* Login */
+  #login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+  }
+  .login-card {
+    background: #fff; border-radius: 16px; padding: 40px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10); width: 360px; text-align: center;
+  }
+  .login-card h1 { font-size: 24px; margin-bottom: 8px; color: #1a1a2e; }
+  .login-card p { color: #666; margin-bottom: 24px; font-size: 14px; }
+  .login-card input {
+    width: 100%; padding: 12px 16px; border: 1.5px solid #e0e0e0;
+    border-radius: 10px; font-size: 15px; outline: none; margin-bottom: 14px;
+    transition: border-color .2s;
+  }
+  .login-card input:focus { border-color: #4f8ef7; }
+  .btn {
+    display: inline-block; padding: 12px 28px; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity .2s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: #4f8ef7; color: #fff; width: 100%; }
+  .btn-danger { background: #ff4d4f; color: #fff; }
+  .btn-sm { padding: 6px 14px; font-size: 13px; border-radius: 7px; }
+  #login-error { color: #ff4d4f; font-size: 13px; margin-top: 10px; display: none; }
+
+  /* Main */
+  #main-screen { display: none; }
+  .topbar {
+    background: #1a1a2e; color: #fff; padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar h2 { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+  .topbar span { font-size: 13px; opacity: .7; }
+  .topbar button { background: rgba(255,255,255,.15); color: #fff; border: none; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+
+  .tabs { display: flex; gap: 4px; background: #fff; padding: 14px 28px; border-bottom: 1px solid #e8e8e8; }
+  .tab {
+    padding: 8px 20px; border-radius: 8px; cursor: pointer;
+    font-size: 14px; font-weight: 500; color: #666; transition: all .2s;
+  }
+  .tab.active { background: #4f8ef7; color: #fff; }
+  .tab:hover:not(.active) { background: #f0f2f5; }
+
+  .content { padding: 28px; max-width: 1100px; margin: 0 auto; }
+
+  /* Stats */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  @media (max-width: 800px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat-card {
+    background: #fff; border-radius: 14px; padding: 20px 22px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .stat-card .label { font-size: 13px; color: #888; margin-bottom: 6px; }
+  .stat-card .value { font-size: 32px; font-weight: 700; color: #1a1a2e; }
+  .stat-card .sub { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+  /* Table */
+  .table-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.06); overflow: hidden; }
+  .table-header { padding: 18px 22px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+  .table-header h3 { font-size: 16px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #fafafa; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: .5px; padding: 10px 16px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+  td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #f8f8f8; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbff; }
+
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-uz { background: #e8f4fd; color: #1890ff; }
+  .badge-ru { background: #fff1e6; color: #fa8c16; }
+
+  .pagination { display: flex; gap: 8px; align-items: center; padding: 14px 22px; }
+  .page-btn { padding: 6px 14px; border: 1.5px solid #e0e0e0; background: #fff; border-radius: 7px; cursor: pointer; font-size: 13px; }
+  .page-btn:disabled { opacity: .4; cursor: default; }
+  .page-info { font-size: 13px; color: #666; }
+
+  /* Broadcast */
+  .broadcast-card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .broadcast-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  textarea {
+    width: 100%; padding: 12px 16px; border: 1.5px solid #e0e0e0;
+    border-radius: 10px; font-size: 15px; outline: none; resize: vertical;
+    min-height: 120px; font-family: inherit; transition: border-color .2s;
+  }
+  textarea:focus { border-color: #4f8ef7; }
+  .broadcast-actions { margin-top: 14px; display: flex; gap: 10px; align-items: center; }
+  #broadcast-result { font-size: 14px; color: #52c41a; }
+
+  .loading { text-align: center; padding: 40px; color: #aaa; font-size: 15px; }
+  .empty { text-align: center; padding: 40px; color: #bbb; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-screen">
+  <div class="login-card">
+    <h1>🛒 Bozorlik</h1>
+    <p>Admin panel — token kiriting</p>
+    <input type="password" id="token-input" placeholder="Admin token" autocomplete="off">
+    <button class="btn btn-primary" onclick="doLogin()">Kirish</button>
+    <div id="login-error">Token noto'g'ri!</div>
+  </div>
+</div>
+
+<!-- Main -->
+<div id="main-screen">
+  <div class="topbar">
+    <h2>🛒 Bozorlik Admin</h2>
+    <div style="display:flex;gap:16px;align-items:center;">
+      <span id="admin-date"></span>
+      <button onclick="doLogout()">Chiqish</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('dashboard')">Dashboard</div>
+    <div class="tab" onclick="showTab('users')">Foydalanuvchilar</div>
+    <div class="tab" onclick="showTab('lists')">So'nggi ro'yxatlar</div>
+    <div class="tab" onclick="showTab('broadcast')">Xabar yuborish</div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="tab-dashboard" class="content">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Jami foydalanuvchilar</div>
+        <div class="value" id="stat-total">—</div>
+        <div class="sub">botdan ro'yxatdan o'tgan</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Bugun yangi</div>
+        <div class="value" id="stat-new">—</div>
+        <div class="sub">yangi foydalanuvchilar</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Bugun faol</div>
+        <div class="value" id="stat-active">—</div>
+        <div class="sub">ro'yxat yaratganlar</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Jami ro'yxatlar</div>
+        <div class="value" id="stat-lists">—</div>
+        <div class="sub">saqlangan xaridlar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users -->
+  <div id="tab-users" class="content" style="display:none;">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Foydalanuvchilar</h3>
+        <span id="users-count" style="font-size:13px;color:#888;"></span>
+      </div>
+      <div id="users-body"><div class="loading">Yuklanmoqda...</div></div>
+      <div class="pagination">
+        <button class="page-btn" id="users-prev" onclick="usersPage(-1)" disabled>← Oldingi</button>
+        <span class="page-info" id="users-page-info"></span>
+        <button class="page-btn" id="users-next" onclick="usersPage(1)">Keyingi →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lists -->
+  <div id="tab-lists" class="content" style="display:none;">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>So'nggi xarid ro'yxatlari</h3>
+      </div>
+      <div id="lists-body"><div class="loading">Yuklanmoqda...</div></div>
+      <div class="pagination">
+        <button class="page-btn" id="lists-prev" onclick="listsPage(-1)" disabled>← Oldingi</button>
+        <span class="page-info" id="lists-page-info"></span>
+        <button class="page-btn" id="lists-next" onclick="listsPage(1)">Keyingi →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Broadcast -->
+  <div id="tab-broadcast" class="content" style="display:none;">
+    <div class="broadcast-card">
+      <h3>Barcha foydalanuvchilarga xabar yuborish</h3>
+      <textarea id="broadcast-msg" placeholder="Xabar matnini kiriting..."></textarea>
+      <div class="broadcast-actions">
+        <button class="btn btn-primary" style="width:auto;" onclick="sendBroadcast()">Yuborish</button>
+        <span id="broadcast-result"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let token = localStorage.getItem('admin_token') || '';
+let usersOffset = 0, listsOffset = 0;
+const PAGE = 20;
+
+async function api(path, opts = {}) {
+  const res = await fetch(path, {
+    ...opts,
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', ...(opts.headers || {}) }
+  });
+  return res.json();
+}
+
+async function doLogin() {
+  token = document.getElementById('token-input').value.trim();
+  const data = await api('/api/admin/stats');
+  if (data.error) {
+    document.getElementById('login-error').style.display = 'block';
+    return;
+  }
+  localStorage.setItem('admin_token', token);
+  showMain(data);
+}
+
+document.getElementById('token-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogout() {
+  localStorage.removeItem('admin_token');
+  token = '';
+  document.getElementById('main-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+function showMain(stats) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-screen').style.display = 'block';
+  document.getElementById('admin-date').textContent = new Date().toLocaleDateString('uz-UZ');
+  applyStats(stats);
+}
+
+function applyStats(s) {
+  document.getElementById('stat-total').textContent = s.total_users ?? '—';
+  document.getElementById('stat-new').textContent = s.new_today ?? '—';
+  document.getElementById('stat-active').textContent = s.active_today ?? '—';
+  document.getElementById('stat-lists').textContent = s.total_lists ?? '—';
+}
+
+async function loadStats() {
+  const s = await api('/api/admin/stats');
+  if (!s.error) applyStats(s);
+}
+
+function showTab(name) {
+  ['dashboard','users','lists','broadcast'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).style.display = 'block';
+  event.target.classList.add('active');
+  if (name === 'dashboard') loadStats();
+  if (name === 'users') loadUsers();
+  if (name === 'lists') loadLists();
+}
+
+async function loadUsers() {
+  document.getElementById('users-body').innerHTML = '<div class="loading">Yuklanmoqda...</div>';
+  const data = await api(`/api/admin/users?limit=${PAGE}&offset=${usersOffset}`);
+  if (data.error) { document.getElementById('users-body').innerHTML = `<div class="empty">Xato: ${data.error}</div>`; return; }
+  document.getElementById('users-count').textContent = `Jami: ${data.total}`;
+  const start = usersOffset + 1, end = Math.min(usersOffset + PAGE, data.total);
+  document.getElementById('users-page-info').textContent = `${start}–${end} / ${data.total}`;
+  document.getElementById('users-prev').disabled = usersOffset === 0;
+  document.getElementById('users-next').disabled = end >= data.total;
+
+  if (!data.users.length) { document.getElementById('users-body').innerHTML = '<div class="empty">Foydalanuvchilar yo\'q</div>'; return; }
+
+  let html = `<table><thead><tr>
+    <th>#</th><th>Ism</th><th>Telegram ID</th><th>Til</th>
+    <th>Oila</th><th>Byudjet</th><th>Ro'yxatdan o'tgan</th><th></th>
+  </tr></thead><tbody>`;
+  data.users.forEach((u, i) => {
+    const date = u.created_at ? u.created_at.split('T')[0] : '';
+    const lang = u.language === 'ru' ? '<span class="badge badge-ru">RU</span>' : '<span class="badge badge-uz">UZ</span>';
+    html += `<tr>
+      <td>${usersOffset + i + 1}</td>
+      <td>${esc(u.name || '—')}</td>
+      <td><code>${u.telegram_id}</code></td>
+      <td>${lang}</td>
+      <td>${u.family_size}</td>
+      <td>${u.weekly_budget ? u.weekly_budget.toLocaleString() + ' so\'m' : '—'}</td>
+      <td>${date}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteUser(${u.telegram_id}, '${esc(u.name || '')}')">O'chirish</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('users-body').innerHTML = html;
+}
+
+function usersPage(dir) {
+  usersOffset = Math.max(0, usersOffset + dir * PAGE);
+  loadUsers();
+}
+
+async function deleteUser(tid, name) {
+  if (!confirm(`"${name}" (${tid}) foydalanuvchini o'chirilsinmi?`)) return;
+  const res = await api(`/api/admin/users/${tid}`, { method: 'DELETE' });
+  if (res.ok) loadUsers();
+  else alert('Xato: ' + res.error);
+}
+
+async function loadLists() {
+  document.getElementById('lists-body').innerHTML = '<div class="loading">Yuklanmoqda...</div>';
+  const data = await api(`/api/admin/lists?limit=${PAGE}&offset=${listsOffset}`);
+  if (!Array.isArray(data)) { document.getElementById('lists-body').innerHTML = `<div class="empty">Xato</div>`; return; }
+
+  const end = listsOffset + data.length;
+  document.getElementById('lists-page-info').textContent = `${listsOffset + 1}–${end}`;
+  document.getElementById('lists-prev').disabled = listsOffset === 0;
+  document.getElementById('lists-next').disabled = data.length < PAGE;
+
+  if (!data.length) { document.getElementById('lists-body').innerHTML = '<div class="empty">Ro\'yxatlar yo\'q</div>'; return; }
+
+  let html = `<table><thead><tr>
+    <th>#</th><th>Foydalanuvchi</th><th>Telegram ID</th><th>Taom nomi</th><th>Sana</th>
+  </tr></thead><tbody>`;
+  data.forEach((r, i) => {
+    const date = r.created_at ? r.created_at.replace('T', ' ').slice(0, 16) : '';
+    html += `<tr>
+      <td>${listsOffset + i + 1}</td>
+      <td>${esc(r.name || '—')}</td>
+      <td><code>${r.telegram_id}</code></td>
+      <td>${esc(r.meal_name || '—')}</td>
+      <td>${date}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('lists-body').innerHTML = html;
+}
+
+function listsPage(dir) {
+  listsOffset = Math.max(0, listsOffset + dir * PAGE);
+  loadLists();
+}
+
+async function sendBroadcast() {
+  const msg = document.getElementById('broadcast-msg').value.trim();
+  if (!msg) return;
+  document.getElementById('broadcast-result').textContent = 'Yuborilmoqda...';
+  const res = await api('/api/admin/broadcast', { method: 'POST', body: JSON.stringify({ message: msg }) });
+  if (res.error) {
+    document.getElementById('broadcast-result').textContent = 'Xato: ' + res.error;
+  } else {
+    document.getElementById('broadcast-result').textContent = `Yuborildi: ${res.sent}, muvaffaqiyatsiz: ${res.failed}`;
+    document.getElementById('broadcast-msg').value = '';
+  }
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Auto-login if token saved
+(async () => {
+  if (token) {
+    const data = await api('/api/admin/stats');
+    if (!data.error) { showMain(data); return; }
+    localStorage.removeItem('admin_token');
+  }
+})();
+</script>
+</body>
+</html>

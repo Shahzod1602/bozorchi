@@ -324,7 +324,7 @@ async def _send_long_message(message: Message, text: str):
 
 async def main():
     await init_db()
-    await start_webserver(port=8090)
+    await start_webserver(port=8090, bot=bot)
     print("🤖 Bozorlik bot ishga tushdi!")
     await dp.start_polling(bot)
 
