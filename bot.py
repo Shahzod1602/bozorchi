@@ -59,6 +59,7 @@ def lang_keyboard() -> InlineKeyboardMarkup:
         [
             InlineKeyboardButton(text="🇺🇿 O'zbek", callback_data="lang_uz"),
             InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru"),
+            InlineKeyboardButton(text="🇬🇧 English", callback_data="lang_en"),
         ]
     ])
 
@@ -73,7 +74,7 @@ async def cmd_start(message: Message):
     )
 
 
-@dp.callback_query(F.data.in_({"lang_uz", "lang_ru"}))
+@dp.callback_query(F.data.in_({"lang_uz", "lang_ru", "lang_en"}))
 async def set_language(callback: CallbackQuery):
     lang = callback.data.split("_")[1]
     await update_language(callback.from_user.id, lang)
@@ -91,7 +92,7 @@ async def get_lang(user_id: int) -> str:
 
 
 # Ovqat tavsiya qil
-@dp.message(F.text.in_({t("uz", "btn_suggest"), t("ru", "btn_suggest")}))
+@dp.message(F.text.in_({t("uz", "btn_suggest"), t("ru", "btn_suggest"), t("en", "btn_suggest")}))
 async def ask_preference(message: Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
     await state.set_state(UserState.waiting_for_preference)
@@ -123,7 +124,7 @@ async def process_preference(message: Message, state: FSMContext):
     if WEBAPP_URL:
         inline_buttons.append([
             InlineKeyboardButton(
-                text="🛒 Bozorlik ro'yxatini ko'rish" if lang == "uz" else "🛒 Открыть список покупок",
+                text="🛒 Bozorlik ro'yxatini ko'rish" if lang == "uz" else ("🛒 Открыть список покупок" if lang == "ru" else "🛒 Open shopping list"),
                 web_app=WebAppInfo(url=WEBAPP_URL)
             )
         ])
@@ -135,7 +136,7 @@ async def process_preference(message: Message, state: FSMContext):
 
 
 # Retsept izla
-@dp.message(F.text.in_({t("uz", "btn_recipe"), t("ru", "btn_recipe")}))
+@dp.message(F.text.in_({t("uz", "btn_recipe"), t("ru", "btn_recipe"), t("en", "btn_recipe")}))
 async def ask_recipe_name(message: Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
     await state.set_state(UserState.waiting_for_recipe_name)
@@ -156,7 +157,7 @@ async def process_recipe_name(message: Message, state: FSMContext):
 
 
 # Byudjet bo'yicha reja
-@dp.message(F.text.in_({t("uz", "btn_budget"), t("ru", "btn_budget")}))
+@dp.message(F.text.in_({t("uz", "btn_budget"), t("ru", "btn_budget"), t("en", "btn_budget")}))
 async def ask_budget(message: Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
     current_budget = await get_weekly_budget(message.from_user.id)
@@ -232,7 +233,7 @@ async def change_budget(callback: CallbackQuery, state: FSMContext):
 
 
 # Haftalik reja
-@dp.message(F.text.in_({t("uz", "btn_weekly"), t("ru", "btn_weekly")}))
+@dp.message(F.text.in_({t("uz", "btn_weekly"), t("ru", "btn_weekly"), t("en", "btn_weekly")}))
 async def weekly_plan(message: Message):
     lang = await get_lang(message.from_user.id)
     thinking_msg = await message.answer(t(lang, "weekly_thinking"))
@@ -243,7 +244,7 @@ async def weekly_plan(message: Message):
 
 
 # Tarix
-@dp.message(F.text.in_({t("uz", "btn_history"), t("ru", "btn_history")}))
+@dp.message(F.text.in_({t("uz", "btn_history"), t("ru", "btn_history"), t("en", "btn_history")}))
 async def show_history(message: Message):
     lang = await get_lang(message.from_user.id)
     profile = await get_user_profile(message.from_user.id)
@@ -268,7 +269,7 @@ async def show_history(message: Message):
 
 
 # Oila soni
-@dp.message(F.text.in_({t("uz", "btn_family"), t("ru", "btn_family")}))
+@dp.message(F.text.in_({t("uz", "btn_family"), t("ru", "btn_family"), t("en", "btn_family")}))
 async def ask_family_size(message: Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
     current = await get_family_size(message.from_user.id)
@@ -292,7 +293,7 @@ async def process_family_size(message: Message, state: FSMContext):
 
 
 # Yordam
-@dp.message(F.text.in_({t("uz", "btn_help"), t("ru", "btn_help")}))
+@dp.message(F.text.in_({t("uz", "btn_help"), t("ru", "btn_help"), t("en", "btn_help")}))
 async def help_cmd(message: Message):
     lang = await get_lang(message.from_user.id)
     await message.answer(t(lang, "help_text"), parse_mode="Markdown")

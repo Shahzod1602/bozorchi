@@ -11,21 +11,23 @@ MODEL = "gemini-2.0-flash"
 LANG_INSTRUCTION = {
     "uz": "Faqat O'ZBEK tilida javob ber.",
     "ru": "Отвечай ТОЛЬКО на РУССКОМ языке.",
+    "en": "Reply ONLY in ENGLISH.",
 }
 
 CHEF_ROLE = {
     "uz": "Sen o'zbek oshpaz assistantisan.",
     "ru": "Ты узбекский кулинарный ассистент.",
+    "en": "You are an Uzbek culinary assistant.",
 }
 
 PREF_LABELS = {
-    "vegetarian": {"uz": "vegetarian (go'sht yemaydi)", "ru": "вегетарианец (без мяса)"},
-    "no_gluten": {"uz": "glutensiz (xamirli ovqat yemaydi)", "ru": "без глютена (не ест мучное)"},
-    "no_dairy": {"uz": "sut mahsulotlari yemaydi", "ru": "без молочных продуктов"},
-    "diabetic": {"uz": "qandli diabet (shakarli ovqat yemaydi)", "ru": "диабет (без сахара)"},
-    "low_calorie": {"uz": "kaloriyasi kam ovqat", "ru": "низкокалорийное питание"},
-    "halal": {"uz": "faqat halol mahsulotlar", "ru": "только халяль продукты"},
-    "no_spicy": {"uz": "achchiq ovqat yemaydi", "ru": "без острого"},
+    "vegetarian": {"uz": "vegetarian (go'sht yemaydi)", "ru": "вегетарианец (без мяса)", "en": "vegetarian (no meat)"},
+    "no_gluten": {"uz": "glutensiz (xamirli ovqat yemaydi)", "ru": "без глютена (не ест мучное)", "en": "gluten-free"},
+    "no_dairy": {"uz": "sut mahsulotlari yemaydi", "ru": "без молочных продуктов", "en": "no dairy products"},
+    "diabetic": {"uz": "qandli diabet (shakarli ovqat yemaydi)", "ru": "диабет (без сахара)", "en": "diabetic (no sugar)"},
+    "low_calorie": {"uz": "kaloriyasi kam ovqat", "ru": "низкокалорийное питание", "en": "low-calorie diet"},
+    "halal": {"uz": "faqat halol mahsulotlar", "ru": "только халяль продукты", "en": "halal only"},
+    "no_spicy": {"uz": "achchiq ovqat yemaydi", "ru": "без острого", "en": "no spicy food"},
 }
 
 
@@ -35,13 +37,15 @@ def build_pref_text(preferences: list, lang: str) -> str:
     items = []
     for p in preferences:
         if p in PREF_LABELS:
-            items.append(PREF_LABELS[p][lang])
+            items.append(PREF_LABELS[p].get(lang, PREF_LABELS[p]["en"]))
         else:
-            items.append(p)  # custom preference
+            items.append(p)
     if lang == "uz":
         return f"\n⚠️ MUHIM CHEKLOVLAR (ALBATTA HISOBGA OL):\n" + "\n".join(f"  - {i}" for i in items) + "\n"
-    else:
+    elif lang == "ru":
         return f"\n⚠️ ВАЖНЫЕ ОГРАНИЧЕНИЯ (ОБЯЗАТЕЛЬНО УЧТИ):\n" + "\n".join(f"  - {i}" for i in items) + "\n"
+    else:
+        return f"\n⚠️ IMPORTANT RESTRICTIONS (MUST FOLLOW):\n" + "\n".join(f"  - {i}" for i in items) + "\n"
 
 
 async def get_meal_suggestion(preferences: str, family_size: int, lang: str = "uz", user_prefs: list = None, fridge_items: list = None) -> dict:
@@ -53,10 +57,13 @@ async def get_meal_suggestion(preferences: str, family_size: int, lang: str = "u
         items_str = ", ".join(fridge_items)
         if lang == "uz":
             fridge_text = f"\n🧊 MUZLATGICHDAGI MAVJUD MAHSULOTLAR (albatta shu mahsulotlardan foydalanib tavsiya ber):\n{items_str}\n"
-        else:
+        elif lang == "ru":
             fridge_text = f"\n🧊 ПРОДУКТЫ В ХОЛОДИЛЬНИКЕ (обязательно используй эти продукты в рецепте):\n{items_str}\n"
+        else:
+            fridge_text = f"\n🧊 FRIDGE ITEMS (must use these in the recipe):\n{items_str}\n"
 
-    prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
+    if lang == "uz":
+        prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Foydalanuvchi:
 - Oila: {family_size} kishi
@@ -76,7 +83,9 @@ Yuqoridagi REAL narxlardan foydalanib javob ber:
 
 💰 TAXMINIY NARX: ~[jami] so'm
 ⏱️ VAQT: [vaqt]
-💡 MASLAHAT: [maslahat]""" if lang == "uz" else f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
+💡 MASLAHAT: [maslahat]"""
+    elif lang == "ru":
+        prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Пользователь:
 - Семья: {family_size} человек
@@ -97,12 +106,34 @@ Yuqoridagi REAL narxlardan foydalanib javob ber:
 💰 ПРИМЕРНАЯ СТОИМОСТЬ: ~[итого] сум
 ⏱️ ВРЕМЯ: [время]
 💡 СОВЕТ: [совет]"""
+    else:
+        prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
+
+User:
+- Family: {family_size} people
+- Preference: {preferences}
+{pref_text}{fridge_text}
+{prices}
+
+Use the REAL prices above and reply:
+
+🍽️ SUGGESTED DISH: [dish name]
+
+📝 RECIPE:
+[5-7 steps]
+
+🛒 INGREDIENTS (for {family_size} people):
+- [ingredient]: [amount] — ~[price] sum
+
+💰 ESTIMATED COST: ~[total] sum
+⏱️ TIME: [time]
+💡 TIP: [tip]"""
 
     response = client.models.generate_content(model=MODEL, contents=prompt)
     response_text = response.text
 
     meal_name = ""
-    markers = ["TAVSIYA ETILGAN OVQAT:", "РЕКОМЕНДУЕМОЕ БЛЮДО:"]
+    markers = ["TAVSIYA ETILGAN OVQAT:", "РЕКОМЕНДУЕМОЕ БЛЮДО:", "SUGGESTED DISH:"]
     for marker in markers:
         if marker in response_text:
             lines = [l for l in response_text.split('\n') if marker in l]
@@ -134,7 +165,7 @@ Format:
 💰 JAMI XARAJAT: ~[narx] so'm
 ⏱️ VAQT: [vaqt]
 💡 MASLAHAT: [maslahat]"""
-    else:
+    elif lang == "ru":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Полный рецепт блюда "{meal_name}" на {family_size} человек.
@@ -153,6 +184,25 @@ Format:
 💰 ИТОГО: ~[цена] сум
 ⏱️ ВРЕМЯ: [время]
 💡 СОВЕТ: [совет]"""
+    else:
+        prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
+
+Full recipe for "{meal_name}" for {family_size} people.
+
+{prices}
+
+Format:
+🍽️ {meal_name.upper()}
+
+📝 RECIPE:
+[detailed recipe]
+
+🛒 INGREDIENTS (for {family_size} people):
+- [ingredient]: [amount] — ~[price] sum
+
+💰 TOTAL COST: ~[price] sum
+⏱️ TIME: [time]
+💡 TIP: [tip]"""
 
     response = client.models.generate_content(model=MODEL, contents=prompt)
     return response.text
@@ -162,7 +212,15 @@ async def get_budget_weekly_plan(budget: float, family_size: int, lang: str = "u
     daily_budget = budget / 7
     prices = get_price_reference()
     pref_text = build_pref_text(user_prefs or [], lang)
-    wish_text = f"\n🗒️ Foydalanuvchi istagi: {wish}\n" if wish and lang == "uz" else (f"\n🗒️ Пожелание пользователя: {wish}\n" if wish else "")
+    if wish:
+        if lang == "uz":
+            wish_text = f"\n🗒️ Foydalanuvchi istagi: {wish}\n"
+        elif lang == "ru":
+            wish_text = f"\n🗒️ Пожелание пользователя: {wish}\n"
+        else:
+            wish_text = f"\n🗒️ User's wish: {wish}\n"
+    else:
+        wish_text = ""
     if lang == "uz":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
@@ -194,7 +252,7 @@ Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
 💡 TEJAMKORLIK MASLAHATLARI:
 1. [maslahat]
 2. [maslahat]"""
-    else:
+    elif lang == "ru":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Семья {family_size} человек, недельный бюджет: {budget:,.0f} сум (в день ~{daily_budget:,.0f} сум).
@@ -225,6 +283,37 @@ Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
 💡 СОВЕТЫ ПО ЭКОНОМИИ:
 1. [совет]
 2. [совет]"""
+    else:
+        prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
+
+Family of {family_size}, weekly budget: {budget:,.0f} sum (~{daily_budget:,.0f} sum/day).
+{pref_text}{wish_text}
+{prices}
+
+Use REAL prices and build a 7-day plan within budget:
+
+💰 WEEKLY MEAL PLAN
+💵 Budget: {budget:,.0f} sum | 👨‍👩‍👧‍👦 {family_size} people | 📅 7 days
+━━━━━━━━━━━━━━━━━━━━━━
+
+📅 MONDAY (~{daily_budget:,.0f} sum):
+☀️ Breakfast: [dish] — [price] sum
+🌞 Lunch: [dish] — [price] sum
+🌙 Dinner: [dish] — [price] sum
+💸 Day total: [total] sum
+
+[Remaining 6 days similarly]
+
+━━━━━━━━━━━━━━━━━━━━━━
+🛒 WEEKLY SHOPPING LIST:
+- [ingredient]: [amount] — ~[price] sum
+
+💰 TOTAL: ~[price] sum
+💚 SAVINGS: ~[remaining] sum
+
+💡 MONEY-SAVING TIPS:
+1. [tip]
+2. [tip]"""
 
     response = client.models.generate_content(model=MODEL, contents=prompt)
     return response.text
@@ -232,7 +321,15 @@ Yuqoridagi REAL narxlardan foydalanib byudjet doirasida 7 kunlik reja tuz:
 
 async def get_weekly_plan(family_size: int, lang: str = "uz", user_prefs: list = None, wish: str = "") -> str:
     pref_text = build_pref_text(user_prefs or [], lang)
-    wish_text = f"\n🗒️ Foydalanuvchi istagi: {wish}\n" if wish and lang == "uz" else (f"\n🗒️ Пожелание пользователя: {wish}\n" if wish else "")
+    if wish:
+        if lang == "uz":
+            wish_text = f"\n🗒️ Foydalanuvchi istagi: {wish}\n"
+        elif lang == "ru":
+            wish_text = f"\n🗒️ Пожелание пользователя: {wish}\n"
+        else:
+            wish_text = f"\n🗒️ User's wish: {wish}\n"
+    else:
+        wish_text = ""
     if lang == "uz":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
@@ -252,7 +349,7 @@ DUSHANBA:
 - [masalliq]: [miqdor] — ~[narx] so'm
 
 💰 TAXMINIY JAMI: ~[narx] so'm"""
-    else:
+    elif lang == "ru":
         prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
 
 Меню на 7 дней для семьи {family_size} человек. Больше узбекских блюд.
@@ -271,6 +368,25 @@ DUSHANBA:
 - [продукт]: [количество] — ~[цена] сум
 
 💰 ПРИМЕРНАЯ СТОИМОСТЬ: ~[цена] сум"""
+    else:
+        prompt = f"""{CHEF_ROLE[lang]} {LANG_INSTRUCTION[lang]}
+
+7-day meal plan for a family of {family_size}. Include Uzbek dishes.
+{pref_text}{wish_text}
+
+📅 WEEKLY MENU ({family_size} people)
+
+MONDAY:
+☀️ Breakfast: [dish]
+🌞 Lunch: [dish]
+🌙 Dinner: [dish]
+
+[Remaining days similarly]
+
+🛒 FULL SHOPPING LIST ({family_size} people, 7 days):
+- [ingredient]: [amount] — ~[price] sum
+
+💰 ESTIMATED TOTAL: ~[price] sum"""
 
     response = client.models.generate_content(model=MODEL, contents=prompt)
     return response.text
