@@ -499,6 +499,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
         <div class="lang-sw">
           <button class="lsb on" id="lz" onclick="setLang('uz')">UZ</button>
           <button class="lsb" id="lr" onclick="setLang('ru')">RU</button>
+          <button class="lsb" id="le" onclick="setLang('en')">EN</button>
         </div>
       </div>
     </div>
@@ -603,6 +604,12 @@ const T={
     save_btn:'Saqlash',daily:'kunlik',kishi:'kishi',err:'Xatolik. Qaytadan urining.',
     sh:'Bugun nima yemochisiz?',rh:'Retsept izla',bh:'Byudjet rejasi',
     budget_none:'Byudjet belgilanmagan',pref_hint:'Yoqilsa — AI bu turdagi ovqatlarni tavsiya qilmaydi',
+    fridge_add:"Belgilanganlarni muzlatgichga qo'sh",fridge_empty:"Muzlatgichingiz bo'sh. Avval mahsulot qo'shing.",
+    fridge_label:'Muzlatgichdagi mahsulotlar:',fridge_added:"Muzlatgichga qo'shildi",
+    fridge_clear:"Muzlatgichni tozalaysizmi?",fridge_empty_toast:"Muzlatgich bo'sh!",
+    mark_first:'Avval mahsulotlarni belgilang',type_text:'Iltimos, yozing',type_dish:'Ovqat nomini yozing',
+    weekly_plan:'Haftalik reja',new_plan:'Yangi reja tuzish',
+    shop_label:'Haftalik masalliqlar',lang_label:'Til',
   },
   ru:{
     quick:['Быстро','Дёшево','С мясом','Узбекская','Диетическое','Для детей'],
@@ -616,6 +623,31 @@ const T={
     save_btn:'Сохранить',daily:'в день',kishi:'чел.',err:'Ошибка. Попробуйте снова.',
     sh:'Что хотите есть?',rh:'Найти рецепт',bh:'План по бюджету',
     budget_none:'Бюджет не задан',pref_hint:'При включении — AI исключит эти блюда',
+    fridge_add:'Добавить отмеченные в холодильник',fridge_empty:'Холодильник пуст. Сначала добавьте продукты.',
+    fridge_label:'Продукты в холодильнике:',fridge_added:'Добавлено в холодильник',
+    fridge_clear:'Очистить холодильник?',fridge_empty_toast:'Холодильник пуст!',
+    mark_first:'Сначала отметьте товары',type_text:'Введите текст',type_dish:'Введите название',
+    weekly_plan:'Недельный план',new_plan:'Новый план',
+    shop_label:'Список покупок',lang_label:'Language',
+  },
+  en:{
+    quick:['Quick','Budget','With meat','Uzbek','Diet','For kids'],
+    popular:['Plov','Lagman','Manti','Shurpa','Samsa','Dimlama','Roast'],
+    no_list:'No list yet',no_list_sub:'Request a suggestion — list will appear here',
+    list_empty:'List is empty',list_empty_sub:'Add a dish to your shopping list',
+    loading:'Loading...',saved:'Saved',added:'Added to list',
+    add_btn:'Add to list',clear:'Clear list',clear_q:'Clear the list?',
+    ingr:'Ingredients:',weekly_ingr:'Shopping list',total:'Total:',
+    family_label:'Family size',budget_label:'Weekly budget',pref_section:'Dietary restrictions',
+    save_btn:'Save',daily:'per day',kishi:'people',err:'Error. Please try again.',
+    sh:'What would you like to eat?',rh:'Find a recipe',bh:'Budget meal plan',
+    budget_none:'No budget set',pref_hint:'When enabled — AI will exclude these from suggestions',
+    fridge_add:'Add checked items to fridge',fridge_empty:'Your fridge is empty. Add items first.',
+    fridge_label:'Fridge items:',fridge_added:'Added to fridge',
+    fridge_clear:'Clear the fridge?',fridge_empty_toast:'Fridge is empty!',
+    mark_first:'Check items first',type_text:'Please type something',type_dish:'Enter dish name',
+    weekly_plan:'Weekly plan',new_plan:'New plan',
+    shop_label:'Shopping list',lang_label:'Language',
   }
 };
 
@@ -768,6 +800,9 @@ function renderProfile(){
   document.getElementById('budgetProfileInput').value=prof.weekly_budget||'';
   document.getElementById('lz').classList.toggle('on',prof.language==='uz');
   document.getElementById('lr').classList.toggle('on',prof.language==='ru');
+  document.getElementById('le').classList.toggle('on',prof.language==='en');
+  document.getElementById('prefSectionTitle').textContent=L().pref_section;
+  document.getElementById('saveBtn').textContent=L().save_btn;
   renderPrefList();
 }
 
@@ -790,10 +825,10 @@ function renderShopList(){
     </div>`;
   }).join('');
   const bought=prof.ingredients.filter((_,i)=>checked[i]).length;
-  const fridgeBtnLabel=prof.language==='uz'?'Belgilanganlarni muzlatgichga qo\'sh':'Добавить отмеченные в холодильник';
+  const fridgeBtnLabel=L().fridge_add;
   const fridgeBtn=bought>0?`<button class="btn-s" onclick="addBoughtToFridge()" style="margin-top:8px">${fridgeBtnLabel} (${bought} ta)</button>`:'';
   const n=prof.ingredients.length;
-  const label=prof.language==='uz'?`Haftalik masalliqlar — ${n} ta`:`Список покупок — ${n} шт.`;
+  const label=`${L().shop_label} — ${n}${prof.language==='ru'?' шт.':prof.language==='en'?' items':' ta'}`;
   wrap.innerHTML=`<div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">${label}</div>
   <div class="shop-card">${rows}
     <div class="shop-total">
@@ -933,9 +968,9 @@ async function loadShopProducts(){
     if(data.error) throw new Error(data.error);
     shopProducts=data;
     shopLoaded=true;
-    const isUz=shopLang()==='uz';
+    const isUz=shopLang()==='uz';const isRu=shopLang()==='ru';
     const cats=[...new Set(data.map(p=>isUz?p.category_uz:p.category_ru))].filter(Boolean);
-    const allLabel=isUz?'Barchasi':'Все';
+    const allLabel=isUz?'Barchasi':isRu?'Все':'All';
     shopCat=allLabel;
     document.getElementById('shopCats').innerHTML=[allLabel,...cats].map(c=>
       `<button class="shop-cat-btn${c===allLabel?' on':''}" onclick="shopSetCat('${c.replace(/'/g,"\\'")}')">${c}</button>`
@@ -959,14 +994,14 @@ function shopFilter(){
 
 function renderShopGrid(q=''){
   const grid=document.getElementById('shopGrid');
-  const isUz=shopLang()==='uz';
-  const allLabel=isUz?'Barchasi':'Все';
+  const isUz=shopLang()==='uz';const isRu=shopLang()==='ru';
+  const allLabel=isUz?'Barchasi':isRu?'Все':'All';
   let items=shopProducts;
   if(shopCat&&shopCat!==allLabel)
     items=items.filter(p=>(isUz?p.category_uz:p.category_ru)===shopCat);
   if(q) items=items.filter(p=>(isUz?p.name_uz:p.name_ru).toLowerCase().includes(q.toLowerCase()));
   if(!items.length){
-    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--sub)">Topilmadi</div>`;
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--sub)">${isUz?'Topilmadi':isRu?'Не найдено':'Not found'}</div>`;
     return;
   }
   grid.innerHTML=items.map(p=>{
@@ -1086,20 +1121,20 @@ function addToFridge(items){
     }
   });
   saveFridge();renderFridge();renderHome();
-  toast(prof.language==='uz'?'Muzlatgichga qo\'shildi':'Добавлено в холодильник');
+  toast(L().fridge_added);
 }
 
 function delFridge(i){fridge.splice(i,1);saveFridge();renderFridge();}
 
 function clearFridge(){
-  const msg=prof.language==='uz'?'Muzlatgichni tozalaysizmi?':'Очистить холодильник?';
+  const msg=L().fridge_clear;
   const go=()=>{fridge=[];saveFridge();renderFridge();};
   if(tg){tg.showConfirm(msg,ok=>{if(ok)go();});}else if(confirm(msg))go();
 }
 
 function addBoughtToFridge(){
   const bought=prof.ingredients.filter((_,i)=>checked[i]);
-  if(!bought.length){toast(prof.language==='uz'?'Avval mahsulotlarni belgilang':'Сначала отметьте товары');return;}
+  if(!bought.length){toast(L().mark_first);return;}
   addToFridge(bought);
 }
 
@@ -1164,10 +1199,10 @@ function setSuggestMode(mode){
   if(mode==='fridge'){
     if(fridge.length===0){
       banner.style.display='block';
-      banner.textContent=prof.language==='uz'?'Muzlatgichingiz bo\'sh. Avval mahsulot qo\'shing.':'Холодильник пуст. Сначала добавьте продукты.';
+      banner.textContent=L().fridge_empty;
     } else {
       banner.style.display='block';
-      const label=prof.language==='uz'?'Muzlatgichdagi mahsulotlar:':'Продукты в холодильнике:';
+      const label=L().fridge_label;
       banner.textContent=`${label} ${fridge.map(f=>typeof f==='string'?f:(f.qty?f.qty+' '+f.name:f.name)).join(', ')}`;
     }
   } else {
@@ -1177,9 +1212,9 @@ function setSuggestMode(mode){
 
 async function doSuggest(){
   const pref=document.getElementById('preferenceInput').value.trim();
-  if(!pref){toast(prof.language==='uz'?"Iltimos, yozing":'Введите текст');return;}
+  if(!pref){toast(L().type_text);return;}
   if(suggestMode==='fridge'&&fridge.length===0){
-    toast(prof.language==='uz'?'Muzlatgich bo\'sh!':'Холодильник пуст!');return;
+    toast(L().fridge_empty_toast);return;
   }
   ldr('suggestResult');
   try{
@@ -1194,7 +1229,7 @@ async function doSuggest(){
 }
 async function doRecipe(){
   const name=document.getElementById('recipeInput').value.trim();
-  if(!name){toast(prof.language==='uz'?"Ovqat nomini yozing":'Введите название');return;}
+  if(!name){toast(L().type_dish);return;}
   ldr('recipeResult');
   try{
     const d=await api('/api/recipe','POST',{user_id:userId,meal_name:name});
@@ -1213,14 +1248,14 @@ async function doBudgetPlan(){
     const endpoint=budget>=10000?'/api/budget-plan':'/api/weekly-plan';
     const d=await api(endpoint,'POST',body);
     if(d.error)throw new Error(d.error);
-    showPlan('budgetResult',d.text,d.ingredients||[],prof.language==='uz'?'Haftalik reja':'Недельный план');
+    showPlan('budgetResult',d.text,d.ingredients||[],L().weekly_plan);
   }catch(e){errMsg('budgetResult');}
 }
 
 function showPlan(id, text, ingredients, title){
   lastPlan={text,ingredients,title};const t=L();
   const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'$1');
-  const newPlanLabel=prof.language==='uz'?'Yangi reja tuzish':'Новый план';
+  const newPlanLabel=L().new_plan;
   let ingHtml='';
   if(ingredients?.length>0){
     const rows=ingredients.slice(0,8).map(x=>`<li>${x.name}${x.qty?' <span style="color:var(--sub);font-size:12px">'+x.qty+'</span>':''}${x.price?' — '+x.price:''}</li>`).join('');
@@ -1262,6 +1297,7 @@ async function setLang(lang){
   prof.language=lang;
   document.getElementById('lz').classList.toggle('on',lang==='uz');
   document.getElementById('lr').classList.toggle('on',lang==='ru');
+  document.getElementById('le').classList.toggle('on',lang==='en');
   if(userId) await api('/api/profile','POST',{user_id:userId,language:lang});
   renderAll();
 }
