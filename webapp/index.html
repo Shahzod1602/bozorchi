@@ -326,8 +326,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
       </svg>
     </div>
     <div class="act-body">
-      <div class="act-title">Haftalik reja</div>
-      <div class="act-sub">7 kunlik ovqat va xarid rejasi</div>
+      <div class="act-title" id="cardWeeklyTitle">Haftalik reja</div>
+      <div class="act-sub" id="cardWeeklySub">7 kunlik ovqat va xarid rejasi</div>
     </div>
     <span class="act-arr">›</span>
   </div>
@@ -339,7 +339,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
       </svg>
     </div>
     <div class="act-body">
-      <div class="act-title">Muzlatkich</div>
+      <div class="act-title" id="cardFridgeTitle">Muzlatkich</div>
       <div class="act-sub" id="homeFridgeSub">Mahsulotlar saqlanmoqda</div>
     </div>
     <span class="act-arr">›</span>
@@ -352,7 +352,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
       </svg>
     </div>
     <div class="act-body">
-      <div class="act-title">Ro'yxat</div>
+      <div class="act-title" id="cardListTitle">Ro'yxat</div>
       <div class="act-sub" id="homeListSub">Bozorlik ro'yxatini ko'rish</div>
     </div>
     <span class="act-arr">›</span>
@@ -364,8 +364,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
     </div>
     <div class="act-body">
-      <div class="act-title">Korzinka</div>
-      <div class="act-sub">Mahsulotlar narxlarini ko'rish</div>
+      <div class="act-title" id="cardKorzinkaTitle">Korzinka</div>
+      <div class="act-sub" id="cardKorzinkaSub">Mahsulotlar narxlarini ko'rish</div>
     </div>
     <span class="act-arr">›</span>
   </div>
@@ -416,14 +416,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
     <div id="sub-budget" style="display:none">
       <div id="budgetHeroSub" class="mt8"></div>
       <div class="iw mt12">
-        <label>Haftalik byudjet (so'm)</label>
+        <label id="lblBudgetInput">Haftalik byudjet (so'm)</label>
         <input type="number" id="budgetInput" placeholder="500 000" inputmode="numeric">
       </div>
       <div class="iw">
         <label id="weeklyWishLabel">Qo'shimcha xohishlar (ixtiyoriy)</label>
         <textarea id="weeklyWish" rows="2" placeholder="Masalan: ko'proq sabzavotli, tez tayyorlanadigan..."></textarea>
       </div>
-      <button class="btn-p" onclick="doBudgetPlan()">Haftalik reja tuzish</button>
+      <button class="btn-p" id="btnBudgetPlan" onclick="doBudgetPlan()">Haftalik reja tuzish</button>
       <div id="budgetResult"></div>
     </div>
   </div>
@@ -433,7 +433,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 <div class="scr" id="scr-list">
   <div class="hdr">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-    <span class="hdr-t" style="margin-left:8px">Bozorlik ro'yxati</span>
+    <span class="hdr-t" style="margin-left:8px" id="hdrList">Bozorlik ro'yxati</span>
   </div>
   <div class="pad" style="padding-top:14px" id="shopWrap"></div>
 </div>
@@ -494,7 +494,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
           <div class="pr-icon-box">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
           </div>
-          <span>Til</span>
+          <span id="lblLang">Til</span>
         </span>
         <div class="lang-sw">
           <button class="lsb on" id="lz" onclick="setLang('uz')">UZ</button>
@@ -517,7 +517,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
     <button onclick="closeShop()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <span class="hdr-t" style="margin-left:4px">Korzinka</span>
+    <span class="hdr-t" style="margin-left:4px" id="hdrShop">Korzinka</span>
   </div>
 
   <!-- search -->
@@ -542,35 +542,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
     <div class="nb-icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     </div>
-    <span class="nl" data-uz="Bosh" data-ru="Главная">Bosh</span>
+    <span class="nl" data-uz="Bosh" data-ru="Главная" data-en="Home">Bosh</span>
     <div class="nb-dot"></div>
   </button>
   <button class="nb" id="nb-suggest" onclick="goTab('suggest')">
     <div class="nb-icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </div>
-    <span class="nl" data-uz="Tavsiya" data-ru="Блюдо">Tavsiya</span>
+    <span class="nl" data-uz="Tavsiya" data-ru="Блюдо" data-en="Suggest">Tavsiya</span>
     <div class="nb-dot"></div>
   </button>
   <button class="nb" id="nb-list" onclick="goTab('list')">
     <div class="nb-icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
     </div>
-    <span class="nl" data-uz="Ro'yxat" data-ru="Список">Ro'yxat</span>
+    <span class="nl" data-uz="Ro'yxat" data-ru="Список" data-en="List">Ro'yxat</span>
     <div class="nb-dot"></div>
   </button>
   <button class="nb" id="nb-fridge" onclick="goTab('fridge')">
     <div class="nb-icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="9" y1="6" x2="9" y2="8"/><line x1="9" y1="14" x2="9" y2="18"/></svg>
     </div>
-    <span class="nl" data-uz="Muzlat." data-ru="Холодил.">Muzlat.</span>
+    <span class="nl" data-uz="Muzlat." data-ru="Холодил." data-en="Fridge">Muzlat.</span>
     <div class="nb-dot"></div>
   </button>
   <button class="nb" id="nb-profile" onclick="goTab('profile')">
     <div class="nb-icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </div>
-    <span class="nl" data-uz="Profil" data-ru="Профиль">Profil</span>
+    <span class="nl" data-uz="Profil" data-ru="Профиль" data-en="Profile">Profil</span>
     <div class="nb-dot"></div>
   </button>
 </nav>
@@ -582,13 +582,13 @@ const userId=tg?.initDataUnsafe?.user?.id||null;
 const userName=tg?.initDataUnsafe?.user?.first_name||'U';
 
 const PREFS=[
-  {id:'vegetarian',  uz:"Vegetarian (go'shtsiz)",    ru:"Вегетарианец"},
-  {id:'no_gluten',   uz:"Glutensiz (unsiz)",          ru:"Без глютена"},
-  {id:'no_dairy',    uz:"Sut mahsulotisiz",            ru:"Без молочного"},
-  {id:'diabetic',    uz:"Diabet (shakarsiz)",          ru:"Диабет"},
-  {id:'low_calorie', uz:"Kam kaloriyali",              ru:"Низкокалорийное"},
-  {id:'halal',       uz:"Faqat halol",                 ru:"Только халяль"},
-  {id:'no_spicy',    uz:"Achchiqsiz",                  ru:"Без острого"},
+  {id:'vegetarian',  uz:"Vegetarian (go'shtsiz)",    ru:"Вегетарианец",     en:"Vegetarian"},
+  {id:'no_gluten',   uz:"Glutensiz (unsiz)",          ru:"Без глютена",      en:"Gluten-free"},
+  {id:'no_dairy',    uz:"Sut mahsulotisiz",            ru:"Без молочного",    en:"No dairy"},
+  {id:'diabetic',    uz:"Diabet (shakarsiz)",          ru:"Диабет",           en:"Diabetic"},
+  {id:'low_calorie', uz:"Kam kaloriyali",              ru:"Низкокалорийное",  en:"Low-calorie"},
+  {id:'halal',       uz:"Faqat halol",                 ru:"Только халяль",    en:"Halal only"},
+  {id:'no_spicy',    uz:"Achchiqsiz",                  ru:"Без острого",      en:"No spicy"},
 ];
 
 const T={
@@ -610,6 +610,32 @@ const T={
     mark_first:'Avval mahsulotlarni belgilang',type_text:'Iltimos, yozing',type_dish:'Ovqat nomini yozing',
     weekly_plan:'Haftalik reja',new_plan:'Yangi reja tuzish',
     shop_label:'Haftalik masalliqlar',lang_label:'Til',
+    // nav
+    nav_home:'Bosh',nav_suggest:'Tavsiya',nav_list:"Ro'yxat",nav_fridge:'Muzlat.',nav_profile:'Profil',
+    // home cards
+    card_weekly:"Haftalik reja",card_weekly_sub:"7 kunlik ovqat va xarid rejasi",
+    card_fridge:"Muzlatkich",card_list:"Ro'yxat",card_korzinka:"Korzinka",card_korzinka_sub:"Mahsulotlar narxlarini ko'rish",
+    last_title:"Oxirgi xaridlar",
+    // headers
+    hdr_list:"Bozorlik ro'yxati",hdr_fridge:"Muzlatkich",hdr_profile:"Profil",hdr_shop:"Korzinka",
+    // tabs
+    tab_suggest:"Tavsiya",tab_recipe:"Retsept",tab_budget:"Byudjet",
+    mode_regular:"Oddiy tavsiya",mode_fridge:"Muzlatkich orqali",
+    // inputs
+    ph_pref:"Masalan: tez va arzon ovqat",ph_recipe:"Masalan: Osh, Lag'mon",
+    ph_wish:"Masalan: ko'proq sabzavotli, tez tayyorlanadigan...",ph_fridge:"Mahsulot nomi...",ph_qty:"Miqdor",ph_shop:"Mahsulot qidirish...",
+    lbl_budget:"Haftalik byudjet (so'm)",lbl_wish:"Qo'shimcha xohishlar (ixtiyoriy)",lbl_lang:"Til",
+    // buttons
+    btn_suggest:"Tavsiya qil",btn_recipe:"Retseptni ko'rish",btn_budget_plan:"Haftalik reja tuzish",
+    // fridge
+    fridge_empty_h3:"Muzlatkich bo'sh",fridge_empty_p:"Xarid qilingan mahsulotlar bu yerda ko'rinadi",
+    fridge_clear_all:"Barchasini o'chirish",ph_edit_name:"Nomi",ph_edit_qty:"Miqdor",
+    // misc
+    marked:"belgilangan",set_budget:"Belgilash uchun bosing",
+    items_more_suffix:"ta mahsulot",items_suffix:"ta",
+    list_sub_marked_suffix:"ta belgilangan",fridge_sub_suffix:"ta mahsulot",fridge_sub_empty:"Hozircha bo'sh",
+    krz_empty:"Hali mahsulot qo'shilmagan",shop_loading:"Yuklanmoqda...",shop_failed:"Yuklab bo'lmadi",
+    ingr_count_suffix:"ta",
   },
   ru:{
     quick:['Быстро','Дёшево','С мясом','Узбекская','Диетическое','Для детей'],
@@ -619,7 +645,7 @@ const T={
     loading:'Загрузка...',saved:'Сохранено',added:'Добавлено в список',
     add_btn:'Добавить в список',clear:'Очистить список',clear_q:'Очистить список?',
     ingr:'Ингредиенты:',weekly_ingr:'Список покупок',total:'Итого:',
-    family_label:'Размер семьи',budget_label:'Недельный бюджет',pref_section:'Ограничения',
+    family_label:'Размер семьи',budget_label:'Недельный бюджет',pref_section:'Ограничения питания',
     save_btn:'Сохранить',daily:'в день',kishi:'чел.',err:'Ошибка. Попробуйте снова.',
     sh:'Что хотите есть?',rh:'Найти рецепт',bh:'План по бюджету',
     budget_none:'Бюджет не задан',pref_hint:'При включении — AI исключит эти блюда',
@@ -628,7 +654,25 @@ const T={
     fridge_clear:'Очистить холодильник?',fridge_empty_toast:'Холодильник пуст!',
     mark_first:'Сначала отметьте товары',type_text:'Введите текст',type_dish:'Введите название',
     weekly_plan:'Недельный план',new_plan:'Новый план',
-    shop_label:'Список покупок',lang_label:'Language',
+    shop_label:'Список покупок',lang_label:'Язык',
+    nav_home:'Главная',nav_suggest:'Блюдо',nav_list:'Список',nav_fridge:'Холодил.',nav_profile:'Профиль',
+    card_weekly:'Недельный план',card_weekly_sub:'7-дневное меню и список покупок',
+    card_fridge:'Холодильник',card_list:'Список',card_korzinka:'Korzinka',card_korzinka_sub:'Смотреть цены на продукты',
+    last_title:'Последние покупки',
+    hdr_list:'Список покупок',hdr_fridge:'Холодильник',hdr_profile:'Профиль',hdr_shop:'Korzinka',
+    tab_suggest:'Блюдо',tab_recipe:'Рецепт',tab_budget:'Бюджет',
+    mode_regular:'Обычная рекомендация',mode_fridge:'Из холодильника',
+    ph_pref:'Например: быстро и недорого',ph_recipe:'Например: Плов, Лагман',
+    ph_wish:'Например: больше овощей, быстро готовить...',ph_fridge:'Название продукта...',ph_qty:'Кол-во',ph_shop:'Поиск продуктов...',
+    lbl_budget:'Недельный бюджет (сум)',lbl_wish:'Дополнительные пожелания (необязательно)',lbl_lang:'Язык',
+    btn_suggest:'Предложить',btn_recipe:'Найти рецепт',btn_budget_plan:'Составить план',
+    fridge_empty_h3:'Холодильник пуст',fridge_empty_p:'Купленные продукты появятся здесь',
+    fridge_clear_all:'Очистить всё',ph_edit_name:'Название',ph_edit_qty:'Кол-во',
+    marked:'отмечено',set_budget:'Нажмите, чтобы задать',
+    items_more_suffix:'продуктов',items_suffix:'шт.',
+    list_sub_marked_suffix:'отмечено',fridge_sub_suffix:'продуктов',fridge_sub_empty:'Пока пусто',
+    krz_empty:'Ничего не добавлено',shop_loading:'Загрузка...',shop_failed:'Не удалось загрузить',
+    ingr_count_suffix:'шт.',
   },
   en:{
     quick:['Quick','Budget','With meat','Uzbek','Diet','For kids'],
@@ -641,13 +685,31 @@ const T={
     family_label:'Family size',budget_label:'Weekly budget',pref_section:'Dietary restrictions',
     save_btn:'Save',daily:'per day',kishi:'people',err:'Error. Please try again.',
     sh:'What would you like to eat?',rh:'Find a recipe',bh:'Budget meal plan',
-    budget_none:'No budget set',pref_hint:'When enabled — AI will exclude these from suggestions',
+    budget_none:'No budget set',pref_hint:'When on — AI will exclude these from suggestions',
     fridge_add:'Add checked items to fridge',fridge_empty:'Your fridge is empty. Add items first.',
     fridge_label:'Fridge items:',fridge_added:'Added to fridge',
     fridge_clear:'Clear the fridge?',fridge_empty_toast:'Fridge is empty!',
     mark_first:'Check items first',type_text:'Please type something',type_dish:'Enter dish name',
     weekly_plan:'Weekly plan',new_plan:'New plan',
     shop_label:'Shopping list',lang_label:'Language',
+    nav_home:'Home',nav_suggest:'Suggest',nav_list:'List',nav_fridge:'Fridge',nav_profile:'Profile',
+    card_weekly:'Weekly plan',card_weekly_sub:'7-day meal and shopping plan',
+    card_fridge:'Fridge',card_list:'List',card_korzinka:'Korzinka',card_korzinka_sub:'View product prices',
+    last_title:'Recent purchases',
+    hdr_list:'Shopping list',hdr_fridge:'Fridge',hdr_profile:'Profile',hdr_shop:'Korzinka',
+    tab_suggest:'Suggest',tab_recipe:'Recipe',tab_budget:'Budget',
+    mode_regular:'Regular suggestion',mode_fridge:'From fridge',
+    ph_pref:'E.g.: quick and cheap food',ph_recipe:'E.g.: Plov, Lagman',
+    ph_wish:'E.g.: more vegetables, quick to cook...',ph_fridge:'Product name...',ph_qty:'Amount',ph_shop:'Search products...',
+    lbl_budget:'Weekly budget (sum)',lbl_wish:'Additional wishes (optional)',lbl_lang:'Language',
+    btn_suggest:'Suggest',btn_recipe:'Find recipe',btn_budget_plan:'Create plan',
+    fridge_empty_h3:'Fridge is empty',fridge_empty_p:'Purchased products will appear here',
+    fridge_clear_all:'Clear all',ph_edit_name:'Name',ph_edit_qty:'Amount',
+    marked:'marked',set_budget:'Click to set',
+    items_more_suffix:'items',items_suffix:'items',
+    list_sub_marked_suffix:'marked',fridge_sub_suffix:'items',fridge_sub_empty:'Empty for now',
+    krz_empty:'Nothing added yet',shop_loading:'Loading...',shop_failed:'Failed to load',
+    ingr_count_suffix:'items',
   }
 };
 
@@ -692,12 +754,7 @@ function renderAll(){
 }
 
 function applyLang(){
-  const t=L();
-  document.querySelectorAll('[data-uz]').forEach(el=>el.textContent=el.dataset[prof.language]||el.dataset.uz);
-  document.getElementById('familyLabel').textContent=t.family_label;
-  document.getElementById('budgetLabel').textContent=t.budget_label;
-  document.getElementById('prefSectionTitle').textContent=t.pref_section;
-  document.getElementById('saveBtn').textContent=t.save_btn;
+  renderTexts();
   renderChips();renderPrefList();
 }
 
@@ -713,12 +770,12 @@ function renderHome(){
       <div class="b-hero-row">
         <div class="b-hero-col"><div class="b-hero-val">${fmtNum(daily)}</div><div class="b-hero-lbl">${t.daily}</div></div>
         <div class="b-hero-col"><div class="b-hero-val">${prof.family_size}</div><div class="b-hero-lbl">${t.kishi}</div></div>
-        <div class="b-hero-col"><div class="b-hero-val">${bought}/${total}</div><div class="b-hero-lbl">belgilangan</div></div>
+        <div class="b-hero-col"><div class="b-hero-val">${bought}/${total}</div><div class="b-hero-lbl">${t.marked}</div></div>
       </div>`;
   } else {
     bc.innerHTML=`<div class="b-hero-label">${t.budget_label}</div>
       <div class="b-hero-amount" style="font-size:22px;opacity:.7">${t.budget_none}</div>
-      <div style="font-size:12px;opacity:.6;margin-top:6px">Belgilash uchun bosing</div>`;
+      <div style="font-size:12px;opacity:.6;margin-top:6px">${t.set_budget}</div>`;
   }
   const bhs=document.getElementById('budgetHeroSub');
   if(bhs&&prof.weekly_budget>0){
@@ -729,9 +786,9 @@ function renderHome(){
   }
   const total=prof.ingredients?.length||0;
   const bought=prof.ingredients?.filter((_,i)=>checked[i]).length||0;
-  document.getElementById('homeListSub').textContent=total>0?`${bought}/${total} ta belgilangan`:t.no_list_sub;
+  document.getElementById('homeListSub').textContent=total>0?`${bought}/${total} ${t.list_sub_marked_suffix}`:t.no_list_sub;
   const fridgeSub=document.getElementById('homeFridgeSub');
-  if(fridgeSub) fridgeSub.textContent=fridge.length>0?`${fridge.length} ta mahsulot`:'Hozircha bo\'sh';
+  if(fridgeSub) fridgeSub.textContent=fridge.length>0?`${fridge.length} ${t.fridge_sub_suffix}`:t.fridge_sub_empty;
 
   const wrap=document.getElementById('homeLastItems');
   if(!prof.ingredients||prof.ingredients.length===0){
@@ -748,7 +805,7 @@ function renderHome(){
     </div>`;
   }).join('');
   const more=prof.ingredients.length>5
-    ?`<div class="prev-more">+${prof.ingredients.length-5} ta mahsulot</div>`:'';
+    ?`<div class="prev-more">+${prof.ingredients.length-5} ${L().items_more_suffix}</div>`:'';
   wrap.innerHTML=rows+more;
 }
 
@@ -773,7 +830,7 @@ function renderPrefList(){
     PREFS.map(p=>{
       const on=prof.preferences.includes(p.id);
       return `<div class="pref-row">
-        <span class="pref-name">${p[lang]||p.uz}</span>
+        <span class="pref-name">${p[lang]||p.en||p.uz}</span>
         <label class="tog">
           <input type="checkbox" ${on?'checked':''} onchange="togglePref('${p.id}',this)">
           <div class="tog-t"></div><div class="tog-b"></div>
@@ -801,8 +858,6 @@ function renderProfile(){
   document.getElementById('lz').classList.toggle('on',prof.language==='uz');
   document.getElementById('lr').classList.toggle('on',prof.language==='ru');
   document.getElementById('le').classList.toggle('on',prof.language==='en');
-  document.getElementById('prefSectionTitle').textContent=L().pref_section;
-  document.getElementById('saveBtn').textContent=L().save_btn;
   renderPrefList();
 }
 
@@ -909,7 +964,7 @@ function renderKrz(){
   const list=document.getElementById('krzList');
   if(!list) return;
   if(krz.length===0){
-    list.innerHTML=`<div class="krz-empty">Hali mahsulot qo'shilmagan</div>`;
+    list.innerHTML=`<div class="krz-empty">${L().krz_empty}</div>`;
   } else {
     const rows=krz.map((item,i)=>`
       <div class="krz-item">
@@ -920,7 +975,7 @@ function renderKrz(){
       </div>`).join('');
     const total2=krz.reduce((s,i)=>s+(i.price||0)*(i.qty_n||1),0);
     const footer=total2>0?`<div class="krz-footer">
-      <span class="krz-footer-l">Jami:</span>
+      <span class="krz-footer-l">${L().total}</span>
       <span class="krz-footer-r">${fmtNum(total2)} so'm</span>
     </div>`:'';
     list.innerHTML=rows+footer;
@@ -962,7 +1017,7 @@ function closeShop(){
 
 async function loadShopProducts(){
   const grid=document.getElementById('shopGrid');
-  grid.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--sub)">Yuklanmoqda...</div>`;
+  grid.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--sub)">${L().shop_loading}</div>`;
   try{
     const data=await fetch('/api/korzinka-products').then(r=>r.json());
     if(data.error) throw new Error(data.error);
@@ -978,7 +1033,7 @@ async function loadShopProducts(){
     renderShopGrid();
   }catch(e){
     grid.style.gridTemplateColumns='1fr';
-    grid.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--sub)">Yuklab bo'lmadi</div>`;
+    grid.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--sub)">${L().shop_failed}</div>`;
   }
 }
 
@@ -1034,8 +1089,8 @@ function renderFridge(){
   if(fridge.length===0){
     wrap.innerHTML=`<div class="empty">
       <div class="empty-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/></svg></div>
-      <h3>${lang==='uz'?'Muzlatkich bo\'sh':'Холодильник пуст'}</h3>
-      <p>${lang==='uz'?'Xarid qilingan mahsulotlar bu yerda ko\'rinadi':'Купленные продукты появятся здесь'}</p>
+      <h3>${L().fridge_empty_h3}</h3>
+      <p>${L().fridge_empty_p}</p>
     </div>`;
     renderHome();return;
   }
@@ -1052,7 +1107,7 @@ function renderFridge(){
       <button class="fridge-del" onclick="delFridge(${i})"></button>
     </div>`;
   }).join('');
-  const clearBtn=lang==='uz'?"Barchasini o'chirish":'Очистить всё';
+  const clearBtn=L().fridge_clear_all;
   wrap.innerHTML=`<div class="shop-card" style="margin-bottom:10px">${rows}</div>
     <button class="btn-d" onclick="clearFridge()">${clearBtn}</button>`;
   renderHome();
@@ -1065,8 +1120,8 @@ function editFridge(i){
   const name=typeof item==='string'?item:item.name;
   const qty=typeof item==='string'?'':item.qty||'';
   el.outerHTML=`<div class="fridge-edit-row" id="fi-${i}">
-    <input class="fn-inp" type="text" id="fen-${i}" value="${name.replace(/"/g,'&quot;')}" placeholder="Nomi">
-    <input class="fq-inp" type="text" id="feq-${i}" value="${qty.replace(/"/g,'&quot;')}" placeholder="Miqdor">
+    <input class="fn-inp" type="text" id="fen-${i}" value="${name.replace(/"/g,'&quot;')}" placeholder="${L().ph_edit_name}">
+    <input class="fq-inp" type="text" id="feq-${i}" value="${qty.replace(/"/g,'&quot;')}" placeholder="${L().ph_edit_qty}">
     <button class="fridge-save-btn" onclick="saveFridgeEdit(${i})">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
     </button>
@@ -1260,7 +1315,7 @@ function showPlan(id, text, ingredients, title){
   if(ingredients?.length>0){
     const rows=ingredients.slice(0,8).map(x=>`<li>${x.name}${x.qty?' <span style="color:var(--sub);font-size:12px">'+x.qty+'</span>':''}${x.price?' — '+x.price:''}</li>`).join('');
     ingHtml=`<div class="food-card" style="margin-top:12px"><div style="padding:16px">
-      <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">${t.weekly_ingr} — ${ingredients.length} ta</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text)">${t.weekly_ingr} — ${ingredients.length} ${t.ingr_count_suffix}</div>
       <ul class="food-ingr" style="margin-bottom:16px">${rows}</ul>
       <button class="btn-p" onclick="savePlan(this)">${t.add_btn}</button>
     </div></div>`;
@@ -1293,6 +1348,37 @@ async function saveProfile(){
   if(userId) await api('/api/profile','POST',{user_id:userId,family_size:prof.family_size,weekly_budget:prof.weekly_budget,language:prof.language,preferences:prof.preferences});
   toast(L().saved);renderAll();
 }
+function renderTexts(){
+  const t=L();
+  const s=(id,txt)=>{const el=document.getElementById(id);if(el)el.textContent=txt;};
+  const p=(id,txt)=>{const el=document.getElementById(id);if(el)el.placeholder=txt;};
+  // nav
+  document.querySelectorAll('.nl').forEach(el=>{
+    el.textContent=el.dataset[prof.language]||el.dataset.uz||el.textContent;
+  });
+  // home cards
+  s('cardWeeklyTitle',t.card_weekly);s('cardWeeklySub',t.card_weekly_sub);
+  s('cardFridgeTitle',t.card_fridge);s('cardListTitle',t.card_list);
+  s('cardKorzinkaTitle',t.card_korzinka);s('cardKorzinkaSub',t.card_korzinka_sub);
+  s('homeLastT',t.last_title);
+  // headers
+  s('hdrList',t.hdr_list);s('fridgeTitle',t.hdr_fridge);
+  s('profTitle',t.hdr_profile);s('hdrShop',t.hdr_shop);
+  // tabs
+  s('st-suggest',t.tab_suggest);s('st-recipe',t.tab_recipe);s('st-budget',t.tab_budget);
+  s('sm-regular',t.mode_regular);s('sm-fridge',t.mode_fridge);
+  // buttons
+  s('suggestBtn',t.btn_suggest);s('recipeBtn',t.btn_recipe);s('btnBudgetPlan',t.btn_budget_plan);
+  // labels
+  s('familyLabel',t.family_label);s('budgetLabel',t.budget_label);
+  s('lblLang',t.lbl_lang);s('prefSectionTitle',t.pref_section);
+  s('saveBtn',t.save_btn);s('weeklyWishLabel',t.lbl_wish);s('lblBudgetInput',t.lbl_budget);
+  // placeholders
+  p('preferenceInput',t.ph_pref);p('recipeInput',t.ph_recipe);
+  p('weeklyWish',t.ph_wish);p('fridgeInput',t.ph_fridge);
+  p('fridgeQtyInput',t.ph_qty);p('shopSearch',t.ph_shop);
+}
+
 async function setLang(lang){
   prof.language=lang;
   document.getElementById('lz').classList.toggle('on',lang==='uz');
